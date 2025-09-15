@@ -39,3 +39,4 @@ if %errorlevel% == 0 (
 )
 
 echo Restoration script finished.
+pause
