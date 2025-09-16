@@ -220,4 +220,156 @@ LOCAL STATUS 	InitCmdExec(CmdExecInst *this) {
 
 LOCAL STATUS FinalizeCmdExec(CmdExecInst *this) {
 	STATUS nRet = OK;
+	if(this->ipcObj.msgQId) {
+		if (msgQDelete(this->ipcObj.msgQId)) {
+			LOGMSG("msgQDelete() error!\n");
+			nRet = ERROR;
+		} else {
+			this->ipcObj.msgQId = NULL;
+		}
+	}
 	
+	int i;
+	for (i = 0; i < g_numCmdFuncAdded; i++) {
+		if (symRemove(this->cmdTblId, g_cmdTblItems[i].name, SYM_GLOBAL | SYM_TEXT) == ERROR) {
+			LOGMSG("symRemove() error! (errNo: 0x%08X)\n", errnoGet());
+			printErrno(errnoGet());
+			
+			return ERROR;
+		}
+	}
+	
+	if (this->cmdTblId != NULL){
+		if (symTblDelete(this->cmdTblId) == ERROR){
+			LOGMSG("symTblDelete() error! (errNo: 0x%08X)\n", errnoGet());
+			printErrno(errnoGet();
+			nRet = ERROR;
+		}
+		else {
+			this->cmdTblId = NULL;
+		}
+	}
+	
+	if (this->cmdPoolId != NULL) {
+		if (memPartDelete(this->cmdPoolId) == ERROR) {
+			LOGMSG("memPartDelete() error! (errNo: 0x%08X)\n", errnoGet());
+			printErrno(errnoGet());
+			nRet = ERROR;
+		} else {
+			this->cmdPoolId = NULL;
+		}
+	}
+	
+	return nRet;
+}
+
+LOCAL STATUS ExecuteCmdExec(CmdExecInst *this) {
+	STATUS nRet = OK;
+	CmdExecMsg stMsg;
+	
+	FOREVER {
+		if (msgQReceive(this->ipcObj.msgQId, (char *)&stMsg, sizeof(stMsg),
+						WAIT_FOREVER) == ERROR) {
+			LOGMSG("msgQReceive() Error!\n");
+			nRet = ERROR;
+			break;
+		}
+
+#ifdef USE_CHK_TASK_STATUS
+		updateTaskStatus(this->taskStatus);
+#endif
+		if (stMsg.cmd == CMD_EXEC_QUIT)
+			break;
+		
+		switch (stMsg.cmd) {
+		case CMD_EXEC_START:
+			OnStart(this);
+			break;
+		case CMD_EXEC_STOP:
+			OnStop(this);
+			break;
+		case CMD_EXEC_EXECUTE:
+			OnExecute(this, &(stMsg.body.testControl));
+			break;
+		}
+	
+	return nRet;
+	}
+	
+LOCAL void OnStart(CmdExecInst *this) {
+	this->state = RUNNING;
+}
+
+LOCAL void OnStop(CmdExecInst *this) {
+	this->state = STOP;
+}
+
+LOCAL STATUS OnExecute(CmdExecInst *this, OPS_TYPE_TEST_CONTROL *pTestControl) {
+	if (this->state == STOP)
+		return ERROR;
+	if (pTestControl->cmdType == CMD_TYPE_START) {
+		return startCmd(this, pTestControl->cmd, pTestControl->args);
+	}
+	else if (pTestControl->cmdType == CMD_TYPE_STOP) {
+		return stopCmd(this);
+	}
+	else {
+		return ERROR;
+	}
+}
+
+LOCAL void removeBlank(char *szArg) {
+	char *d = szArg;
+	
+	do {
+		while (isspace(*d)) {
+			d++;
+		}
+		*szArg++ = *d++;
+	} while (*szArg != NULL);
+}
+
+LOCAL STATUS setArgMask(char *szArg) {
+	char ch = 0;
+	
+	if (szArg == NULL)
+		return ERROR;
+	
+	if (strlen(szArg) <=2)
+		return ERROR;
+	
+	if (szArg[0] != '0' || szArg[1] != 'x'_OvrInitEms
+		return ERROR;
+		
+	szArg += 2;
+	
+	g_dwArgMask = 0;
+	
+	while ((ch = *szArg) != 0) {
+		g_dwArgMask <<= 4;
+		
+		if (ch == '*') {
+			*szArg = '0';
+		} else {
+			g_dwArgMask |= 0xF;
+		}
+		
+		szArg++;
+	}
+	
+	return OK;
+}
+
+LOCAL STATUS parseArgs(char *szArg) {
+	char *pToken;
+	int i = 0;
+	
+	removeBlank(szArg);
+	
+	memset(g_szArgs, 0, sizeof(g_szArgs));
+	g_dwArgMask = UINT32_MAX;
+	
+	pToken = strtok(szArg, ",");
+	if (pToken == NULL) {
+		strcpy(g_szArgs[0], szArg)
+						
