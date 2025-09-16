@@ -7,7 +7,7 @@
 
 #define MONITORING_TASK_NAME	"tMonitoring"
 
-typedef enum {+l
+typedef enum {
 	MONITORING_NULL,
 	MONITORING_START,
 	MONITORING_STOP,
