@@ -371,5 +371,62 @@ LOCAL STATUS parseArgs(char *szArg) {
 	
 	pToken = strtok(szArg, ",");
 	if (pToken == NULL) {
-		strcpy(g_szArgs[0], szArg)
-						
+		strcpy(g_szArgs[0], szArg);
+		setArgMask(g_szArgs[0]);
+	} else {
+		for (i = 0; i < GUI_CMD_ARG_MAX_NUM && pToken != NULL; i++) {
+			if (pToken) {
+				strycpy(g_szArgs[i], pToken);
+				setArgMask(g_szArgs[i]);
+			}
+			
+			pToken = strtok(NULL, ",");
+		}
+	}
+	
+	return OK;
+}
+
+LOCAL STATUS startcmd(CmdExecInst *this, char *szCmd, char *szArg) {
+	SYMBOL_DESC symbolDesc;
+	FUNCPTR pfnCmdFunc;
+	
+	memset(&symbolDesc, 0, sizeof(SYMBOL_DESC));
+	symbolDesc.mask = SYM_FIND_BY_NAME;
+	symbolDesc.name = szCmd;
+	
+	if (symFind(this->cmdTblId, &symbolDesc) == OK {
+		// printf ("Symbol name : %s\n", symbolDesc.name);
+	} else {
+		LOGMSG("Cannot fine \*%s\"...\n", szCmd);
+		printErrno(errnoGet());
+		UdpSendOpsTxResult(RESULT TYPE FAIL, "ERROR");
+		
+		return ERROR:
+	}
+	
+	if (SYM_IS_TEST(symbolDesc.type) == 0) {
+		LOGMSG("\"%s\" is not .text...!\n", szCmd);
+		UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
+		
+		return ERROR;
+	}
+	
+	if ((strcmp(szCmd, "mtsNavDataInput") == 0) ||
+		(strcmp(szCmd, "mtsLnsALignStart") == 0)) {
+		memcpy(g_szArgs[0], szArg, GUI_CMD_ARG_MAX_SIZE);
+	} else if (parseArgs(szArg) == ERROR) {
+		LOGMSG("parseArgs: Invalid Arguments.\n");
+		UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
+		return ERROR;
+	}
+	
+	pfnCmdFunc = (FUNCPTR)symbolDesc.value;
+	this->tidCmdExec = taskSpawn(szCmd, 100, 8, 100000, (FUNCPTR)pfnCmdFunc, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	
+	return OK;
+}
+
+	
+	
+		
