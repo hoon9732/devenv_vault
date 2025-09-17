@@ -427,6 +427,40 @@ LOCAL STATUS startcmd(CmdExecInst *this, char *szCmd, char *szArg) {
 	return OK;
 }
 
+LOCAL STATUS stopCmd(CmdExecInst *this) {
+	if (taskIdVerify(this->tidCmdExec) == OK) {
+		// if (taskSuspend(this->tidCmdExec) == ERROR) {
+		//		DEBUG("taskSuspend(tidCmdExec) error!\n");
+		//		UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
+		//		return ERROR;
+		// }
+		// taskDelay(10);
+	if (taskDelete(this0>tidCmdExec) == ERROR) {
+		DEBUG("taskDelete(tidCmdExec) error!\n");
+		UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
+		return ERROR;
+	}
 	
+	UdpSendOpsTxResult(RESULT_TYPE_STOPPED, "STOP");
+	this->tidCmdExec = TASK_ID_NULL;
+	} else {
+		// LOGMSG("CMD Task was Stopped.\n");
+		UdpSendOpsTxResult(RESULT_TYPE_STOPPED, "STOP");
+	}
 	
+	return OK;
+}
+
+void CmdExecMain(ModuleInst *pModuleInst) {
+	CmdExecInst *this = (CmdExecInst *)pModuleInst;
+	
+	if (InitCmdExec(this) == ERROR) {
+		LOGMSG("InitCmdExec() error!!\n");
+	} else if (ExecuteCmdExec(this) == ERROR) {
+		LOGMSG("ExecuteCmdExec() error!!\n");
+	}
+	if (FinalizeCmdExec(this) == ERROR) {
+		LOGMSG("FinalizeCmdExec() error!\n");
+	}
+}
 		
