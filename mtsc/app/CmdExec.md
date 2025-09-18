@@ -611,4 +611,5 @@ void CmdExecMain(ModuleInst *pModuleInst) {
 *   **Conditional statements**: `if-else if` ladder for sequential execution of initialization, execution, and finalization, with error handling at each stage.
 *   **Function calls**: `InitCmdExec()`, `ExecuteCmdExec()`, `FinalizeCmdExec()`, `LOGMSG()`.
 *   **Return values**: The return values of `InitCmdExec`, `ExecuteCmdExec`, and `FinalizeCmdExec` are checked against `ERROR` to determine success or failure.
+*   **Structure member access**: `this->` to access members of the `CmdExecInst` structure.re.CmdExec` are checked against `ERROR` to determine success or failure.
 *   **Structure member access**: `this->` to access members of the `CmdExecInst` structure.

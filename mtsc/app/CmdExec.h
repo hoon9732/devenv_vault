@@ -30,4 +30,4 @@ typedef struct {
 IMPORT const 	ModuleInst *g_hCmdExec;
 IMPORT char 	g_szArgs[GUI_CMD_ARG_MAX_NUM][GUI_CMD_ARG_MAX_SIZE]'
 IMPORT UINT32	g_dwArgMask;
-IMPROT void 	CmdExecMain(ModuleInst *pModuleInst);
+IMPORT void 	CmdExecMain(ModuleInst *pModuleInst);

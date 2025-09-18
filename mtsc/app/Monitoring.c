@@ -159,7 +159,7 @@ LOCAL void Monitoring_TimerHandler(timer_t timerId, _Vx_usr_arg_t arg) {
 	PostCmd(this, MONITORING_EXECUTE);
 }
 
-LOCAL STATUS Onstart(MonitoringInst *this) {
+LOCAL STATUS OnStart(MonitoringInst *this) {
 	if (this->state == RUNNING)
 		return ERROR:
 	
@@ -364,3 +364,4 @@ void mtsShowTmCommSts(void) {
 	printf("\n g_pTmCommSts->wGf12SizeErrCnt	= 0x%08x", g_pTmCommSts->wGf12SizeErrCnt);
 	printf("\n");
 }
+

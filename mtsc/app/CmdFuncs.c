@@ -68,4 +68,6 @@
 
 #define TRY_STR_TO_LONG(dst, argIdx, casting)
 	do {
-		dst = (casting)strtol(g_szArgs[argIdx], &g_endptr
+		dst = (casting)strtol(g_szArgs[argIdx], &g_endptr, 0);
+		if ((g_endptr == g_szArgs[argIdx]) || (errno != 0)) {
+			REPORT_ERROR("Invalid Argument. [#%d(%s)]\n",

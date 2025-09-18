@@ -435,7 +435,7 @@ LOCAL STATUS stopCmd(CmdExecInst *this) {
 		//		return ERROR;
 		// }
 		// taskDelay(10);
-	if (taskDelete(this0>tidCmdExec) == ERROR) {
+	if (taskDelete(this->tidCmdExec) == ERROR) {
 		DEBUG("taskDelete(tidCmdExec) error!\n");
 		UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
 		return ERROR;
@@ -463,4 +463,4 @@ void CmdExecMain(ModuleInst *pModuleInst) {
 		LOGMSG("FinalizeCmdExec() error!\n");
 	}
 }
-		
+			

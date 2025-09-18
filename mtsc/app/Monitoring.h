@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vwworks.h>
-#include "../lib/util/MOduleCommon.h"
+#include <vxworks.h>
+#include "../lib/util/ModuleCommon.h"
 #include "../lib/mtsLib.h"
 #include "typeDef/tmType/tmSts.h"
 
@@ -36,8 +36,8 @@ typedef struct {
 	double					main28vCurrent;
 	double					main5vVoltage;
 	double					main5vCurrent;
-	double					mainExtVoltage;
-	double					mainExtCurrent;
+	double					mslExtVoltage;
+	double					mslExtCurrent;
 	double 					cluExtVoltage;
 	double					cluExtCurrent;
 	double					tlmExtVoltage;
@@ -54,3 +54,6 @@ IMPORT const ModuleInst *g_hMonitoring;
 IMPORT TM_COMM_STS * g_pTmCommSts;
 
 IMPORT void MonitoringMain(ModuleInst *pModuleInst);
+
+
+

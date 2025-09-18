@@ -1,6 +1,4 @@
-This code is written in C, not C++. While C++ can often compile C code, the constructs used here are standard C.
-
-I will explain the code block by block. Please let me know if you want me to stop at any point.
+This document provides a detailed, block-by-block explanation of the C code in `Monitoring.c`. The code implements a command execution module for a real-time operating system (likely VxWorks), designed to receive and execute commands in separate tasks.
 
 ### Block 1: Preprocessor Directives and Includes
 
@@ -251,8 +249,7 @@ LOCAL STATUS FinalizeMonitoring(MonitoringInst *this) {
 			nRet = ERROR;
 		}
 		if (timer_delete(this->timerId)) {
-			LOGMSG("timer_delete() error!
-");
+			LOGMSG("timer_delete() error!\n");
 			nRet = ERROR;
 		}
 	}
@@ -285,8 +282,7 @@ LOCAL STATUS ExecuteMonitoring(MonitoringInst *this) {
 	FOREVER {
 		if (msgQReceive(this->ipcObj.msgQId, (char *)&stMsg, sizeof(stMsg),
 						WAIT_FOREVER) == ERROR) {
-			LOGMSG("msgQReceive() Error!
-");
+			LOGMSG("msgQReceive() Error!\n");
 			nRet = ERROR;
 			break;
 		}
@@ -635,4 +631,4 @@ void mtsShowTmCommSts(void) {
 *   Standard I/O (`printf`).
 *   Type casting (`(UINT16)`).
 
-In summary, `Monitoring.c` implements a periodic monitoring task, likely within an embedded or RTOS environment. It uses message queues for inter-task communication, POSIX timers for scheduling, and interacts with various hardware drivers (DIO, ADC, SDLC) to collect system status and sensor data. This data is then formatted into log messages and sent for further processing. The `mtsShowTmCommSts` function provides a way to inspect communication statistics. The code heavily relies on C language features such as structures, unions, pointers, preprocessor directives, and system-level programming constructs.
+In summary, `Monitoring.c` implements a periodic monitoring task, likely within an embedded or RTOS environment. It uses message queues for inter-task communication, POSIX timers for scheduling, and interacts with various hardware drivers (DIO, ADC, SDLC) to collect system status and sensor data. This data is then formatted into log messages and sent for further processing. The `mtsShowTmCommSts` function provides a way to inspect communication statistics. The code heavily relies on C language features such as structures, unions, pointers, preprocessor directives, and system-level programming constructs..
