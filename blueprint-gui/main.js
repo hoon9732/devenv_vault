@@ -1,5 +1,5 @@
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -8,8 +8,9 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
@@ -23,6 +24,29 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 }
+
+ipcMain.handle('open-file', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+  });
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
+});
+
+ipcMain.handle('save-file', async () => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+  });
+  if (canceled) {
+    return;
+  } else {
+    return filePath;
+  }
+});
 
 app.whenReady().then(createWindow);
 

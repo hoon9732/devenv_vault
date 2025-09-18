@@ -1,32 +1,52 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Navbar, Alignment, Button, Classes } from '@blueprintjs/core';
-
-// Pages
-const HomePage = () => <div><h1>Home Page</h1><p>Welcome to the Blueprint.js Electron App!</p></div>;
-const DataVisualizationPage = () => <div><h1>Data Visualization</h1><p>This is where your data visualizations will go.</p></div>;
-const DataEditingPage = () => <div><h1>Data Editing</h1><p>This is where your data editing tools will go.</p></div>;
+import {
+  Navbar,
+  NavbarGroup,
+  NavbarHeading,
+  NavbarDivider,
+  Button,
+  Classes,
+  Menu,
+  MenuItem,
+  Popover,
+  Position,
+  Alignment
+} from '@blueprintjs/core';
 
 function App() {
+  const handleOpenFile = () => {
+    window.electron.openFile();
+  };
+
+  const handleSaveFile = () => {
+    window.electron.saveFile();
+  };
+
+  const fileMenu = (
+    <Menu>
+      <MenuItem text="Open File" onClick={handleOpenFile} />
+      <MenuItem text="Save File" onClick={handleSaveFile} />
+    </Menu>
+  );
+
   return (
-    <Router>
+    <div className="app-container">
       <Navbar className={Classes.DARK}>
-        <Navbar.Group align={Alignment.LEFT}>
-          <Navbar.Heading>Blueprint GUI</Navbar.Heading>
-          <Navbar.Divider />
-          <Link to="/"><Button className={Classes.MINIMAL} icon="home" text="Home" /></Link>
-          <Link to="/visualize"><Button className={Classes.MINIMAL} icon="chart" text="Visualize Data" /></Link>
-          <Link to="/edit"><Button className={Classes.MINIMAL} icon="edit" text="Edit Data" /></Link>
-        </Navbar.Group>
+        <NavbarGroup align={Alignment.LEFT}>
+          <NavbarHeading>ICDViewer</NavbarHeading>
+          <NavbarDivider />
+          <Popover content={fileMenu} position={Position.BOTTOM_LEFT}>
+            <Button className={Classes.MINIMAL} text="File" />
+          </Popover>
+          <Button className={Classes.MINIMAL} text="Edit" />
+          <Button className={Classes.MINIMAL} text="View" />
+          <Button className={Classes.MINIMAL} text="Help" />
+        </NavbarGroup>
       </Navbar>
-      <div style={{ padding: '20px' }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/visualize" element={<DataVisualizationPage />} />
-          <Route path="/edit" element={<DataEditingPage />} />
-        </Routes>
+      <div className="app-content">
+        {/* Blank screen for later features */}
       </div>
-    </Router>
+    </div>
   );
 }
 
