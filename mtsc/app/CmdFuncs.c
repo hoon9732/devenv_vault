@@ -528,7 +528,7 @@ STATUS mtsPowerExtOn(void) {
 		return ERROR;
 	}
 	
-	UdpSendnOpsTxResult(RESULT_TYPE_PASS, "OK");
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
 	
 	return OK;
 }
@@ -577,3 +577,532 @@ STATUS mtsPowerExtOff(void) {
 		
 	} else {
 		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	
+	return OK;
+}
+
+STATUS mtsPowerExtGd(void) {
+	UINT32 dwPwrGd;
+	OPS_TYPE_RESULT_TYPE eResult;
+	long refVal;
+	
+	if (strcmp(g_szArgs[0], "TLM_EXT") == 0) {
+		dwPwrGd = mtsLibDiBitPwrTlmExtPg();
+	} else if (strcmp(g_szArgs[0], "CLU_EXT") == 0) {
+		dwPwrGd = mtsLibDiBitPwrCluExtPg();
+	} else if (strcmp(g_szArgs[0], "MSL_EXT") == 0) {
+		dwPwrGd = mtsLibDiBitPwrMslExtPg();
+	} else if (strcmp(g_szArgs[0], "LNS") == 0) {
+		dwPwrGd = steLibDiBitPwrLnsPg();
+	} else if (strcmp(g_szArgs[0], "LAR") == 0) {
+		dwPwrGd = steLibDiBitPwrLarPg();
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	TRY_STR_TO_LONG(refVal, 1, int);
+	eResult = (refVal == dwPwrGd ? RESULT_TYPE_PASS : RESULT_TYPE_FAIL);
+	UdpSendOpsTxResult(eResult, "%d", dwPwrGd);
+	
+	return OK;
+}
+
+STATUS mtsPowerMeasureVolt(void) {
+	double dAdcVolt;
+	
+	OPS_TYPE_RESULT_TYPE eResult;
+	double refMin, refMax;
+	
+	if (strcmp(g_szArgs[0], "TLM_EXT") == 0) {
+		dAdcVolt = mtsLibAdcTlmExtVoltage();
+	} else if (strcmp(g_szArgs[0], "CLU_EXT") == 0) {
+		dAdcVolt = mtsLibAdcCluExtVoltage();
+	} else if (strcmp(g_szArgs[0], "MSL_EXT") == 0) {
+		dAdcVolt = mtsLibAdcMslExtVoltage();
+	} else if (strcmp(g_szArgs[0], "TBAT") == 0) {
+		dAdcVolt = steLibAdcTbatVoltage();
+	} else if (strcmp(g_szArgs[0], "CBAT") == 0) {
+		dAdcVolt = steLibAdcCbatVoltage();
+	} else if (strcmp(g_szArgs[0], "BAT") == 0) {
+		dAdcVolt = ateLibAdcBatVoltage();
+	} else if (strcmp(g_szArgs[0], "LNS") == 0) {
+		dAdcVolt = steLibAdcLnsExtVoltage();
+	} else if (strcmp(g_szArgs[0], "LAR") == 0) {
+		dAdcVolt = steLibAdcLarExtVoltage();
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	TRY_STR_TO_DOUBLE(refMin, 1);
+	TRY_STR_TO_DOUBLE(refMax, 2);
+	eResult = mtsCheck Rangge(refMin, refMax, dAdcVolt);
+	UdpSendOpsTxResult(eResult, "%0.3lf", aAdcVolt);
+	
+	return OK;
+}
+
+STATUS mtsPowerMeasureCurrent(void) {
+	double dAdcCurrent;
+	OPS_TYPE_RESULT_TYPE eResult;
+	double refMin, refMax;
+	
+	if (strcmp(g_szArgs[0], "TLM_EXT") == 0) {
+		dAdcCurrent = mtsLibAdcTlmExtCurrent();
+	} else if (strcmp(g_szArgs[0], "CLU_EXT") == 0) {
+		dAdcCurrent = mtsLibAdcCluExtCurrent();
+	} else if (strcmp(g_szArgs[0], "MSL_EXT") == 0) {
+		dAdcCurrent = mtsLibAdcMslExtCurrent();
+	} else if (strcmp(g_szArgs[0], "TBAT") == 0) {
+		dAdcCurrent = steLibAdcTbatCurrent();
+	} else if (strcmp(g_szArgs[0], "CBAT") == 0) {
+		dAdcCurrent - steLibAdcCbatCurrent();
+	} else if (strcmp(g_szArgs[0], "BAT") == 0) {
+		dAdcCurrent = steLibAdcBatCurrent();
+	} else if (strcmp(g_szArgs[0], "LNS") == 0) {
+		dAdcCurrent = steLibAdcLnsExtCurrent();
+	} else if (strcmp(g_szArgs[0], "LAR") == 0) {
+		dAdcCurrent = steLibAdcLarExtCurrent();
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	TRY_STR_TO_DOUBLE(refMin, 1);
+	TRY_STR_TO_DOUBLE(refMax, 2);
+	eResult = mtsCheckRange(refMin, refMax, dAdcCurrent);
+	UdpSendOpsTxResult(eResult, "%0.3lf", dAdcCurrent);
+	
+	return OK;
+}
+
+STATUS mtsInitActPwrSuplOut(void) {
+	double dVolt, dCurr;
+	
+	TRY_STR_TO_DOUBLE(dVolt, 0);
+	TRY_STR_TO_DOUBLE(dCurr, 1);
+	
+	if ((dVolt > PWR_SUPPLY_MAX_VOLT) || (dCurr > PWR_SUPPLY_MAX_AMP)) {
+		REPORT_ERROR("Setting Value is Too High.\n");
+		return ERROR;
+	}
+	
+#ifdef PWR_SUPPLY_USE_TCP
+	if (mtsLibPsTcpInit(dVolt, dCurr) == ERROR) {
+		REPORT_ERROR("mtsLibPsTcpInit Failed.\n");
+		return ERROR;
+	}
+#else
+	if (mtsLibPsUdpInit(dVolt, dCurr) == ERROR) {
+		REPORT_ERROR("mtsLibPsUdpInit Failed.\n");
+		return ERROR;
+	}
+#endif
+
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+		
+	return OK;
+}
+
+STATUS mtsSetActPwrSuplOut(void) {
+	int i;
+	
+	if (mtsLibPsIsReady() == ERROR) {
+		REPORT_ERROR("ActPwrSupl is not Initialized.\n");
+		return ERROR;
+	}
+	
+	if (strcmp(g_szArgs[0], "ON") == 0) {
+		if (mtsAbatSqbOn() == ERROR) {
+			REPORT_ERROR("mtsAbatSqbOn() Error.\n");
+			return ERROR;
+		}
+	
+		for (i = 0; i < 150; i++) {
+			if (((double)(g_pTmGf2->m_ABAT_VTG) * 0.01) >= 100.0)
+				break;
+			
+			DELAY_MS(100);
+		}
+	} else if (strcmp(g_szaArgs[0], "OFF") == 0) {
+		if (mtsLibPsSetOutput(0) == ERROR) {
+			REPORT_ERROR("mtsLibPsSetOutput(0) Result is Abnormal.\n");
+			return ERROR;
+		}
+		
+		for (i = 0; i < 200; i++) {
+			if (((double)(g_pTmGf2->m_ABAT_VTG) * 0.01) < 1.2)
+				break;
+			
+			DELAY_MS(100);
+		}
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	
+	return OK;
+}
+
+STATUS mtsSetActPwrSuplOutBit(void) {
+	int i;
+	
+	if (mtsLibPsIsReady() == ERROR) {
+		REPORT_ERROR("ActPwrSupl is not Initialized.\n");
+		return ERROR;
+	}
+	
+	if (strcmp(g_szArgs[0], "ON") == 0) {
+		if (mtsLibPsSetOutput(1) == ERROR) {
+			REPORT_ERROR("mtsLibPsSetOutput(1) Result is Abnormal.\n");
+			return ERROR;
+		}
+	} else if (strcmp(g_szArgs[0], "OFF") == 0) {
+		if (mtsLibPsSetOutput(0) == ERROR) {
+			REPORT_ERROR("mtsLibPsSetOutput(0) Result is Abnormal.\n");
+			return ERROR;
+		}
+		
+		for (i = 0; i < 200; i++) {
+			if (((double)(g_pTmGf2->m_ABAT_VTG) * 0.01) < 1.2)
+				break;
+			
+			DELAY_MS(100);
+		}
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	
+	return OK;
+}
+
+STATUS mtsGetActPwrSuplOut(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	double dValue;
+	double refMin, refMax;
+	
+	TRY_STR_TO_DOUBLE(refMin, 1);
+	TRY_STR_TO_DOUBLE(refMax, 2);
+	
+	if (mtsLibPsIsReady() == ERROR) {
+		REPORT_ERROR("ActPwrSupl is not Initialized.\n");
+		return ERROR;
+	}
+	
+	if (strcmp(g_szArgs[0], "VOLT") == 0) {
+		if (mtsLibPsGetVolt(&dValue) == ERROR) {
+			REPORT_ERROR("mtsLibPsGetVolt() Failed.\n");
+			return ERROR;
+		}
+	} else if (strcmp(g_szArgs[0], "AMP") == 0) {
+		if (mtsLibPsGetCurr(&dValue) == ERROR) {
+			REPORT_ERROR("mtsLibPsGetCurr() Failed.\n");
+			return ERROR;
+		}
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	eResult = mtsCheckRange(refMin, refMax, dValue);
+	UdpSendOpsTxResult(eResult, "%0.1lf", dValue);
+	
+	return OK;
+}
+
+STATUS mtsChkGf2(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	long refVal;
+	double refMin, refMax;
+	double dValue;
+	int nValue;
+	
+	if (strcmp(g_szArgs[0], "GCU_28V") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_GCU_28V) * 0.002;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "GCU_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 15);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "ACU_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 14);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "GPS_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 13);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "IMU_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 11);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "FUZ_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 10);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "PARAM_FAIL") == 0) {
+		nValue = GET_BIT(g_pTmGf2->m_MSL_STS, 8);
+		eResult = mtsCheckEqual(0x0, nValue);
+		UdpSendOpsTxResult(eResult, "%d", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "ACU_STS") == 0) {
+		TRY_STR_TO_LONG(refVal, 1, long);
+		
+		nValue = g_pTmGf2->m_ACU_STS;
+		eResult = mtsCheckEqual(refVal, nValue & g_dwArgMask);
+		UdpSendOpsTxResult(eResult, "0x%04X", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "MSL_STS") == 0) {
+		TRY_STR_TO_LONG(refVal, 1, long);
+		
+		nValue = g_pTmGf2->m_MSL_STS;
+		eResult = mtsCheckEqual(refVal, nValue & g_dwArgMask);
+		UdpSendOpsTxResult(eResult, "0x%04X", nValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "ABAT_VTG") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_ABAT_VTG) * 0.01;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.2lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "BAT1_VTG") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_BAT1_VTG) * 0.002;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "BAT2_VTG") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_BAT2_VTG) * 0.002;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "FIN1_FB") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_FIN1_FB) * 0.001;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "FIN2_FB) == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_FIN2_FB) * 0.001;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "FIN3_FB") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_FIN3_FB) * 0.001;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else if (strcmp(g_szArgs[0], "FIN4_FB") == 0) {
+		TRY_STR_TO_DOUBLE(refMin, 1);
+		TRY_STR_TO_DOUBLE(refMax, 2);
+		
+		dValue = (double)(g_pTmGf2->m_FIN4_FB) * 0.001;
+		eResult = mtsCheckRange(refMin, refMax, dValue);
+		UdpSendOpsTxResult(eResult, "%0.3lf", dValue);
+		
+		return OK;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+}
+
+STATUS mtsGcuMslStsChk(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usResp;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_MSL_COMM_START;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n";
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MSL_COMM_START, g_pTmGf2->m_GCU_RESP, usResp, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usResp);
+	
+	return OK;
+}
+
+STATUS mtsSwVerChk(void) {
+	int refVal, targetVal;
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp;
+	
+	memset((void *)(g_pTmFg3), 0, sizeof(TM_TYPE_FG3));
+	
+	g_pTmFg3->fg3_4.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg3->fg3_4.m_CONTROL = TM_FG3_SDLC_CONTROL;
+	g_pTmFg3->fg3_4.m_OPCODE = TM_FG3_4_OPCODE;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG3) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG3)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG3_4_OPCODE, g_pTmGf3->gf3_4.m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	if (strcmp(g_szArgs[0], "GCU_SW_VER") == 0) {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_SW_VER;
+	} else if (strcmp(g_szArgs[0], "GCU_SW_CREATE") == 0) {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_SW_CREATE;
+	} else if (strcmp(g_szArgs[0], "GCU_FW_VER") == 0) {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_FW_VER;
+	} else if (strcmp(g_szArgs[0], "GCU_FW_CREATE") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_FW_CREATE;
+	} else if (strcmp(g_szArgs[0], "GCU_SW_VER") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_SW_VER;
+	} else if (strcmp(g_szArgs[0], "GCU_SW_CREATE") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_GCU_SW_CREATE;
+	} else if (strcmp(g_szArgs[0], "INS_UPDATE_VER1") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_INS_UPDATE_VER1;
+	} else if (strcmp(g_szArgs[0], "INS_UPDATE_VER2") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_INS_UPDATE_VER2;
+	} else if (strcmp(g_szArgs[0], "ACU_VER") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_ACU_VER;
+	} else if (strcmp(g_szArgs[0], "ACU_UPDATE") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_ACU_UPDATE;
+	} else if (strcmp(g_szArgs{[0], "MAR_VER") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_MAR_VER;
+	} else if (strcmp(g_szArgs[0], "MAR_UPDATE") == 0 {
+		targetVal = g_pTmGf3->gf3_4.m_MAR_UPDATE{;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	if (strcmp(g_szArgs[1], "PASS") == 0) {
+		eResult = RESULT_TYPE_PASS;
+	} else {
+		TRY_STR_TO_LONG(refVal, 1, int);
+		eResult = mtsCheckEqual(refVal, targetVal);
+	}
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", targetVal);
+	
+	return OK;
+}
+
+STATUS mtsGcuFireModeStart(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp, usGcuMode;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_MODE_LAUNCH;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MODE_LAUNCH, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	usGcuMode = g_pTmGf2->m_GCU_MODE;
+	eResult = mtsCheckEqual(0x1400, usGcuMode & 0xFFF0);
+	UdpSendOpsTxResult(eResult, "0x%04X", usGcuMode);
+	
+	return OK;
+}
+
+STATUS mtsNavCal(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp, usGcuMode;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_MSL_START_GNC;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MSL_START_GNC, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	usGcuMode = g_pTmGf2->m_GCU_MODE;
+	eResult = mtsCheckEqual(0x1812, usGcuMode);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usGcuMode);
+	
+	return OK;
+}
+
+STATUS mtsNavDataInput(void) {
+	STATUS ret = OK;
+	
+	ARGS_NAV_DATA *pNavData = (ARGS_NAV_DATA *)g_szArgs[0];
