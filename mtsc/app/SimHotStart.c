@@ -143,7 +143,7 @@ LOCAL STATUS OnStart(SimHotStartInst *this, const SimHotStartMsg *pRxMsg) {
 	BOOL reportResult =
 		(((pRxMsg->len == 0) || (pRxMsg->body.reportResult == FALSE)) ? FALSE : TRUE);
 	
-	if (this->numFgFrames <= 0 ) {
+	if (this->numFg6Frames <= 0 ) {
 		DEBUG("There are no FG6 frames...\n");
 		if (reportResult == TRUE)
 			UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
@@ -199,7 +199,7 @@ LOCAL STATUS OnStop(SimHotStartInst *this, const SimHotStartMsg *pRxMsg) {
 	axiDioSetPpsIsr(NULL, NULL);
 	
 	if (reportResult == TRUE)
-		UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK")
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
 	
 	return OK;
 }
@@ -218,11 +218,12 @@ LOCAL STATUS OnLoadData(SimHotStartInst *this, const SimHotStartMsg *pRxMsg) {
 		(((pRxMsg->len == 0) || (pRxMsg->body.reportResult == FALSE)) ? FALSE : TRUE);
 		
 	if ((fpFile = fopen(SIM_HOTSTART_DATA_FILE, "rb")) == NULL) {
-		DEBUG("Cannot open %s...!!", SIM_HOTSTART_DATA_FILE);R
+		DEBUG("Cannot open %s...!!", SIM_HOTSTART_DATA_FILE);
 		if (reportResult == TRUE)
 			UdpSendOpsTxResult(RESULT_TYPE_FAIL, "ERROR");
 		
 		return ERROR;
+	}
 		
 	this->numFg6Frames = 0;
 	
@@ -254,7 +255,7 @@ LOCAL STATUS OnTx(SimHotStartInst *this) {
 	if (this->state == STOP)
 		return ERROR;
 	
-	if ((this->numFg6Frames <= 0) || (this->currIdx >= this->numFg5Frames)) {
+	if ((this->numFg6Frames <= 0) || (this->currIdx >= this->numFg6Frames)) {
 		PostCmd(this, SIM_HOTSTART_STOP);
 		return ERROR;
 	}
@@ -279,5 +280,38 @@ LOCAL STATUS OnTx(SimHotStartInst *this) {
 			break;
 		}
 		
-		opcode = ntohs(this->fg6Frames
+		opcode = ntohs(this->fg6Frames[this->currIdx].body.sdlcTx.fg6.fg6_1.m_OPCODE);
+		switch (opcode & 0xFF00) {
+			case TM_FG6_2_OPCODE:
+			case TM_FG6_3_OPCODE:
+			case TM_FG6_4_OPCODE:
+			case TM_FG6_5_OPCODE:
+				DELAY_MS(SIM_HOTSTART_FRAME_GAP_TIME);
+				PostCmdEx(g_hSdlcSendGcu, &this->fg6Frames[this->currIdx++]);
+				break;
+			default:
+				isTxDone = TRUE;
+				break;
+		}
+	}
+	
+	return OK;
+}
+
+LOCAL void SimHotStart_PpsIsr(PPS_ISR_ARG arg) {
+	PostCmd(g_hSimHotStart, SIM_HOTSTART_TX);
+}
+
+void SimHotStartMain(ModuleInst *pModuleInst) {
+	SimHotStartInst *this = (SimHotStartInst *)pModuleInst;
+	
+	if (InitSimHotStart(this) == ERROR) {
+		LOGMSG("InitSimHotStart() error!!\n");
+	} else if (ExecuteSimHotStart(this) == ERROR) {
+		LOGMSG("ExecuteSimHotStart() error!!\n");
+	}
+	if (FinalizeSimHotStart(this) == ERROR) {
+		LOGMSG("FinalizeSimHotStart() error!!\n");
+	}
+}
 	
