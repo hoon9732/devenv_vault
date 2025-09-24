@@ -2,7 +2,7 @@
 
 Write a detailed code explanation of @mtsc/app/SimHotStart.c with the same block by block structure, comment of C Aspects used, and level of detail as @mtsc/app/Monitoring.md, and save the whole text as SimHotStart.md in the same folder. This action should be remembered in GEMINI.md file so that it should be repeated for any other code when I write #codereview, you ask for the name of the code i want the review on.
 
-Please ceate a GUI app based on the layout design of @guiexample.png. Following features must be implemented.
+Please create a GUI app based on the layout design of @guiexample.png. Following features must be implemented.
 1. A collapsable sidebar to the left. Clicking the top hamburger button will smoothly show/hid the full button would button name.
 1-1. Home button in the side bar. Clicking leads to the home screen(empty at first)
 1-2. Search button in the side bar. Clicking leads to the search screen(empty at first)
