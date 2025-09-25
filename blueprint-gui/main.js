@@ -17,9 +17,9 @@ function createWindow () {
   win.loadURL(startUrl);
 
   // Open the DevTools.
-  if (process.env.ELECTRON_START_URL) {
-    win.webContents.openDevTools();
-  }
+  // if (process.env.ELECTRON_START_URL) {
+  //   win.webContents.openDevTools();
+  // }
 }
 
 app.whenReady().then(() => {
