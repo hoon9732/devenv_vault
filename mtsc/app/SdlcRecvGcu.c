@@ -487,3 +487,13 @@ LOCAL void handleSdlcGf5(void) {
 			g_pTmCommSts->wGf5OpCodeErrCnt++;
 			break;
 	}
+	
+	g_tmGf5Log.formatted.ticklog = tickGet();
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf5Log),
+					 sizeof(TM_TYPE_GF5) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL void handleSdlcGf6(void) {
+	tmSwapGf6();
+		
+		

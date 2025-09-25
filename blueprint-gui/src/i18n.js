@@ -1,0 +1,32 @@
+export const translations = {
+  en: {
+    'Home': 'Home',
+    'Search': 'Search',
+    'File Explorer': 'File Explorer',
+    'Settings': 'Settings',
+    'Help': 'Help',
+    'Profile': 'Profile',
+    'Theme': 'Theme',
+    'Select your preferred color mode.': 'Select your preferred color mode.',
+    'Language': 'Language',
+    'Choose the application language.': 'Choose the application language.',
+    'UI Size': 'UI Size',
+    'Adjust the user interface scale.': 'Adjust the user interface scale.',
+    'File Content': 'File Content',
+  },
+  ko: {
+    'Home': '홈',
+    'Search': '검색',
+    'File Explorer': '파일 탐색기',
+    'Settings': '설정',
+    'Help': '도움말',
+    'Profile': '프로필',
+    'Theme': '테마',
+    'Select your preferred color mode.': '선호하는 색상 모드를 선택하세요.',
+    'Language': '언어',
+    'Choose the application language.': '애플리케이션 언어를 선택하세요.',
+    'UI Size': 'UI 크기',
+    'Adjust the user interface scale.': '사용자 인터페이스 크기를 조정하세요.',
+    'File Content': '파일 내용',
+  }
+};

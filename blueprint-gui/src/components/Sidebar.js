@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Drawer from '@mui/material/Drawer';
+import { styled } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -16,69 +17,96 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const drawerWidth = 240;
 
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
+
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
+    }),
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
+
 const Sidebar = ({ open, handleFileOpen }) => {
+  const { t } = useLanguage();
+
   const mainNavItems = [
-    { text: 'Home', icon: <HomeIcon />, path: '/' },
-    { text: 'Search', icon: <SearchIcon />, path: '/search' },
+    { text: t('Home'), icon: <HomeIcon />, path: '/' },
+    { text: t('Search'), icon: <SearchIcon />, path: '/search' },
   ];
 
   const bottomNavItems = [
-      { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-      { text: 'Help', icon: <HelpOutlineIcon />, path: '/help' },
-      { text: 'Profile', icon: <AccountCircleIcon />, path: '/profile' },
+      { text: t('Settings'), icon: <SettingsIcon />, path: '/settings' },
+      { text: t('Help'), icon: <HelpOutlineIcon />, path: '/help' },
+      { text: t('Profile'), icon: <AccountCircleIcon />, path: '/profile' },
   ];
 
-  const drawerContent = (
-    <div>
+  return (
+    <Drawer variant="permanent" open={open}>
       <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflowX: 'hidden' }}>
         <List>
           {mainNavItems.map((item) => (
             <ListItem key={item.text} disablePadding component={Link} to={item.path} sx={{ color: 'inherit', textDecoration: 'none' }}>
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
           <ListItem key="file-explorer" disablePadding onClick={handleFileOpen}>
-            <ListItemButton>
-              <ListItemIcon><FolderOpenIcon /></ListItemIcon>
-              <ListItemText primary="File Explorer" />
+            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}><FolderOpenIcon /></ListItemIcon>
+              <ListItemText primary={t('File Explorer')} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
         </List>
       </Box>
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflow: 'auto' }}>
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflowX: 'hidden' }}>
         <Divider />
         <List>
           {bottomNavItems.map((item) => (
              <ListItem key={item.text} disablePadding component={Link} to={item.path} sx={{ color: 'inherit', textDecoration: 'none' }}>
-             <ListItemButton>
-               <ListItemIcon>{item.icon}</ListItemIcon>
-               <ListItemText primary={item.text} />
+             <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+               <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+               <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
              </ListItemButton>
            </ListItem>
           ))}
         </List>
       </Box>
-    </div>
-  );
-
-  return (
-    <Drawer
-      variant="persistent"
-      open={open}
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-      }}
-    >
-      {drawerContent}
     </Drawer>
   );
 };

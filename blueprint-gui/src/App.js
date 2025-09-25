@@ -11,39 +11,58 @@ import HomeScreen from './pages/HomeScreen';
 import SearchScreen from './pages/SearchScreen';
 import HelpScreen from './pages/HelpScreen';
 import FileViewerScreen from './pages/FileViewerScreen';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    background: {
-      default: '#f4f6f8',
-    },
-  },
-  components: {
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: '#1f2a38',
-          color: '#ffffff',
-        },
-      },
-    },
-    MuiListItemIcon: {
-        styleOverrides: {
-            root: {
-                color: '#ffffff',
-            }
-        }
-    }
-  },
-});
+import SettingsScreen from './pages/SettingsScreen';
 
 function App() {
   const [open, setOpen] = useState(true);
   const [fileContent, setFileContent] = useState('');
+  const [themeMode, setThemeMode] = useState('dark');
   const navigate = useNavigate();
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: themeMode,
+          ...(themeMode === 'dark'
+            ? {
+                // Dark mode palette
+                primary: { main: '#90caf9' },
+                background: { default: '#121212', paper: '#1e1e1e' },
+              }
+            : {
+                // Light mode palette
+                primary: { main: '#1976d2' },
+                background: { default: '#f4f6f8', paper: '#ffffff' },
+              }),
+        },
+        components: {
+          MuiDrawer: {
+            styleOverrides: {
+              paper: {
+                backgroundColor: themeMode === 'dark' ? '#1e1e1e' : '#1f2a38',
+                color: '#ffffff',
+              },
+            },
+          },
+          MuiListItemIcon: {
+            styleOverrides: {
+              root: {
+                color: 'inherit',
+              },
+            },
+          },
+          MuiSvgIcon: {
+            styleOverrides: {
+              root: {
+                fontSize: '1.5rem',
+              },
+            },
+          },
+        },
+      }),
+    [themeMode],
+  );
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -72,7 +91,17 @@ function App() {
         <Sidebar open={open} handleFileOpen={handleFileOpen} />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, ml: open ? `240px` : 0, transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms' }}
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${open ? 240 : 60}px)` },
+            ml: { sm: `${open ? 240 : 60}px` },
+            transition: (theme) =>
+              theme.transitions.create(['margin', 'width'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+          }}
         >
           <Toolbar />
           <Routes>
@@ -80,6 +109,7 @@ function App() {
             <Route path="/search" element={<SearchScreen />} />
             <Route path="/help" element={<HelpScreen />} />
             <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
+            <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} />} />
           </Routes>
         </Box>
       </Box>
