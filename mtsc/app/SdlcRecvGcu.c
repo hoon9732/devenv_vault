@@ -495,5 +495,167 @@ LOCAL void handleSdlcGf5(void) {
 
 LOCAL void handleSdlcGf6(void) {
 	tmSwapGf6();
+	
+	switch (g_pTmGf6->gf6_1.m_MAR_RESP & 0xFF00) {
+		case TM_GF6_1_OPCODE:
+			g_pTmCommSts->wGf6RxCnt++;
+			g_pTmCommSts->wGf61RxCnt++;
+			g_tmGf6Log.formatted.index.id = 0x61;
+			break;
 		
+		case TM_GF6_2_OPCODE:
+			g_pTmCommSts->wGf6RxCnt++;
+			g_pTmCommSts->wGf62RxCnt++;
+			g_tmGf6Log.formatted.index.id = 0x62;
+			break;
+		
+		case TM_GF6_3_OPCODE:
+			g_pTmCommSts->wGf6RxCnt++;
+			g_pTmCommSts->wGf63RxCnt++;
+			g_tmGf6Log.formatted.index.id = 0x63;
+			break;
+		
+		case TM_GF6_4_OPCODE:
+			g_pTmCommSts->wGf6RxCnt++;
+			g_pTmCommSts->wGf64RxCnt++;
+			g_tmGf6Log.formatted.index.id = 0x64;
+			break;
+			
+		case TM_GF6_5_OPCODE:
+			g_pTmCommSts->wGf6RxCnt++;
+			g_pTmCommSts->wGf65RxCnt++;
+			g_tmGf6Log.formatted.index.id = 0x65;
+			break;
+			
+		default:
+			g_pTmCommSts->wGf60pCodeErrCnt++;
+			break;
+	}
+	
+	g_tmGf6Log.formatted.ticklog = tickGet();
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf6Log),
+					 sizeof(TM_TYPE_GF5) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL void handleSdlcGf7(void) {
+	tmSwapGf7();
+	
+	switch (g_pTmGf7->m_NAV_RESP & 0xFF00) {
+		case TM_TCS_INS_RESP_CODE_GF7_2;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf72RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_3;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf73RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_4;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf74RxCnt++;
+			break;
+		
+		case TM_TCS_INS_RESP_CODE_GF7_5;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf75RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_6;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf76RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_7;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf77RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_8;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf78RxCnt++;
+			break;
+			
+		case TM_TCS_INS_RESP_CODE_GF7_9;
+			g_pTmCommSts->wGf7RxCnt++;
+			g_pTmCommSts->wGf79RxCnt++;
+			break;
+		
+		default:
+			g_pTmCommSts->wGf7OpCodeErrCnt++;
+			break;
+	}
+	
+	g_tmGf7Log.formatted.tickLog = tickGet();
+	g_tmGf7Log.formatted.index.id = 0x70;
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf7Log),
+					 sizeof(TM_TYPE_GF7) + OFFSET(LOG_DATA, formatted.body));
+	if (calcNavData() == OK) {
+		g_monNavLog.formatted.tickLog = tickGet();
+		PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_monNavLog),
+						 sizeof(MonitoringNavLog) + OFFSET(LOG_DATA, formatted.body));
+	}
+}
+
+LOCAL void handleSdlcGf8(void) {
+	tmSwapGf8();
+	
+	g_pTmCommSts->wGf8RxCnt++;
+	
+	g_tmGf8Log.formatted.tickLog = tickGet();
+	g_tmGf8Log.formatted.index.id = 0x80;
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf8Log),
+					 sizeof(TM_TYPE_GF8) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL void handleSdlcGf9(void) {
+	tmSwapGf9();
+	
+	g_pTmCommSts->wGf9RxCnt++;
+	
+	g_tmGf9Log.formatted.tickLog = tickGet();
+	g_tmGf9Log.formatted.index.id = 0x90;
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf9Log),
+					 sizeof(TM_TYPE_GF9) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL void handleSdlcGf11(void) {
+	tmSwapGf11();
+	
+	g_pTmCommSts->wGf11RxCnt++;
+	
+	g_tmGf11Log.formatted.tickLog = tickGet();
+	g_tmGf11Log.formatted.index.id = 0xB0;
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf11Log),
+					 sizeof(TM_TYPE_GF11) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL void handleSdlcGf12(void) {
+	tmSwapGf12();
+	
+	g_pTmCommSts->wGf12RxCnt++;
+	
+	g_tmGf12Log.formatted.tickLog = tickGet();
+	g_tmGf12Log.formatted.index.id = 0xC0;
+	PostLogSendCmdEx(LOG_SEND_TX, (const char *)(&g_tmGf12Log),
+					 sizeof(TM_TYPE_GF12) + OFFSET(LOG_DATA, formatted.body));
+}
+
+LOCAL int mtsCheckRange(double dLowerLimit, double dUpperLimit, double dMeasure) {
+	int resultType = 0;
+	if ((dMeasure >= dLowerLimit) && (dMeasure <= dUpperLimit)) {
+		resultType = RESULT_TYPE_PASS;
+	} else {
+		resultType = RESULT_TYPE_FAIL;
+	}
+	
+	return resultType;
+}
+
+LOCAL STATUS calcNavData(void) {
+	double latTemp, lonTemp, htTemp;
+	
+	if ((g_pTmGf7->m_NAV_STS & 0xF) == 0x4) {
+		g_pMonNav->flightTime = g_pTmGf7->m_MODE_TIME;
+	} else {
 		

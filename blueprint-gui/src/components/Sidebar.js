@@ -59,7 +59,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleFileOpen }) => {
+const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle }) => {
   const { t } = useLanguage();
 
   const mainNavItems = [
@@ -76,10 +76,10 @@ const Sidebar = ({ open, handleFileOpen }) => {
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflowX: 'hidden' }}>
         <List>
           {mainNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding component={Link} to={item.path} sx={{ color: 'inherit', textDecoration: 'none' }}>
+            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
               <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
                 <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
@@ -94,11 +94,11 @@ const Sidebar = ({ open, handleFileOpen }) => {
           </ListItem>
         </List>
       </Box>
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflow: 'auto' }}>
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflowX: 'hidden' }}>
         <Divider />
         <List>
           {bottomNavItems.map((item) => (
-             <ListItem key={item.text} disablePadding component={Link} to={item.path} sx={{ color: 'inherit', textDecoration: 'none' }}>
+             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />

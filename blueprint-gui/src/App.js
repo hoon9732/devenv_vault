@@ -12,12 +12,18 @@ import SearchScreen from './pages/SearchScreen';
 import HelpScreen from './pages/HelpScreen';
 import FileViewerScreen from './pages/FileViewerScreen';
 import SettingsScreen from './pages/SettingsScreen';
+import SecondarySidebar from './components/SecondarySidebar';
+import { useLanguage } from './contexts/LanguageContext';
 
 function App() {
   const [open, setOpen] = useState(true);
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
+  const [secondaryCollapsed, setSecondaryCollapsed] = useState(false);
+  const [secondaryContent, setSecondaryContent] = useState(null);
   const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('dark');
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const theme = useMemo(
     () =>
@@ -57,6 +63,29 @@ function App() {
 
   const handleDrawerToggle = () => {
     setOpen(!open);
+    if (open) {
+      setSecondaryOpen(false);
+    }
+  };
+
+  const handleSecondaryToggle = (item) => {
+    navigate(item.path);
+    if (item.text === t('Home')) {
+      if (secondaryContent !== item.text) {
+        setSecondaryContent(item.text);
+        setSecondaryOpen(true);
+        setSecondaryCollapsed(false);
+      } else if (secondaryOpen && !secondaryCollapsed) {
+        setSecondaryCollapsed(true);
+      } else if (secondaryOpen && secondaryCollapsed) {
+        setSecondaryOpen(false);
+      } else {
+        setSecondaryOpen(true);
+        setSecondaryCollapsed(false);
+      }
+    } else {
+      setSecondaryOpen(false);
+    }
   };
 
   const handleFileOpen = async () => {
@@ -73,24 +102,44 @@ function App() {
     }
   };
 
+  const primarySidebarWidth = open ? 240 : 60;
+  const secondarySidebarWidth = secondaryOpen ? (secondaryCollapsed ? 60 : 240) : 0;
+  const totalSidebarWidth = primarySidebarWidth + secondarySidebarWidth;
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Topbar handleDrawerToggle={handleDrawerToggle} />
-        <Sidebar open={open} handleFileOpen={handleFileOpen} />
+        <Sidebar open={open} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} />
         <Box
-          component="main"
-          sx={{ flexGrow: 1, p: 3, ml: open ? `240px` : 0, transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms' }}
+          sx={{
+            display: 'flex',
+            flexGrow: 1,
+            transition: (theme) =>
+              theme.transitions.create('margin-left', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+          }}
         >
-          <Toolbar />
-          <Routes>
-            <Route path="/" element={<HomeScreen />} />
-            <Route path="/search" element={<SearchScreen />} />
-            <Route path="/help" element={<HelpScreen />} />
-            <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
-            <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} />} />
-          </Routes>
+          <SecondarySidebar open={secondaryOpen} collapsed={secondaryCollapsed} content={secondaryContent} />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              p: 3,
+            }}
+          >
+            <Toolbar />
+            <Routes>
+              <Route path="/" element={<HomeScreen />} />
+              <Route path="/search" element={<SearchScreen />} />
+              <Route path="/help" element={<HelpScreen />} />
+              <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
+              <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} />} />
+            </Routes>
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
