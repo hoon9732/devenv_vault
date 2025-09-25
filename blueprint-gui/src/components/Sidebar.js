@@ -76,7 +76,7 @@ const Sidebar = ({ open, handleFileOpen }) => {
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar />
-      <Box sx={{ overflowX: 'hidden' }}>
+      <Box sx={{ overflow: 'auto' }}>
         <List>
           {mainNavItems.map((item) => (
             <ListItem key={item.text} disablePadding component={Link} to={item.path} sx={{ color: 'inherit', textDecoration: 'none' }}>
@@ -94,7 +94,7 @@ const Sidebar = ({ open, handleFileOpen }) => {
           </ListItem>
         </List>
       </Box>
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflowX: 'hidden' }}>
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflow: 'auto' }}>
         <Divider />
         <List>
           {bottomNavItems.map((item) => (

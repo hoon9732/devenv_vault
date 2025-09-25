@@ -13,7 +13,7 @@ function createWindow () {
 
   // In development, load from the React dev server.
   // In production, load the built index.html file.
-  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, './build/index.html')}`;
+  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, 'build/index.html')}`;
   win.loadURL(startUrl);
 
   // Open the DevTools.
@@ -42,7 +42,6 @@ app.on('window-all-closed', () => {
 ipcMain.handle('open-file-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openFile'],
-    defaultPath: app.getAppPath(),
     filters: [
       { name: 'JSON Files', extensions: ['json'] }
     ]

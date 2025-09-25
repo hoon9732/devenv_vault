@@ -2,18 +2,14 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Slider from '@mui/material/Slider';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useUIScale } from '../contexts/UIScaleContext';
 
 const SettingsScreen = ({ themeMode, setThemeMode }) => {
   const { language, setLanguage, t } = useLanguage();
-  const { scale, setScale } = useUIScale();
 
   const handleThemeChange = (event) => {
     setThemeMode(event.target.value);
@@ -21,10 +17,6 @@ const SettingsScreen = ({ themeMode, setThemeMode }) => {
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
-  };
-
-  const handleScaleChange = (event, newValue) => {
-    setScale(newValue);
   };
 
   return (
@@ -71,27 +63,6 @@ const SettingsScreen = ({ themeMode, setThemeMode }) => {
             <MenuItem value="ko">Korean</MenuItem>
           </Select>
         </FormControl>
-      </Paper>
-
-      <Divider sx={{ my: 3 }} />
-
-      <Paper elevation={3} sx={{ p: 2 }}>
-        <Typography variant="h6">{t('UI Size')}</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('Adjust the user interface scale.')}
-        </Typography>
-        <Box sx={{ px: 1 }}>
-          <Slider
-            value={scale}
-            onChange={handleScaleChange}
-            aria-labelledby="discrete-slider"
-            valueLabelDisplay="auto"
-            step={10}
-            marks
-            min={50}
-            max={200}
-          />
-        </Box>
       </Paper>
     </div>
   );

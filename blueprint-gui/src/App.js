@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,19 +19,17 @@ function App() {
   const [themeMode, setThemeMode] = useState('dark');
   const navigate = useNavigate();
 
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
       createTheme({
         palette: {
           mode: themeMode,
           ...(themeMode === 'dark'
             ? {
-                // Dark mode palette
                 primary: { main: '#90caf9' },
                 background: { default: '#121212', paper: '#1e1e1e' },
               }
             : {
-                // Light mode palette
                 primary: { main: '#1976d2' },
                 background: { default: '#f4f6f8', paper: '#ffffff' },
               }),
@@ -49,13 +47,6 @@ function App() {
             styleOverrides: {
               root: {
                 color: 'inherit',
-              },
-            },
-          },
-          MuiSvgIcon: {
-            styleOverrides: {
-              root: {
-                fontSize: '1.5rem',
               },
             },
           },
@@ -77,7 +68,6 @@ function App() {
       }
     } else {
       console.error("Electron context not available");
-      // Fallback for web browser testing
       setFileContent('This is a fallback content for browsers. File dialog is only available in Electron.');
       navigate('/file-viewer');
     }
@@ -91,17 +81,7 @@ function App() {
         <Sidebar open={open} handleFileOpen={handleFileOpen} />
         <Box
           component="main"
-          sx={{
-            flexGrow: 1,
-            p: 3,
-            width: { sm: `calc(100% - ${open ? 240 : 60}px)` },
-            ml: { sm: `${open ? 240 : 60}px` },
-            transition: (theme) =>
-              theme.transitions.create(['margin', 'width'], {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
-          }}
+          sx={{ flexGrow: 1, p: 3, ml: open ? `240px` : 0, transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms' }}
         >
           <Toolbar />
           <Routes>
