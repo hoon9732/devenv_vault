@@ -1136,6 +1136,123 @@ STATUS mtsNavDataInput(void) {
 	
 	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_XLATL, g_pTmGf3->gf3_1.m_XLATL, 0) == RESULT_TYPE_FAIL) {
 		LOGMSG("XLATL Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
-				g_pTmFg3->fg3_1.mXLATL, g_pTmGf3->gf3_1.mXLATL);
+				g_pTmFg3->fg3_1.m_XLATL, g_pTmGf3->gf3_1.m_XLATL);
 		ret = ERROR;
 	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_XLONL, g_pTmGf3->gf3_1.m_XLONL, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("XLONL Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_XLONL, g_pTmGf3->gf3_1.m_XLONL);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_HL, g_pTmGf3->gf3_1.m_HL, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("HL Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_HL, g_pTmGf3->gf3_1.m_HL);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_XLATT, g_pTmGf3->gf3_1.m_XLATT, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("XLATT Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_XLATT, g_pTmGf3->gf3_1.m_HL);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_XLONT, g_pTmGf3->gf3_1.m_XLONT, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("XLONT Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_XLONT, g_pTmGf3->gf3_1.m_XLONT);
+		ret = ERROR;
+	}
+	
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_HT, g_pTmGf3->gf3_1.m_HT, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("HT Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_HT, g_pTmGf3->gf3_1.m_HT);
+		ret = ERROR;
+	}
+	
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_AQQC1, g_pTmGf3->gf3_1.m_AQQC1, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("AQQC1 Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_AQQC1, g_pTmGf3->gf3_1.m_AQQC1);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_AQQC2, g_pTmGf3->gf3_1.m_AQQC2, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("AQQC2 Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_AQQC2, g_pTmGf3->gf3_1.m_AQQC2);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_AQQC3, g_pTmGf3->gf3_1.m_AQQC3, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("AQQC3 Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_AQQC3, g_pTmGf3->gf3_1.m_AQQC3);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_AQQC4, g_pTmGf3->gf3_1.m_AQQC4, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("AQQC4 Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_AQQC4, g_pTmGf3->gf3_1.m_AQQC4);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_ROLL, g_pTmGf3->gf3_1.m_ROLL, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("ROLL Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_ROLL, g_pTmGf3->gf3_1.m_ROLL);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_PITCH, g_pTmGf3->gf3_1.m_PITCH, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("PITCH Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_PITCH, g_pTmGf3->gf3_1.m_PITCH);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_YAW, g_pTmGf3->gf3_1.m_YAW, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("YAW Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_YAW, g_pTmGf3->gf3_1.m_YAW);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_IMU_LA_X, g_pTmGf3->gf3_1.m_IMU_LA_X, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("IMU_LA_X Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_IMU_LA_X, g_pTmGf3->gf3_1.m_IMU_LA_X);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_IMU_LA_Y, g_pTmGf3->gf3_1.m_IMU_LA_Y, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("IMU_LA_Y Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_IMU_LA_Y, g_pTmGf3->gf3_1.m_IMU_LA_Y);
+		ret = ERROR;
+	}
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_IMU_LA_Z, g_pTmGf3->gf3_1.m_IMU_LA_Z, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("IMU_LA_Z Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.m_IMU_LA_Z, g_pTmGf3->gf3_1.m_IMU_LA_Z);
+		ret = ERROR;
+	}
+	
+	if (ret == ERROR) {
+		REPORT_ERROR("FG3 and GF3 NavData Mismatch. \n");
+	} else {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	}
+	
+	return ret;
+}
+
+STATUS mtsSaveAlignData(void) {
+	VALUE_EX_QUATERNION quaternion;
+	
+	quaternion.aqqc1 = g_pTmGf7->m_AQQC1 * 5.0e-10;
+	quaternion.aqqc2 = g_pTmGf7->m_AQQC2 * 5.0e-10;
+	quaternion.aqqc3 = g_pTmGf7->m_AQQC3 * 5.0e-10;
+	quaternion.aqqc4 = g_pTmGf7->m_AQQC4 * 5.0e-10;
+	
+	UdpSendOpsTxResultTx(RESULT_TYPE_PASS, &quaternion, sizeof(quaternion), "OK");
+	
+	return OK;
+}
+
+STATUS mtsChkGf3NavData(void) {
+	const char * szValueFormat = "%0.5f";
+	
+	if (strcmp(g_szArgs[0], "XLATL") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLATL);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "XLONL") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLONL);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "HL") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_HL);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "XLONL") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLONL);
+		return OK;
+	}
+	

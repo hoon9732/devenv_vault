@@ -106,9 +106,6 @@ function App() {
     }
   };
 
-  //const primarySidebarWidth = open ? 240 : 60;
-  //const secondarySidebarWidth = secondaryOpen ? (secondaryCollapsed ? 60 : 240) : 0;
-
   const handleModalOpen = (content) => {
     if (content === 'Profile') {
       setModalContent(<ProfileContent />);
