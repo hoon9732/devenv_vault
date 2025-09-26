@@ -6,23 +6,27 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
-import HomeIcon from '@mui/icons-material/Home';
+import TableViewIcon from '@mui/icons-material/TableView';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import DescriptionIcon from '@mui/icons-material/Description';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const drawerWidth = 240;
 const collapsedWidth = 60;
 
 const SecondarySidebar = ({ open, collapsed, content }) => {
+  const { t } = useLanguage();
+
   const getItems = () => {
-    switch (content) {
-      case 'Home':
-        return [
-          { text: 'Home 1', icon: <HomeIcon /> },
-          { text: 'Home 2', icon: <HomeIcon /> },
-          { text: 'Home 3', icon: <HomeIcon /> },
-        ];
-      default:
-        return [];
+    // Use t('Home') to get the translated string for "Home"
+    if (content === t('Home')) {
+      return [
+        { text: t('Sheet'), icon: <TableViewIcon /> },
+        { text: t('Flowchart'), icon: <AccountTreeIcon /> },
+        { text: t('Docs'), icon: <DescriptionIcon /> },
+      ];
     }
+    return [];
   };
 
   const items = getItems();

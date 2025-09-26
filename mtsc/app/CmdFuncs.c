@@ -1106,3 +1106,36 @@ STATUS mtsNavDataInput(void) {
 	STATUS ret = OK;
 	
 	ARGS_NAV_DATA *pNavData = (ARGS_NAV_DATA *)g_szArgs[0];
+	
+	memset((void *)(g_pTmFg3), 0, sizeof(TM_TYPE_FG3));
+	
+	g_pTmFg3->fg3_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg3->fg3_1.m_CONTROL = TM_FG3_SDLC_CONTROL;
+	g_pTmFg3->fg3_1.m_OPCODE = TM_FG3_1_OPCODE;
+	
+	g_pTmFg3->fg3_1.m_XLATL = pNavData->latL;
+	g_pTmFg3->fg3_1.m_XLONL = pNavData->lonL;
+	g_pTmFg3->fg3_1.m_HL = pNavData->altL;
+	g_pTmFg3->fg3_1.m_XLATT = pNavData->latT;
+	g_pTmFg3->fg3_1.m_XLONT = pNavData->lonT;
+	g_pTmFg3->fg3_1.m_HT = pNavData->altT;
+	g_pTmFg3->fg3_1.m_IMU_LA_X = pNavData->laX;
+	g_pTmFg3->fg3_1.m_IMU_LA_Y = pNavData->laY;
+	g_pTmFg3->fg3_1.m_IMU_LA_Z = pNavData->laZ;
+	g_pTmFg3->fg3_1.m_AQQC1 = pNavData->aqqc1;
+	g_pTmFg3->fg3_1.m_AQQC2 = pNavData->aqqc2;
+	g_pTmFg3->fg3_1.m_AQQC3 = pNavData->aqqc3;
+	g_pTmFg3->fg3_1.m_AQQC4 = pNavData->aqqc4;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG3) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG3)\n");
+		return ERROR;
+	}
+	
+	DELAY_MS(GCU_RESPONSE_TIME);
+	
+	if (mtsCheckDouble(g_pTmFg3->fg3_1.m_XLATL, g_pTmGf3->gf3_1.m_XLATL, 0) == RESULT_TYPE_FAIL) {
+		LOGMSG("XLATL Data Mismatch.\n FG3: %0.10f\n GF3: %0.10f \n",
+				g_pTmFg3->fg3_1.mXLATL, g_pTmGf3->gf3_1.mXLATL);
+		ret = ERROR;
+	}

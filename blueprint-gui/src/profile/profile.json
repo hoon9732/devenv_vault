@@ -1,7 +1,7 @@
 {
   "name": "John Doe",
   "id": "johndoe",
-  "email": "john.doe@example.com",
-  "department": "Engineering",
+  "email": "john.doe@hanwha.com",
+  "department": "R&D",
   "profileIcon": "AccountCircle"
 }

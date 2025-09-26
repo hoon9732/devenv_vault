@@ -13,6 +13,9 @@ export const translations = {
     'UI Size': 'UI Size',
     'Adjust the user interface scale.': 'Adjust the user interface scale.',
     'File Content': 'File Content',
+    'Sheet': 'Sheet',
+    'Flowchart': 'Flowchart',
+    'Docs': 'Docs',
   },
   ko: {
     'Home': '홈',
@@ -28,5 +31,8 @@ export const translations = {
     'UI Size': 'UI 크기',
     'Adjust the user interface scale.': '사용자 인터페이스 크기를 조정하세요.',
     'File Content': '파일 내용',
+    'Sheet': '시트',
+    'Flowchart': '순서도',
+    'Docs': '문서',
   }
 };
