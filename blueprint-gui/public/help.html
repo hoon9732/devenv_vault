@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* Prevent scrollbars on the main window */
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body.dark-theme {
+      background-color: #1e1e1e;
+      color: #ffffff;
+    }
+    body.light-theme {
+      background-color: #f4f6f8;
+      color: #000000;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .logo {
+      width: 60%; /* Logo takes 60% of the container width */
+      max-width: 400px; /* Max width to prevent it from being too large */
+      flex-shrink: 0;
+      margin-bottom: 15px;
+    }
+    .logo svg {
+      width: 100%;
+      height: auto;
+    }
+    .author-text {
+      margin-bottom: 15px;
+      flex-shrink: 0;
+    }
+    .license-container {
+      flex-grow: 1;
+      overflow-y: auto; /* Only this container will have a vertical scrollbar */
+      text-align: left;
+      font-size: 0.8rem;
+      padding: 10px 15px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .light-theme .license-container {
+      border-color: #ccc;
+    }
+    .license-container pre {
+      font-family: inherit; /* Match the font of the rest of the page */
+      white-space: pre-wrap;   /* Wrap long lines */
+      word-break: break-word;  /* Break words to prevent horizontal overflow */
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <?xml version="1.0" encoding="UTF-8"?><svg id="_레이어_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 134.14 107.82"><defs><style>.cls-1{fill:#f4a051;}.cls-2{fill:#f7bb82;}.cls-3{fill:#ed7100;}.cls-4{fill:#231815;}</style></defs><g><path class="cls-4" d="M26.37,93.46c.21,0,.4,.05,.58,.16s.34,.29,.48,.55l5.42,10.7h-1.96l-1.44-2.87h-6.12l-1.44,2.87h-1.96l5.42-10.7c.14-.26,.3-.44,.48-.55s.36-.16,.55-.16Zm2.3,7.02l-2.29-4.56-2.29,4.56h4.57Z"/><path class="cls-4" d="M42.65,98.85v.59c0,.73-.25,1.33-.76,1.8-.48,.47-1.14,.7-1.98,.7h-4.63v.06c0,.9,.5,1.35,1.5,1.35h5.47v1.53h-5.45c-1.06,0-1.88-.27-2.45-.8-.56-.52-.85-1.28-.85-2.27v-2.95c0-.74,.25-1.35,.74-1.81,.48-.47,1.15-.71,1.99-.71h3.67c.84,0,1.5,.24,1.99,.71,.51,.47,.76,1.07,.76,1.81Zm-6,1.57h2.84c.92,0,1.38-.38,1.38-1.14v-.28c0-.77-.46-1.16-1.38-1.16h-2.84c-.91,0-1.37,.39-1.37,1.16v.28c0,.76,.46,1.14,1.37,1.14Z"/><path class="cls-4" d="M44.16,99c0-.84,.27-1.5,.82-1.99,.5-.46,1.27-.68,2.33-.68h3.3v1.54h-3.18c-.98,0-1.47,.45-1.47,1.35v5.66h-1.8v-5.88Z"/><path class="cls-4" d="M57.81,104.88h-2.63c-1.06-.01-1.89-.32-2.49-.92-.6-.59-.91-1.44-.91-2.55v-1.59c0-1.12,.3-1.97,.91-2.57,.6-.6,1.44-.91,2.49-.92h2.63c1.07,0,1.91,.32,2.51,.92,.6,.59,.91,1.45,.91,2.57v1.59c0,1.11-.3,1.96-.91,2.55-.6,.6-1.44,.91-2.51,.92Zm-.13-1.54c.63,0,1.1-.19,1.4-.58,.25-.33,.37-.81,.37-1.44v-1.4c0-.64-.12-1.13-.37-1.45-.3-.4-.76-.59-1.4-.59h-2.38c-.62,0-1.08,.2-1.38,.59-.24,.33-.36,.81-.36,1.45v1.4c0,.63,.12,1.11,.36,1.44,.3,.39,.76,.58,1.38,.58h2.38Z"/><path class="cls-4" d="M68.56,99.85c.96,0,1.66,.15,2.11,.45,.56,.38,.85,.97,.85,1.77v.64c0,.79-.28,1.38-.85,1.75-.45,.29-1.15,.43-2.12,.43h-5.67v-1.54h5.67c.78,0,1.17-.27,1.17-.8v-.34c0-.54-.39-.82-1.17-.82h-2.94c-.95,0-1.65-.14-2.09-.43-.55-.38-.83-.96-.83-1.75v-.65c0-.81,.28-1.4,.83-1.77,.45-.3,1.14-.45,2.09-.45h5.43v1.54h-5.41c-.77,0-1.16,.27-1.16,.82v.36c0,.53,.38,.8,1.14,.8h2.94Z"/><path class="cls-4" d="M72.96,99.82c0-1.12,.3-1.97,.91-2.57,.6-.6,1.44-.91,2.49-.92h2.33c1.06,0,1.89,.32,2.49,.92,.61,.59,.92,1.45,.92,2.57v1.59c0,1.11-.31,1.96-.92,2.55-.6,.6-1.43,.91-2.48,.92h-3.96v2.94h-1.78v-8Zm1.78,.1v3.41h3.83c.62,0,1.09-.19,1.4-.58,.24-.33,.36-.81,.36-1.44v-1.4c0-.64-.12-1.13-.36-1.45-.31-.4-.77-.59-1.4-.59h-2.09c-.62,0-1.08,.2-1.38,.59-.24,.33-.36,.81-.36,1.45Z"/><path class="cls-4" d="M86.28,104.88c-.83,0-1.49-.23-1.98-.7-.5-.47-.74-1.06-.74-1.8v-.61c0-.74,.25-1.35,.74-1.81,.48-.48,1.14-.71,1.98-.71h4.65v-.04c0-.91-.5-1.37-1.5-1.37h-5.17v-1.51h5.14c1.07,0,1.89,.27,2.45,.82,.57,.52,.86,1.29,.86,2.29v3.01c0,.77-.26,1.38-.79,1.83-.48,.41-1.14,.61-2,.61h-3.64Zm3.25-4.11h-2.82c-.91,0-1.37,.39-1.37,1.16v.28c0,.76,.45,1.14,1.37,1.14h2.82c.93,0,1.4-.38,1.4-1.14v-.28c0-.77-.47-1.16-1.4-1.16Z"/><path class="cls-4" d="M103.46,104.88h-5.69c-1.06-.01-1.89-.32-2.49-.92-.6-.59-.91-1.44-.91-2.55v-1.57c0-1.12,.3-1.97,.91-2.57,.6-.6,1.44-.92,2.49-.93h5.69v1.54h-5.54c-.63,0-1.1,.2-1.41,.59-.23,.33-.34,.81-.34,1.45v1.4c0,.63,.11,1.11,.34,1.44,.31,.39,.78,.58,1.41,.58h5.54v1.54Z"/><path class="cls-4" d="M114.21,98.85v.59c0,.73-.25,1.33-.76,1.8-.48,.47-1.14,.7-1.98,.7h-4.63v.06c0,.9,.5,1.35,1.5,1.35h5.47v1.53h-5.45c-1.06,0-1.88-.27-2.45-.8-.56-.52-.85-1.28-.85-2.27v-2.95c0-.74,.25-1.35,.74-1.81,.48-.47,1.15-.71,1.99-.71h3.67c.84,0,1.5,.24,1.99,.71,.51,.47,.76,1.07,.76,1.81Zm-6,1.57h2.84c.92,0,1.38-.38,1.38-1.14v-.28c0-.77-.46-1.16-1.38-1.16h-2.84c-.91,0-1.37,.39-1.37,1.16v.28c0,.76,.46,1.14,1.37,1.14Z"/></g><g><path class="cls-4" d="M20.49,65.26v22.62h-3.54v-11.93H3.54v11.93H0v-22.62H3.54v7.59h13.41v-7.59h3.54Z"/><path class="cls-4" d="M29,87.87c-1.65,0-2.96-.46-3.93-1.39-.98-.93-1.48-2.12-1.48-3.57v-1.21c0-1.48,.49-2.68,1.48-3.6,.96-.94,2.27-1.42,3.93-1.42h9.24v-.09c0-1.81-.99-2.72-2.98-2.72h-10.28v-3.01h10.22c2.13,0,3.75,.54,4.87,1.62,1.14,1.04,1.71,2.56,1.71,4.55v5.99c0,1.54-.52,2.75-1.57,3.63-.94,.81-2.27,1.21-3.99,1.21h-7.23Zm6.47-8.18h-5.61c-1.81,0-2.72,.77-2.72,2.3v.56c0,1.52,.91,2.27,2.72,2.27h5.61c1.85,0,2.78-.76,2.78-2.27v-.56c0-1.54-.93-2.3-2.78-2.3Z"/><path class="cls-4" d="M52.15,70.87h3.48c2.2,0,3.94,.64,5.2,1.92,1.26,1.28,1.89,3.06,1.89,5.34v9.74h-3.54v-9.57c0-1.42-.28-2.45-.83-3.1-.69-.85-1.68-1.27-2.98-1.27h-3.01c-1.26,0-2.24,.42-2.95,1.27-.51,.65-.77,1.68-.77,3.1v9.57h-3.54v-9.74c0-2.28,.63-4.06,1.89-5.34,1.26-1.28,2.98-1.92,5.17-1.92Z"/><path class="cls-4" d="M79.04,85.6c-1.26,1.52-2.82,2.27-4.69,2.27h-2.19c-1.97,0-3.53-.62-4.7-1.86-1.1-1.16-1.65-2.81-1.65-4.93v-10.22h3.51v10.25c0,1.24,.27,2.15,.8,2.72,.61,.65,1.41,.97,2.39,.97h1.54c1,0,1.81-.32,2.42-.97,.55-.57,.83-1.48,.83-2.72v-10.25h3.48v10.25c0,1.24,.27,2.15,.8,2.72,.61,.65,1.41,.97,2.39,.97h1.54c1,0,1.81-.32,2.42-.97,.55-.57,.83-1.48,.83-2.72v-10.25h3.51v10.22c0,2.13-.57,3.77-1.71,4.93-1.16,1.24-2.74,1.86-4.72,1.86h-2.16c-1.83,0-3.38-.76-4.64-2.27Z"/><path class="cls-4" d="M102.67,73.94c-1.26,0-2.24,.42-2.95,1.27-.51,.65-.77,1.68-.77,3.1v9.57h-3.54v-22.68h3.54v6.7c1.02-.69,2.19-1.03,3.51-1.03h3.48c2.2,0,3.94,.64,5.2,1.92,1.26,1.28,1.89,3.06,1.89,5.34v9.74h-3.54v-9.57c0-1.42-.28-2.45-.83-3.1-.69-.85-1.68-1.27-2.98-1.27h-3.01Z"/><path class="cls-4" d="M121.36,87.87c-1.65,0-2.96-.46-3.93-1.39-.98-.93-1.48-2.12-1.48-3.57v-1.21c0-1.48,.49-2.68,1.48-3.6,.96-.94,2.27-1.42,3.93-1.42h9.24v-.09c0-1.81-.99-2.72-2.98-2.72h-10.28v-3.01h10.22c2.13,0,3.75,.54,4.87,1.62,1.14,1.04,1.71,2.56,1.71,4.55v5.99c0,1.54-.52,2.75-1.57,3.63-.94,.81-2.27,1.21-3.99,1.21h-7.23Zm6.47-8.18h-5.61c-1.81,0-2.72,.77-2.72,2.3v.56c0,1.52,.9,2.27,2.72,2.27h5.61c1.85,0,2.78-.76,2.78-2.27v-.56c0-1.54-.93-2.3-2.78-2.3Z"/></g><g><path class="cls-2" d="M58.9,29.06c-.81-7.37,6.91-13.29,17.25-13.2,10.34,.08,19.38,6.12,20.19,13.48,.81,7.38-6.91,13.28-17.25,13.2-10.34-.07-19.38-6.11-20.19-13.48m39.37,2.29c-.93-9.14-11.34-16.63-23.24-16.73-11.91-.1-20.79,7.23-19.86,16.37,.93,9.14,11.34,16.63,23.24,16.73,11.9,.09,20.8-7.23,19.86-16.37"/><path class="cls-1" d="M80.3,47.9c-5.86,6.13-15.27,6.64-21.02,1.14-5.74-5.5-5.65-14.92,.22-21.04,5.86-6.12,15.28-6.63,21.01-1.14,5.74,5.5,5.65,14.92-.22,21.04m-21.72-20.1c-6.81,7.12-6.92,18.07-.25,24.46,6.67,6.39,17.61,5.8,24.42-1.32,6.82-7.12,6.93-18.07,.25-24.46-6.67-6.39-17.61-5.8-24.43,1.32"/><path class="cls-3" d="M59.2,4.88c12.19-4.57,24.25,.05,26.93,10.32,2.68,10.27-5.03,22.31-17.22,26.87-12.19,4.57-24.25-.05-26.93-10.32-2.68-10.27,5.03-22.3,17.22-26.87m-11.32,3.93c-12.65,10.01-15.87,24.53-7.19,32.41,8.68,7.89,25.96,6.16,38.62-3.86,12.65-10.01,15.87-24.52,7.19-32.41-8.68-7.88-25.97-6.16-38.61,3.86"/></g></svg>
+    </div>
+    <p class="author-text">Author: Hanwha Aerospace</p>
+    <div class="license-container">
+      <pre>
+        Apache License
+        Version 2.0, January 2004
+        http://www.apache.org/licenses/
+    
+        TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+    
+        1. Definitions.
+    
+        "License" shall mean the terms and conditions for use, reproduction,
+        and distribution as defined by Sections 1 through 9 of this document.
+    
+        "Licensor" shall mean the copyright owner or entity authorized by
+        the copyright owner that is granting the License.
+    
+        "Legal Entity" shall mean the union of the acting entity and all
+        other entities that control, are controlled by, or are under common
+        control with that entity. For the purposes of this definition,
+        "control" means (i) the power, direct or indirect, to cause the
+        direction or management of such entity, whether by contract or
+        otherwise, or (ii) ownership of fifty percent (50%) or more of the
+        outstanding shares, or (iii) beneficial ownership of such entity.
+    
+        "You" (or "Your") shall mean an individual or Legal Entity
+        exercising permissions granted by this License.
+    
+        "Source" form shall mean the preferred form for making modifications,
+        including but not to software source code, documentation source, and
+        configuration files.
+    
+        "Object" form shall mean any form resulting from mechanical
+        transformation or translation of a Source form, including but
+        not to compiled object code, generated documentation, and
+        conversions to other media types.
+    
+        "Work" shall mean the work of authorship, whether in Source or Object
+        form, made available under the License, as indicated by a copyright
+        notice that is included in or attached to the work
+        (an example is provided in the Appendix below).
+    
+        "Derivative Works" shall mean any work, whether in Source or Object
+        form, that is based on (or derived from) the Work and for which the
+        editorial revisions, annotations, elaborations, or other modifications
+        represent, as a whole, an original work of authorship. For the purposes
+        of this License, Derivative Works shall not include works that remain
+        separable from, or merely link (or bind by name) to the interfaces of,
+        the Work and Derivative Works thereof.
+    
+        "Contribution" shall mean any work of authorship, including
+        the original version of the Work and any modifications or additions
+        to that Work or Derivative Works thereof, that is intentionally
+        submitted to Licensor for inclusion in the Work by the copyright owner
+        or by an individual or Legal Entity authorized to submit on behalf of
+        the copyright owner. For the purposes of this definition, "submitted"
+        means any form of electronic, verbal, or written communication sent
+        to the Licensor or its representatives, including but not to
+        communication on electronic mailing lists, source code control systems,
+        and issue tracking systems that are managed by, or on behalf of, the
+        Licensor for the purpose of discussing and improving the Work, but
+        excluding communication that is conspicuously marked or otherwise
+        designated in writing by the copyright owner as "Not a Contribution."
+    
+        "Contributor" shall mean Licensor and any individual or Legal Entity
+        on behalf of whom a Contribution has been received by Licensor and
+        subsequently incorporated within the Work.
+    
+        2. Grant of Copyright License. Subject to the terms and conditions of
+        this License, each Contributor hereby grants to You a perpetual,
+        worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+        copyright license to reproduce, prepare Derivative Works of,
+        publicly display, publicly perform, sublicense, and distribute the
+        Work and such Derivative Works in Source or Object form.
+    
+        3. Grant of Patent License. Subject to the terms and conditions of
+        this License, each Contributor hereby grants to You a perpetual,
+        worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+        (except as stated in this section) patent license to make, have made,
+        use, offer to sell, sell, import, and otherwise transfer the Work,
+        where such license applies only to those patent claims licensable
+        by such Contributor that are necessarily infringed by their
+        Contribution(s) alone or by combination of their Contribution(s)
+        with the Work to which such Contribution(s) was submitted. If You
+        institute patent litigation against any entity (including a
+        cross-claim or counterclaim in a lawsuit) alleging that the Work
+        or a Contribution incorporated within the Work constitutes direct
+        or contributory patent infringement, then any patent licenses
+        granted to You under this License for that Work shall terminate
+        as of the date such litigation is filed.
+    
+        4. Redistribution. You may reproduce and distribute copies of the
+        Work or Derivative Works thereof in any medium, with or without
+        modifications, and in Source or Object form, provided that You
+        meet the following conditions:
+    
+        (a) You must give any other recipients of the Work or
+            Derivative Works a copy of this License; and
+    
+        (b) You must cause any modified files to carry prominent notices
+            stating that You changed the files; and
+    
+        (c) You must retain, in the Source form of any Derivative Works
+            that You distribute, all copyright, patent, trademark, and
+            attribution notices from the Source form of the Work,
+            excluding those notices that do not pertain to any part of
+            the Derivative Works; and
+    
+        (d) If the Work includes a "NOTICE" text file as part of its
+            distribution, then any Derivative Works that You distribute must
+            include a readable copy of the attribution notices contained
+            within such NOTICE file, excluding those notices that do not
+            pertain to any part of the Derivative Works, in at least one
+            of the following places: within a NOTICE text file distributed
+            as part of the Derivative Works; within the Source form or
+            documentation, if provided along with the Derivative Works; or,
+            within a display generated by the Derivative Works, if and
+            wherever such third-party notices normally appear. The contents
+            of the NOTICE file are for informational purposes only and
+            do not modify the License. You may add Your own attribution
+            notices within Derivative Works that You distribute, alongside
+            or as an addendum to the NOTICE text from the Work, provided
+            that such additional attribution notices cannot be construed
+            as modifying the License.
+    
+        You may add Your own copyright statement to Your modifications and
+        may provide additional or different license terms and conditions
+        for use, reproduction, or distribution of Your modifications, or
+        for any such Derivative Works as a whole, provided Your use,
+        reproduction, and distribution of the Work otherwise complies with
+        the conditions stated in this License.
+    
+        5. Submission of Contributions. Unless You explicitly state otherwise,
+        any Contribution intentionally submitted for inclusion in the Work
+        by You to the Licensor shall be under the terms and conditions of
+        this License, without any additional terms or conditions.
+        Notwithstanding the above, nothing herein shall supersede or modify
+        the terms of any separate license agreement you may have executed
+        with Licensor regarding such Contributions.
+    
+        6. Trademarks. This License does not grant permission to use the trade
+        names, trademarks, service marks, or product names of the Licensor,
+        except as required for reasonable and customary use in describing the
+        origin of the Work and reproducing the content of the NOTICE file.
+    
+        7. Disclaimer of Warranty. Unless required by applicable law or
+        agreed to in writing, Licensor provides the Work (and each
+        Contributor provides its Contributions) on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+        implied, including, without limitation, any warranties or conditions
+        of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+        PARTICULAR PURPOSE. You are solely responsible for determining the
+        appropriateness of using or redistributing the Work and assume any
+        risks associated with Your exercise of permissions under this License.
+    
+        8. Limitation of Liability. In no event and under no legal theory,
+        whether in tort (including negligence), contract, or otherwise,
+        unless required by applicable law (such as deliberate and grossly
+        negligent acts) or agreed to in writing, shall any Contributor be
+        liable to You for damages, including any direct, indirect, special,
+        incidental, or consequential damages of any character arising as a
+        result of this License or out of the use or inability to use the
+        Work (including but not to damages for loss of goodwill, work
+        stoppage, computer failure or malfunction, or any and all other
+        commercial damages or losses), even if such Contributor has been
+        advised of the possibility of such damages.
+    
+        9. Accepting Warranty or Additional Liability. While redistributing
+        the Work or Derivative Works thereof, You may choose to offer,
+        and charge a fee for, acceptance of support, warranty, indemnity,
+        or other liability obligations and/or rights consistent with this
+        License. However, in accepting such obligations, You may act only
+        on Your own behalf and on Your sole responsibility, not on behalf of
+        any other Contributor, and only if You agree to indemnify, defend,
+        and hold each Contributor harmless for any liability incurred by,
+        or claims asserted against, such Contributor by reason of your
+        accepting any such warranty or additional liability.
+    
+        END OF TERMS AND CONDITIONS
+      </pre>
+    </div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const theme = params.get('theme') || 'dark';
+    document.body.className = theme + '-theme';
+  </script>
+</body>
+</html>

@@ -59,7 +59,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle }) => {
+const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle, handleModalOpen, handleHelpClick }) => {
   const { t } = useLanguage();
 
   const mainNavItems = [
@@ -69,9 +69,19 @@ const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle }) => {
 
   const bottomNavItems = [
       { text: t('Settings'), icon: <SettingsIcon />, path: '/settings' },
-      { text: t('Help'), icon: <HelpOutlineIcon />, path: '/help' },
-      { text: t('Profile'), icon: <AccountCircleIcon />, path: '/profile' },
+      { text: t('Help'), icon: <HelpOutlineIcon /> },
+      { text: t('Profile'), icon: <AccountCircleIcon /> },
   ];
+
+  const handleBottomNavClick = (item) => {
+    if (item.path) {
+      handleSecondaryToggle(item);
+    } else if (item.text === t('Help')) {
+      handleHelpClick();
+    } else if (item.text === t('Profile')) {
+      handleModalOpen(item.text);
+    }
+  };
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -98,7 +108,7 @@ const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle }) => {
         <Divider />
         <List>
           {bottomNavItems.map((item) => (
-             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
+             <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />

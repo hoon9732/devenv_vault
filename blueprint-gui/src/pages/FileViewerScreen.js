@@ -18,7 +18,9 @@ const FileViewerScreen = ({ fileContent }) => {
     <div>
       <Typography variant="h4" gutterBottom>{t('File Content')}</Typography>
       <Paper elevation={3} sx={{ p: 2, maxHeight: '70vh', overflow: 'auto', backgroundColor: '#2f2f2f', color: '#f1f1f1' }}>
-        <pre><code>{contentToShow}</code></pre>
+        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+          <code>{contentToShow}</code>
+        </pre>
       </Paper>
     </div>
   );

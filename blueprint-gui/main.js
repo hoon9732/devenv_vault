@@ -59,3 +59,46 @@ ipcMain.handle('open-file-dialog', async () => {
     return null;
   }
 });
+
+// IPC handler for reading profile data
+ipcMain.handle('read-profile', async () => {
+  const profilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+  try {
+    const content = fs.readFileSync(profilePath, 'utf-8');
+    return content;
+  } catch (error) {
+    console.error('Failed to read profile', error);
+    return null;
+  }
+});
+
+// IPC handler for writing profile data
+ipcMain.handle('write-profile', async (event, data) => {
+  const profilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+  try {
+    fs.writeFileSync(profilePath, data, 'utf-8');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to write profile', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC handler for opening the help window
+ipcMain.handle('open-help-window', (event, theme) => {
+  const helpWin = new BrowserWindow({
+    width: 800,
+    height: 600,
+    title: 'Help',
+    frame: true, // Use the OS frame for dragging and closing
+    resizable: false,
+    movable: true,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+    }
+  });
+  const helpUrl = new URL(path.join(__dirname, 'public/help.html'), 'file:');
+  helpUrl.searchParams.set('theme', theme);
+  helpWin.loadURL(helpUrl.href);
+});
