@@ -658,4 +658,112 @@ LOCAL STATUS calcNavData(void) {
 	if ((g_pTmGf7->m_NAV_STS & 0xF) == 0x4) {
 		g_pMonNav->flightTime = g_pTmGf7->m_MODE_TIME;
 	} else {
+		return ERROR;
+	}
+	
+	if (g_pMonNav->flightTime < 61) {
+		g_pMonNav->ve60 = (double)(g_pTmGf7->m_AVE * 0.000025);
+		g_pMonNav->vn60 = (double)(g_pTmGf7->m_AVN * 0.000025);
+		g_pMonNav->vu60 = (double)(g_pTmGf7->m_AVU * 0.000025);
 		
+		latTemp = fabs(((double)g_pTmGf7->m_ALAT) * 0.000000083819031754);
+		g_pMonNav->errLat60 = (fabs(g_pTmFg3->fg3_1.mXLATL) - latTemp) * 111180;
+		
+		lonTemp = fabs(((double)g_pTmGf7->m_ALON) * 0.000000083819031754);
+		g_pMonNav->errLon60 = (fabs(g_pTmFg3->fg3_1.mXLONL) - lonTemp) * 89165;
+		
+		htTemp = fabs(((double)g_pTmGf7->m_AHEIGHT) * 0.005);
+		g_pMonNav->errHt60 = (fabs(g_pTmFg3->fg3_1.m_HL) - htTemp);
+		
+		g_pMonNav->sts60.bit.ve = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts60.bit.vn = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts60.bit.vu = RESULT_TYPE_ONGOING;
+		
+		g_pMonNav->sts60.bit.errLat = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts60.bit.errLon = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts60.bit.errHt = RESULT_TYPE_ONGOING;
+	} else if (g_pMonNav->flightTime == 61) {
+		g_pMonNav->sts60.bit.ve = mtsCheckRange(-NAV_VE_TOLERANCE, NAV_VE_TOLERANCE, g_pMonNav->ve60);
+		g_pMonNav->sts60.bit.vn = mtsCheckRange(-NAV_VN_TOLERANCE, NAV_VN_TOLERANCE, g_pMonNav->vn60);
+		g_pMonNav->sts60.bit.vu = mtsCheckRange(-NAV_VU_TOLERANCE, NAV_VU_TOLERANCE, g_pMonNav->vu60);
+		
+		g_pMonNav->sts60.bit.errLat = mtsCheckRange(-NAV_ALAT_TOLERANCE, NAV_ALAT_TOLERANCE, g_pMonNav->errLat60);
+		g_pMonNav->sts60.bit.errLon = mtsCheckRange(-NAV_ALONG_TOLERANCE, NAV_ALONG_TOLERANCE, g_pMonNav->errLon60);
+		g_pMonNav->sts60.bit.errHt = mtsCheckRange(-NAV_AHEIGHT_TOLERANCE, NAV_AHEIGHT_TOLERANCE, g_pMonNav->errHt60);
+	} else if (g_pMonNav->flightTime > 61 && g_pMonNav->flightTime < 181) {
+		g_pMonNav->ve180 = (double)(g_pTmGf7->m_AVE * 0.000025);
+		g_pMonNav->vn180 = (double)(g_pTmGf7->m_AVN * 0.000025);
+		g_pMonNav->vu180 = (double)(g_pTmGf7->m_AVU * 0.000025);
+		
+		latTemp = fabs(((double)g_pTmGf7->m_ALAT) * 0.000000083819031754);
+		g_pMonNav->errLat180 = (fabs(g_pTmFg3->fg3_1.m_XLATL) - latTemp) * 111180;
+		
+		lonTemp = fabs(((double)g_pTmGf7->m_ALON) * 0.000000083819031754);
+		g_pMonNav->errLon180 = (fabs(g_pTmFg3->fg3_1.m_XLONL) - lonTemp) * 89165;
+		
+		htTemp =  fabs(((double)g_pTmGf7->m_AHEIGHT) * 0.005);
+		g_pMonNav->errHt180 = (fabs(g_pTmFg3->fg3_1.m_HL) - htTemp);
+		
+		g_pMonNav->sts180.bit.ve = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts180.bit.vn = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts180.bit.vu = RESULT_TYPE_ONGOING;
+		
+		g_pMonNav->sts180.bit.errLat = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts180.bit.errLon = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts180.bit.errHt = RESULT_TYPE_ONGOING;
+	} else if (g_pMonNav->flightTime == 181) {
+		g_pMonNav->sts180.bit.ve = mtsCheckRange(-NAV_VE_TOLERANCE, NAV_VE_TOLERANCE, g_pMonNav->ve180);
+		g_pMonNav->sts180.bit.vn = mtsCheckRange(-NAV_VN_TOLERANCE, NAV_VN_TOLERANCE, g_pMonNav->vn180);
+		g_pMonNav->sts180.bit.vu = mtsCheckRange(-NAV_VU_TOLERANCE, NAV_VU_TOLERANCE, g_pMonNav->vu180);
+		
+		g_pMonNav->sts180.bit.errLat = mtsCheckRange(-NAV_ALAT_TOLERANCE, NAV_ALAT_TOLERANCE, g_pMonNav->errLat180);
+		g_pMonNav->sts180.bit.errLon = mtsCheckRange(-NAV_ALONG_TOLERANCE, NAV_ALONG_TOLERANCE, g_pMonNav->errLon180);
+		g_pMonNav->sts180.bit.errHt = mtsCheckRange(-NAV_AHEIGHT_TOLERANCE, NAV_AHEIGHT_TOLERANCE, g_pMonNav->errHt180);
+	} else if (g_pMonNav->flightTime > 181 && g_pMonNav->flightTime < 301) {
+		g_pMonNav->ve300 = (double)(g_pTmGf7->m_AVE * 0.000025);
+		g_pMonNav->vn300 = (double)(g_pTmGf7->m_AVN * 0.000025);
+		g_pMonNav->vu300 = (double)(g_pTmGf7->m_AVU * 0.000025);
+		
+		latTemp = fabs(((double)g_pTmGf7->m_ALAT) * 0.000000083819031754);
+		g_pMonNav->errLat300 = (fabs(g_pTmFg3->fg3_1.m_XLATL) - latTemp) * 111180;
+		
+		lonTemp = fabs(((double)g_pTmGf7->m_ALON) * 0.000000083819031754);
+		g_pMonNav->errLon300 = (fabs(g_pTmFg3->fg3_1.m_XLATL) - lonTemp) * 89165;
+		
+		htTemp = fabs(((double)g_pTmGf7->m_AHEIGHT) * 0.0H);
+		g_pMonNav->errHt300 = (fabs(g_pTmFg3->fg3_1.m_HL) - htTemp);
+		
+		g_pMonNav->sts300.bit.ve = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts300.bit.vn = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts300.bit.vu = RESULT_TYPE_ONGOING;
+		
+		g_pMonNav->sts300.bit.errLat = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts300.bit.errLon = RESULT_TYPE_ONGOING;
+		g_pMonNav->sts300.bit.errHt = RESULT_TYPE_ONGOING;
+	} else if (g_pMonNav->flightTime == 301) {
+		g_pMonNav->sts300.bit.ve = mtsCheckRange(-NAV_VE_TOLERANCE, NAV_VE_TOLERANCE, g_pMonNav->ve300);
+		g_pMonNav->sts300.bit.vn = mtsCheckRange(-NAV_VN_TOLERANCE, NAV_VN_TOLERANCE, g_pMonNav->vn300);
+		g_pMonNav->sts300.bit.vu = mtsCheckRange(-NAV_VU_TOLERANCE, NAV_VU_TOLERANCE, g_pMonNav->vu300);
+		
+		g_pMonNav->sts300.bit.errLat = mtsCheckRange(-NAV_ALAT_TOLERANCE, NAV_ALAT_TOLERANCE, g_pMonNav->errLat300);
+		g_pMonNav->sts300.bit.errLon = mtsCheckRange(-NAV_ALONG_TOLERANCE, NAV_ALONG_TOLERANCE, g_pMonNav->errLon300);
+		g_pMonNav->sts300.bit.errHt = mtsCheckRange(-NAV_AHEIGHT_TOLERANCE, NAV_AHEIGHT_TOLERANCE, g_pMonNav->errHt300);
+	} else {
+		return ERROR;
+	}
+	
+	return OK;
+}
+
+void SdlcRecvGcuMain(ModuleInst *pModuleInst) {
+	SdlcRecvGcuInst *this = (SdlcRecvGcuInst *)pModuleInst;
+	
+	if (InitSdlcRecvGcu(this) == ERROR) {
+		LOGMSG("InitSdlcRecvGcu() error!\n");
+	} else if (ExecuteSdlcRecvGcu(this) == ERROR) {
+		LOGMSG("ExecuteSdlcRecvGcu() error!!\n");
+	}
+	if (FinalizeSdlcRecvGcu(this) == ERROR) {
+		LOGMSG("FinalizeSdlcRecvGcu() error!!\n");
+	}
+}

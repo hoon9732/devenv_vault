@@ -30,10 +30,10 @@ I need to set up development environment in the workspace to develop GUI SW with
 Guide me through the process in detail, one step at a time, and don't rush to the next step until I assure you that everything is under control.
 
 '''
-*npm config set strict-ssl true
+*npm config set strict-ssl false
 *npm install npm -g --ca=null
 *npm install --save-dev electron electron-builder concurrently wait-on --prefix C:\Users\USER\Documents\code\blueprint-gui
-*set NODE_TLS_REJECT_UNAUTHORIZED=1
+*set NODE_TLS_REJECT_UNAUTHORIZED=0
 *npm run electron-dev
 '''
 

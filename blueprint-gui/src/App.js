@@ -104,7 +104,7 @@ function App() {
 
   const primarySidebarWidth = open ? 240 : 60;
   const secondarySidebarWidth = secondaryOpen ? (secondaryCollapsed ? 60 : 240) : 0;
-  const totalSidebarWidth = primarySidebarWidth + secondarySidebarWidth;
+  // const totalSidebarWidth = primarySidebarWidth + secondarySidebarWidth;
 
   return (
     <ThemeProvider theme={theme}>
