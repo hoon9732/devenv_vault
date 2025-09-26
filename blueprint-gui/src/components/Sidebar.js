@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -17,6 +16,10 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import TableViewIcon from '@mui/icons-material/TableView';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import DescriptionIcon from '@mui/icons-material/Description';
+
 import { useLanguage } from '../contexts/LanguageContext';
 
 const drawerWidth = 240;
@@ -59,12 +62,19 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle, handleModalOpen, handleHelpClick }) => {
+const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick }) => {
   const { t } = useLanguage();
 
   const mainNavItems = [
     { text: t('Home'), icon: <HomeIcon />, path: '/' },
     { text: t('Search'), icon: <SearchIcon />, path: '/search' },
+    { text: t('Workspace'), icon: <FolderOpenIcon /> },
+  ];
+
+  const appNavItems = [
+    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: 'rgba(102, 255, 102, 0.2)' },
+    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: 'rgba(255, 178, 102, 0.2)' },
+    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: 'rgba(102, 178, 255, 0.2)' },
   ];
 
   const bottomNavItems = [
@@ -86,36 +96,47 @@ const Sidebar = ({ open, handleFileOpen, handleSecondaryToggle, handleModalOpen,
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar />
-      <Box sx={{ overflowX: 'hidden' }}>
+      <Box sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Main Navigation */}
         <List>
           {mainNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
+              <ListItemButton>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
               </ListItemButton>
             </ListItem>
           ))}
-          <ListItem key="file-explorer" disablePadding onClick={handleFileOpen}>
-            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}><FolderOpenIcon /></ListItemIcon>
-              <ListItemText primary={t('File Explorer')} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
         </List>
-      </Box>
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', overflowX: 'hidden' }}>
+
         <Divider />
+
+        {/* App Navigation */}
         <List>
-          {bottomNavItems.map((item) => (
-             <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)} sx={{ color: 'inherit', textDecoration: 'none' }}>
-             <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-               <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-               <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-             </ListItemButton>
-           </ListItem>
+          {appNavItems.map((item) => (
+            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
+              <ListItemButton>
+                <ListItemIcon sx={{ color: item.color }}>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
           ))}
         </List>
+
+        {/* Bottom Navigation */}
+        <Box sx={{ marginTop: 'auto' }}>
+          <Divider />
+          <List>
+            {bottomNavItems.map((item) => (
+              <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)}>
+                <ListItemButton>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );

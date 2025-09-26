@@ -2,6 +2,30 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+// --- Configuration Management ---
+const configPath = path.join(app.getPath('userData'), 'config.json');
+
+function readConfig() {
+  try {
+    if (fs.existsSync(configPath)) {
+      return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    }
+  } catch (error) {
+    console.error('Error reading config file:', error);
+  }
+  return {}; // Return empty object if file doesn't exist or is corrupt
+}
+
+function writeConfig(config) {
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  } catch (error) {
+    console.error('Error writing config file:', error);
+  }
+}
+// --- End Configuration Management ---
+
+
 function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
@@ -11,15 +35,8 @@ function createWindow () {
     }
   });
 
-  // In development, load from the React dev server.
-  // In production, load the built index.html file.
   const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, 'build/index.html')}`;
   win.loadURL(startUrl);
-
-  // Open the DevTools.
-  // if (process.env.ELECTRON_START_URL) {
-  //   win.webContents.openDevTools();
-  // }
 }
 
 app.whenReady().then(() => {
@@ -37,6 +54,47 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+// --- IPC Handlers ---
+
+// Get the stored workspace path
+ipcMain.handle('get-workspace-path', () => {
+  const config = readConfig();
+  return config.workspacePath || null;
+});
+
+// Open a dialog to select a new workspace path and save it
+ipcMain.handle('set-workspace-path', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+
+  if (canceled || filePaths.length === 0) {
+    return null; // User cancelled the dialog
+  }
+
+  const newPath = filePaths[0];
+  const config = readConfig();
+  config.workspacePath = newPath;
+  writeConfig(config);
+  return newPath;
+});
+
+// Read the directory structure for the file explorer
+ipcMain.handle('read-directory', async (event, dirPath) => {
+  try {
+    const dirents = fs.readdirSync(dirPath, { withFileTypes: true });
+    return dirents.map(dirent => ({
+      name: dirent.name,
+      isDirectory: dirent.isDirectory(),
+      path: path.join(dirPath, dirent.name)
+    }));
+  } catch (error) {
+    console.error(`Error reading directory ${dirPath}:`, error);
+    return []; // Return empty array on error
+  }
+});
+
 
 // IPC handler for opening a file dialog
 ipcMain.handle('open-file-dialog', async () => {
@@ -90,7 +148,7 @@ ipcMain.handle('open-help-window', (event, theme) => {
     width: 800,
     height: 600,
     title: 'Help',
-    frame: true, // Use the OS frame for dragging and closing
+    frame: true,
     resizable: false,
     movable: true,
     webPreferences: {

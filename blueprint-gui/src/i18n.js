@@ -2,7 +2,7 @@ export const translations = {
   en: {
     'Home': 'Home',
     'Search': 'Search',
-    'File Explorer': 'File Explorer',
+    'Workspace': 'Workspace',
     'Settings': 'Settings',
     'Help': 'Help',
     'Profile': 'Profile',
@@ -20,7 +20,7 @@ export const translations = {
   ko: {
     'Home': '홈',
     'Search': '검색',
-    'File Explorer': '파일 탐색기',
+    'Workspace': '작업공간',
     'Settings': '설정',
     'Help': '도움말',
     'Profile': '프로필',

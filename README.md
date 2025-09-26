@@ -1,3 +1,12 @@
+# 2025-09-26
+
+So the workspace button is now very crucial. We need to implement a more complex feature.
+1. clicking the workspace button would open up secondary sidebar with only a simple rectange button "Open Workspace" on the top. Clicking the button would open up file explorer window which will make us choose the folder of default workspace that the whole app is working on. 
+2. After the workspace is chosen, the secondary sidebar should work as an in-app file explorer as in modern vscode app. The folders and files should be shown in icons and names, and should be structured as a list. They should be collapsable by clicking '>' or 'V' shaped icons left of the left of the file/folder icon as in vscode.
+3. After any workspace is loaded, there should be a small topbar of icons on top of the secondary sidebar(now called "explorer sidebar") which has icons for 'open new workspace', 'create new file', 'create new folder'(but they have icons only), and a simple close 'X' button to the very right of the explorer sidebar which closes it(but the workspace setting always remains. even after the app is turned off!) which does exactly what it says, just as in vscode.
+4. 
+
+
 # 2025-09-24
 
 Write a detailed code explanation of @mtsc/app/SimHotStart.c with the same block by block structure, comment of C Aspects used, and level of detail as @mtsc/app/Monitoring.md, and save the whole text as SimHotStart.md in the same folder. This action should be remembered in GEMINI.md file so that it should be repeated for any other code when I write #codereview, you ask for the name of the code i want the review on.

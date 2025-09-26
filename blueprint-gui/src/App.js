@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,6 +11,9 @@ import HomeScreen from './pages/HomeScreen';
 import SearchScreen from './pages/SearchScreen';
 import FileViewerScreen from './pages/FileViewerScreen';
 import SettingsScreen from './pages/SettingsScreen';
+import SheetScreen from './pages/SheetScreen';
+import FlowchartScreen from './pages/FlowchartScreen';
+import DocsScreen from './pages/DocsScreen';
 import SecondarySidebar from './components/SecondarySidebar';
 import { useLanguage } from './contexts/LanguageContext';
 import AppModal from './components/AppModal';
@@ -18,9 +21,8 @@ import ProfileContent from './components/ProfileContent';
 
 function App() {
   const [open, setOpen] = useState(true);
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
-  const [secondaryCollapsed, setSecondaryCollapsed] = useState(false);
-  const [secondaryContent, setSecondaryContent] = useState(null);
+  const [isSecondaryOpen, setIsSecondaryOpen] = useState(false); // Independent state for secondary sidebar visibility
+  const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
   const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('light');
   const [uiScale, setUiScale] = useState(0.8);
@@ -28,6 +30,20 @@ function App() {
   const [modalContent, setModalContent] = useState(null);
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  // Fetch the workspace path when the app loads
+  useEffect(() => {
+    const loadWorkspace = async () => {
+      if (window.electron) {
+        const path = await window.electron.getWorkspacePath();
+        if (path) {
+          setWorkspacePath(path);
+          setIsSecondaryOpen(true); // Open sidebar if a workspace is already set
+        }
+      }
+    };
+    loadWorkspace();
+  }, []);
 
   const theme = useMemo(
     () =>
@@ -68,27 +84,19 @@ function App() {
   const handleDrawerToggle = () => {
     setOpen(!open);
     if (open) {
-      setSecondaryOpen(false);
+      setIsSecondaryOpen(false);
     }
   };
 
   const handleSecondaryToggle = (item) => {
-    navigate(item.path);
-    if (item.text === t('Home')) {
-      if (secondaryContent !== item.text) {
-        setSecondaryContent(item.text);
-        setSecondaryOpen(true);
-        setSecondaryCollapsed(false);
-      } else if (secondaryOpen && !secondaryCollapsed) {
-        setSecondaryCollapsed(true);
-      } else if (secondaryOpen && secondaryCollapsed) {
-        setSecondaryOpen(false);
-      } else {
-        setSecondaryOpen(true);
-        setSecondaryCollapsed(false);
-      }
-    } else {
-      setSecondaryOpen(false);
+    // If the item has a path, navigate to it.
+    if (item.path) {
+      navigate(item.path);
+    }
+
+    // Special logic for the Workspace button
+    if (item.text === t('Workspace')) {
+      setIsSecondaryOpen(!isSecondaryOpen);
     }
   };
 
@@ -147,7 +155,12 @@ function App() {
                 }),
             }}
           >
-            <SecondarySidebar open={secondaryOpen} collapsed={secondaryCollapsed} content={secondaryContent} />
+            <SecondarySidebar 
+              open={isSecondaryOpen} 
+              setOpen={setIsSecondaryOpen}
+              workspacePath={workspacePath}
+              setWorkspacePath={setWorkspacePath}
+            />
             <Box
               component="main"
               sx={{
@@ -161,6 +174,9 @@ function App() {
                 <Route path="/search" element={<SearchScreen />} />
                 <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
                 <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
+                <Route path="/sheet" element={<SheetScreen />} />
+                <Route path="/flowchart" element={<FlowchartScreen />} />
+                <Route path="/docs" element={<DocsScreen />} />
               </Routes>
             </Box>
           </Box>
