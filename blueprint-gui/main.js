@@ -25,6 +25,8 @@ function writeConfig(config) {
 }
 // --- End Configuration Management ---
 
+// Force hardware acceleration
+app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -63,6 +65,24 @@ ipcMain.handle('get-workspace-path', () => {
   return config.workspacePath || null;
 });
 
+// --- Workspace Settings ---
+const defaultWorkspaceSettings = {
+  showIcons: true,
+  showOnStart: false,
+};
+
+ipcMain.handle('get-workspace-settings', () => {
+  const config = readConfig();
+  return { ...defaultWorkspaceSettings, ...config.workspaceSettings };
+});
+
+ipcMain.handle('set-workspace-settings', (event, settings) => {
+  const config = readConfig();
+  config.workspaceSettings = { ...config.workspaceSettings, ...settings };
+  writeConfig(config);
+});
+// --- End Workspace Settings ---
+
 // Open a dialog to select a new workspace path and save it
 ipcMain.handle('set-workspace-path', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -92,6 +112,50 @@ ipcMain.handle('read-directory', async (event, dirPath) => {
   } catch (error) {
     console.error(`Error reading directory ${dirPath}:`, error);
     return []; // Return empty array on error
+  }
+});
+
+// IPC handler for creating a new file
+ipcMain.handle('create-file', async (event, filePath) => {
+  try {
+    fs.writeFileSync(filePath, '');
+    return { success: true };
+  } catch (error) {
+    console.error(`Error creating file ${filePath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC handler for creating a new directory
+ipcMain.handle('create-directory', async (event, dirPath) => {
+  try {
+    fs.mkdirSync(dirPath);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error creating directory ${dirPath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC handler for deleting a file
+ipcMain.handle('delete-file', async (event, filePath) => {
+  try {
+    fs.unlinkSync(filePath);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error deleting file ${filePath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC handler for deleting a directory
+ipcMain.handle('delete-directory', async (event, dirPath) => {
+  try {
+    fs.rmdirSync(dirPath, { recursive: true });
+    return { success: true };
+  } catch (error) {
+    console.error(`Error deleting directory ${dirPath}:`, error);
+    return { success: false, error: error.message };
   }
 });
 

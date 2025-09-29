@@ -8,4 +8,13 @@ contextBridge.exposeInMainWorld('electron', {
   getWorkspacePath: () => ipcRenderer.invoke('get-workspace-path'),
   setWorkspacePath: () => ipcRenderer.invoke('set-workspace-path'),
   readDirectory: (path) => ipcRenderer.invoke('read-directory', path),
+  createFile: (path) => ipcRenderer.invoke('create-file', path),
+  createDirectory: (path) => ipcRenderer.invoke('create-directory', path),
+  deleteFile: (path) => ipcRenderer.invoke('delete-file', path),
+  deleteDirectory: (path) => ipcRenderer.invoke('delete-directory', path),
+  getWorkspaceSettings: () => ipcRenderer.invoke('get-workspace-settings'),
+  setWorkspaceSettings: (settings) => ipcRenderer.invoke('set-workspace-settings', settings),
+  path: {
+    dirname: (p) => require('path').dirname(p),
+  },
 });

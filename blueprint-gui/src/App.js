@@ -36,9 +36,12 @@ function App() {
     const loadWorkspace = async () => {
       if (window.electron) {
         const path = await window.electron.getWorkspacePath();
+        const settings = await window.electron.getWorkspaceSettings();
         if (path) {
           setWorkspacePath(path);
-          setIsSecondaryOpen(true); // Open sidebar if a workspace is already set
+          if (settings.showOnStart) {
+            setIsSecondaryOpen(true); // Open sidebar only if the setting is true
+          }
         }
       }
     };
