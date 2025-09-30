@@ -6,9 +6,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Slider from '@mui/material/Slider';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
@@ -22,9 +19,16 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
     setLanguage(event.target.value);
   };
 
-  const handleScaleChange = (event, newValue) => {
-    setUiScale(newValue);
+  const handleScaleChange = (event) => {
+    const displayedValue = event.target.value;
+    // Convert the displayed percentage (where 100 means 0.8 scale) to the internal scale value
+    const internalScale = (displayedValue / 100) * 0.8;
+    setUiScale(internalScale);
   };
+
+  // Convert the internal scale (where 0.8 is the default) to the displayed percentage (where 100 is the default)
+  const displayedScale = Math.round((uiScale / 0.8) * 100);
+  const scaleOptions = [70, 80, 90, 100, 110, 120, 130, 140, 150];
 
   return (
     <div>
@@ -35,23 +39,20 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {t('Adjust the overall size of the application interface.')}
         </Typography>
-        <Box sx={{ width: '100%' }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs>
-              <Slider
-                value={uiScale}
-                onChange={handleScaleChange}
-                aria-labelledby="input-slider"
-                min={0.5}
-                max={2}
-                step={0.05}
-              />
-            </Grid>
-            <Grid item>
-              <Typography>{Math.round(uiScale * 100)}%</Typography>
-            </Grid>
-          </Grid>
-        </Box>
+        <FormControl sx={{ maxWidth: 240 }}>
+          <InputLabel id="scale-select-label">{t('Scale')}</InputLabel>
+          <Select
+            labelId="scale-select-label"
+            id="scale-select"
+            value={displayedScale}
+            label={t('Scale')}
+            onChange={handleScaleChange}
+          >
+            {scaleOptions.map(option => (
+              <MenuItem key={option} value={option}>{option}%</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Paper>
 	  
 	  <Divider sx={{ my: 3 }} />

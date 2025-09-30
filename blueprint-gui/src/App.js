@@ -86,9 +86,6 @@ function App() {
 
   const handleDrawerToggle = () => {
     setOpen(!open);
-    if (open) {
-      setIsSecondaryOpen(false);
-    }
   };
 
   const handleSecondaryToggle = (item) => {
@@ -163,6 +160,7 @@ function App() {
               setOpen={setIsSecondaryOpen}
               workspacePath={workspacePath}
               setWorkspacePath={setWorkspacePath}
+              uiScale={uiScale}
             />
             <Box
               component="main"

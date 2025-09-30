@@ -26,7 +26,7 @@ const initialDrawerWidth = 240;
 const minDrawerWidth = 150;
 const maxDrawerWidth = 500;
 
-const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) => {
+const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -36,7 +36,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef(null);
   const [renderTree, setRenderTree] = useState(false);
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
+  const [settingsAnchorPos, setSettingsAnchorPos] = useState(null);
   const [settings, setSettings] = useState({ showIcons: true, showOnStart: false });
 
   useEffect(() => {
@@ -139,11 +139,15 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
   };
 
   const handleSettingsClick = (event) => {
-    setSettingsAnchorEl(event.currentTarget);
+    const rect = event.currentTarget.getBoundingClientRect();
+    setSettingsAnchorPos({
+      top: rect.bottom / uiScale,
+      left: rect.left / uiScale,
+    });
   };
 
   const handleSettingsClose = () => {
-    setSettingsAnchorEl(null);
+    setSettingsAnchorPos(null);
   };
 
   const handleSettingChange = (settingName) => {
@@ -219,6 +223,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
               onNewItem={handleNewItem}
               refreshTreeView={refreshTreeView}
               showIcons={settings.showIcons}
+              uiScale={uiScale}
             />
           ) : (
             renderTree && !workspacePath && (
@@ -247,7 +252,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
         <DialogTitle>{dialogConfig.type === 'file' ? t('Create New File') : t('Create New Folder')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t('Please enter a name for the new ' + dialogConfig.type + '.')}
+            {t('Please enter a name for the new ' + dialogConfig.type + '.')} 
           </DialogContentText>
           <TextField
             autoFocus
@@ -267,40 +272,38 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
         </DialogActions>
       </Dialog>
       <Menu
-        anchorEl={settingsAnchorEl}
-        open={Boolean(settingsAnchorEl)}
+        open={Boolean(settingsAnchorPos)}
         onClose={handleSettingsClose}
+        disablePortal
+        anchorReference="anchorPosition"
+        anchorPosition={settingsAnchorPos}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         MenuListProps={{ dense: true, sx: { py: 0.5 } }}
-        PaperProps={{ 
-          sx: { 
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            borderRadius: 0,
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
-            border: (theme) => `1px solid ${theme.palette.divider}`
-          } 
-        }}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+            border: (theme) => `1px solid ${theme.palette.divider}`,
+          },
         }}
       >
-        <MenuItem onClick={() => handleSettingChange('showIcons')} sx={{ pl: 1, py: 0.2, minHeight: 'auto' }}>
-          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center' }}>
+        <MenuItem onClick={() => handleSettingChange('showIcons')} sx={{ pl: 1, py: 0.25, minHeight: 'auto' }}>
+          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center', mr: 0.5 }}>
             {settings.showIcons && <CheckIcon sx={{ fontSize: '1rem' }} />}
           </Box>
-          <ListItemText primary={t('Workspace Icons')} primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }} />
+          <ListItemText primary={t('Workspace Icons')} primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} />
         </MenuItem>
-        <MenuItem onClick={() => handleSettingChange('showOnStart')} sx={{ pl: 1, py: 0.2, minHeight: 'auto' }}>
-          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center' }}>
+        <MenuItem onClick={() => handleSettingChange('showOnStart')} sx={{ pl: 1, py: 0.25, minHeight: 'auto' }}>
+          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center', mr: 0.5 }}>
             {settings.showOnStart && <CheckIcon sx={{ fontSize: '1rem' }} />}
           </Box>
-          <ListItemText primary={t('Show Workspace on Start')} primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }} />
+          <ListItemText primary={t('Show Workspace on Start')} primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} />
         </MenuItem>
       </Menu>
     </Box>
   );
 };
-
 export default SecondarySidebar;

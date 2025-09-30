@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons }) => {
+const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons, uiScale }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [children, setChildren] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
@@ -33,8 +33,8 @@ const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons }) =>
     setContextMenu(
       contextMenu === null
         ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
+            mouseX: event.clientX / uiScale,
+            mouseY: event.clientY / uiScale,
           }
         : null,
     );
@@ -93,22 +93,34 @@ const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons }) =>
       <Menu
         open={contextMenu !== null}
         onClose={handleClose}
+        disablePortal
         anchorReference="anchorPosition"
         anchorPosition={
           contextMenu !== null
             ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
             : undefined
         }
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            borderRadius: 0,
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
+            border: (theme) => `1px solid ${theme.palette.divider}`,
+          },
+        }}
+        MenuListProps={{ dense: true, sx: { py: 0.5 } }}
       >
-        <MenuItem onClick={handleNewFile}>New File</MenuItem>
-        <MenuItem onClick={handleNewFolder}>New Folder</MenuItem>
-        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleNewFile}><ListItemText primary="New File" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
+        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleNewFolder}><ListItemText primary="New Folder" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
+        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleDelete}><ListItemText primary="Delete" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
       </Menu>
       {item.isDirectory && (
         <Collapse in={isOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {children.map((child) => (
-              <TreeViewItem key={child.path} item={child} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={depth + 1} showIcons={showIcons} />
+              <TreeViewItem key={child.path} item={child} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={depth + 1} showIcons={showIcons} uiScale={uiScale} />
             ))}
           </List>
         </Collapse>
@@ -117,7 +129,7 @@ const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons }) =>
   );
 };
 
-const TreeView = ({ rootPath, onNewItem, refreshTreeView, showIcons }) => {
+const TreeView = ({ rootPath, onNewItem, refreshTreeView, showIcons, uiScale }) => {
   const [rootItems, setRootItems] = useState([]);
 
   useEffect(() => {
@@ -133,7 +145,7 @@ const TreeView = ({ rootPath, onNewItem, refreshTreeView, showIcons }) => {
   return (
     <List dense>
       {rootItems.map((item) => (
-        <TreeViewItem key={item.path} item={item} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={1} showIcons={showIcons} />
+        <TreeViewItem key={item.path} item={item} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={1} showIcons={showIcons} uiScale={uiScale} />
       ))}
     </List>
   );
