@@ -96,6 +96,20 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar />
+      <Box
+        sx={(theme) => ({
+          position: 'absolute',
+          left: theme.spacing(6),
+          [theme.breakpoints.up('sm')]: {
+            left: theme.spacing(7),
+          },
+          top: 0,
+          height: '100%',
+          width: '1px',
+          backgroundColor: theme.palette.divider,
+          zIndex: theme.zIndex.drawer + 1,
+        })}
+      />
       <Box sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Main Navigation */}
         <List>
