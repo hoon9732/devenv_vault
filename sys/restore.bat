@@ -38,5 +38,9 @@ if %errorlevel% == 0 (
     echo Repository cloned.
 )
 
+echo Fetching latest changes and resetting to remote state...
+git fetch origin
+git reset --hard origin/main
+
 echo Restoration script finished.
 pause
