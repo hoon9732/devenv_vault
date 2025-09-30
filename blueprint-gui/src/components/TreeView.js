@@ -88,10 +88,16 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
                     style: {
                         transform: `scale(${uiScale})`,
                         transformOrigin: 'top left',
+                        borderRadius: 0,
+                    },
+                }}
+                MenuListProps={{
+                    sx: {
+                        py: 0,
                     },
                 }}
             >
-                <MenuItem onClick={handleDelete}>{t('Delete')}</MenuItem>
+                <MenuItem sx={{ pl: 1 }} onClick={handleDelete}>{t('Delete')}</MenuItem>
             </Menu>
             {item.isDirectory && (
                 <Collapse in={isOpen} timeout="auto" unmountOnExit>
@@ -112,7 +118,7 @@ const TreeView = (props) => {
     return (
         <List dense sx={{ padding: 0 }}>
             {treeData.map((item) => (
-                <TreeViewItem key={item.path} item={item} depth={1} {...props} />
+                <TreeViewItem key={item.path} item={item} depth={0} {...props} />
             ))}
         </List>
     );

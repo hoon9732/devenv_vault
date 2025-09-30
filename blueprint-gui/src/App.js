@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import GlobalStyles from '@mui/material/GlobalStyles';
 
 import Topbar from './components/Topbar';
 import Sidebar from './components/Sidebar';
@@ -147,6 +148,21 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <GlobalStyles styles={{
+        '*::-webkit-scrollbar': {
+          width: '12px',
+        },
+        '*::-webkit-scrollbar-track': {
+          background: theme.palette.mode === 'dark' ? '#2e2e2e' : '#f1f1f1',
+        },
+        '*::-webkit-scrollbar-thumb': {
+          background: theme.palette.mode === 'dark' ? '#555' : '#888',
+          borderRadius: '6px',
+        },
+        '*::-webkit-scrollbar-thumb:hover': {
+          background: theme.palette.mode === 'dark' ? '#666' : '#555',
+        },
+      }} />
       <Box sx={{
         width: '100vw',
         height: '100vh',

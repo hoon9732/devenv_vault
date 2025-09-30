@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
@@ -21,17 +22,31 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
 
   const handleScaleChange = (event) => {
     const displayedValue = event.target.value;
-    // Convert the displayed percentage (where 100 means 1 scale) to the internal scale value
     const internalScale = displayedValue / 100;
     setUiScale(internalScale);
   };
 
-  // Convert the internal scale to the displayed percentage
   const displayedScale = Math.round(uiScale * 100);
   const scaleOptions = [70, 80, 90, 100, 110, 120, 130, 140, 150];
 
+  const menuProps = {
+    transitionDuration: 0,
+    PaperProps: {
+      style: {
+        transform: `scale(${uiScale})`,
+        transformOrigin: 'top left',
+        borderRadius: 0,
+      },
+    },
+    MenuListProps: {
+      sx: {
+        py: 0,
+      },
+    },
+  };
+
   return (
-    <div>
+    <Box sx={{ width: 800, height: '100%', overflowY: 'auto' }}>
       <Typography variant="h4" gutterBottom>{t('Settings')}</Typography>
 
       <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
@@ -39,7 +54,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {t('Adjust the overall size of the application interface.')}
         </Typography>
-        <FormControl sx={{ maxWidth: 240 }}>
+        <FormControl sx={{ width: 240 }}>
           <InputLabel id="scale-select-label">{t('Scale')}</InputLabel>
           <Select
             labelId="scale-select-label"
@@ -47,6 +62,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
             value={displayedScale}
             label={t('Scale')}
             onChange={handleScaleChange}
+            MenuProps={menuProps}
           >
             {scaleOptions.map(option => (
               <MenuItem key={option} value={option}>{option}%</MenuItem>
@@ -62,7 +78,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {t('Select your preferred color mode.')}
         </Typography>
-        <FormControl sx={{ maxWidth: 240 }}>
+        <FormControl sx={{ width: 240 }}>
           <InputLabel id="theme-select-label">{t('Theme')}</InputLabel>
           <Select
             labelId="theme-select-label"
@@ -70,6 +86,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
             value={themeMode}
             label={t('Theme')}
             onChange={handleThemeChange}
+            MenuProps={menuProps}
           >
             <MenuItem value="light">Light</MenuItem>
             <MenuItem value="dark">Dark</MenuItem>
@@ -84,7 +101,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {t('Choose the application language.')}
         </Typography>
-        <FormControl sx={{ maxWidth: 240 }}>
+        <FormControl sx={{ width: 240 }}>
           <InputLabel id="language-select-label">{t('Language')}</InputLabel>
           <Select
             labelId="language-select-label"
@@ -92,13 +109,14 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
             value={language}
             label={t('Language')}
             onChange={handleLanguageChange}
+            MenuProps={menuProps}
           >
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="ko">Korean</MenuItem>
           </Select>
         </FormControl>
       </Paper>
-    </div>
+    </Box>
   );
 };
 

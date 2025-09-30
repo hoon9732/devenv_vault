@@ -7,14 +7,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const Topbar = ({ handleDrawerToggle }) => {
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="absolute" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2 }}
+          sx={{ mr: 2, ml: '-15px' }}
         >
           <MenuIcon />
         </IconButton>

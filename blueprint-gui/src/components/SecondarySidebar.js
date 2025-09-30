@@ -126,13 +126,13 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
         <Toolbar />
         <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
           <Box>
-            <Tooltip title={t('Open New Workspace')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Open New Workspace')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
           </Box>
           <Box>
-            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
-            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
           </Box>
         </Toolbar>
         <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
@@ -167,14 +167,20 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
             style: {
                 transform: `scale(${uiScale})`,
                 transformOrigin: 'top left',
+                borderRadius: 0,
+            },
+        }}
+        MenuListProps={{
+            sx: {
+                py: 0,
             },
         }}
       >
-        <MenuItem onClick={() => handleSettingChange('showIcons')}>
+        <MenuItem sx={{ pl: 1 }} onClick={() => handleSettingChange('showIcons')}>
           <ListItemIcon>{settings.showIcons && <CheckIcon />}</ListItemIcon>
           <ListItemText>{t('Workspace Icons')}</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => handleSettingChange('showOnStart')}>
+        <MenuItem sx={{ pl: 1 }} onClick={() => handleSettingChange('showOnStart')}>
           <ListItemIcon>{settings.showOnStart && <CheckIcon />}</ListItemIcon>
           <ListItemText>{t('Show Workspace on Start')}</ListItemText>
         </MenuItem>

@@ -39,9 +39,9 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${theme.spacing(6)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(7)} + 1px)`,
   },
 });
 
@@ -72,9 +72,9 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
   ];
 
   const appNavItems = [
-    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: 'rgba(102, 255, 102, 0.2)' },
-    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: 'rgba(255, 178, 102, 0.2)' },
-    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: 'rgba(102, 178, 255, 0.2)' },
+    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: 'rgba(102, 255, 102, 0.7)' },
+    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: 'rgba(255, 178, 102, 0.7)' },
+    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: 'rgba(102, 178, 255, 0.7)' },
   ];
 
   const bottomNavItems = [
