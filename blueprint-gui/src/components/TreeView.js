@@ -63,19 +63,42 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
         <>
             <ListItem
                 disablePadding
-                sx={{ pl: depth * 1, py: 0, backgroundColor: isSelected ? 'action.hover' : 'transparent' }}
+                sx={{ 
+                    pl: depth * 2, 
+                    py: 0, 
+                    backgroundColor: isSelected ? 'action.selected' : 'transparent',
+                    // Give the item its own background to sit on top of the indented block
+                    '&:not(.Mui-selected)': {
+                        backgroundColor: 'background.paper'
+                    }
+                }}
                 onContextMenu={handleContextMenu}
             >
-                <ListItemButton onClick={handleToggle} sx={{ py: 0.2, px: 1 }}>
-                    <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
+                <ListItemButton 
+                    onClick={handleToggle} 
+                    sx={{ 
+                        py: 0.2, 
+                        px: 1,
+                        transform: 'translateZ(0)', // Prevent flickering of children
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5, transform: 'translateZ(0)' }}>
                         {item.isDirectory ? (isOpen ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />) : <Box sx={{ width: 20 }} />}
                     </ListItemIcon>
                     {showIcons && (
-                        <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5, transform: 'translateZ(0)' }}>
                             {item.isDirectory ? <FolderIcon fontSize="small" /> : <InsertDriveFileIcon fontSize="small" />}
                         </ListItemIcon>
                     )}
-                    <ListItemText primary={item.name} primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }} />
+                    <ListItemText 
+                        primary={item.name} 
+                        primaryTypographyProps={{ 
+                            sx: { 
+                                fontSize: '0.875rem',
+                                transform: 'translateZ(0)', // Optimization to prevent flickering on collapse
+                            } 
+                        }} 
+                    />
                 </ListItemButton>
             </ListItem>
             <Menu
@@ -100,12 +123,17 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
                 <MenuItem sx={{ pl: 1 }} onClick={handleDelete}>{t('Delete')}</MenuItem>
             </Menu>
             {item.isDirectory && (
-                <Collapse in={isOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
+                <Collapse in={isOpen} timeout={200} unmountOnExit>
+                    <Box
+                        sx={(theme) => ({
+                            paddingLeft: theme.spacing(2),
+                            backgroundColor: theme.palette.action.hover,
+                        })}
+                    >
                         {children.map((child) => (
-                            <TreeViewItem key={child.path} item={child} depth={depth + 1} {...{ showIcons, uiScale, selectedNode, setSelectedNode, refreshTreeView }} />
+                            <TreeViewItem key={child.path} item={child} depth={depth} {...{ showIcons, uiScale, selectedNode, setSelectedNode, refreshTreeView }} />
                         ))}
-                    </List>
+                    </Box>
                 </Collapse>
             )}
         </>

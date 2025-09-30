@@ -135,7 +135,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
             <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
           </Box>
         </Toolbar>
-        <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
+        <Box sx={{ overflowY: 'scroll', flexGrow: 1 }}>
           {isResizing && <Box sx={{ position: 'absolute', inset: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
           {renderTree && workspacePath ? (
             <TreeView
