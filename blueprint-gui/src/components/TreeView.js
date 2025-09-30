@@ -13,142 +13,101 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-const TreeViewItem = ({ item, refreshTreeView, onNewItem, depth, showIcons, uiScale }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [children, setChildren] = useState([]);
-  const [contextMenu, setContextMenu] = useState(null);
+const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelectedNode, refreshTreeView }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [children, setChildren] = useState([]);
+    const [contextMenu, setContextMenu] = useState(null);
+    const isSelected = selectedNode?.path === item.path;
 
-  const handleToggle = async () => {
-    if (item.isDirectory) {
-      setIsOpen(!isOpen);
-      if (!children.length) {
-        const fetchedChildren = await window.electron.readDirectory(item.path);
-        setChildren(fetchedChildren);
-      }
-    }
-  };
-
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX / uiScale,
-            mouseY: event.clientY / uiScale,
-          }
-        : null,
-    );
-  };
-
-  const handleClose = () => {
-    setContextMenu(null);
-  };
-
-  const handleNewFile = () => {
-    onNewItem('file', item.isDirectory ? item.path : window.electron.path.dirname(item.path));
-    handleClose();
-  };
-
-  const handleNewFolder = () => {
-    onNewItem('folder', item.isDirectory ? item.path : window.electron.path.dirname(item.path));
-    handleClose();
-  };
-
-  const handleDelete = async () => {
-    let result;
-    if (item.isDirectory) {
-      result = await window.electron.deleteDirectory(item.path);
-    } else {
-      result = await window.electron.deleteFile(item.path);
-    }
-
-    if (result.success) {
-      refreshTreeView();
-    } else {
-      console.error(result.error);
-    }
-
-    handleClose();
-  };
-
-  return (
-    <>
-      <ListItem disablePadding sx={{ pl: depth * 1.5, py: 0 }} onContextMenu={handleContextMenu}>
-        <ListItemButton onClick={handleToggle} sx={{ py: 0.2, px: 1 }}>
-          <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
-            {item.isDirectory ? (
-              isOpen ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />
-            ) : (
-              <Box sx={{ width: 20 }} /> // Placeholder for alignment
-            )}
-          </ListItemIcon>
-          {showIcons && (
-            <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
-              {item.isDirectory ? <FolderIcon fontSize="small" /> : <InsertDriveFileIcon fontSize="small" />}
-            </ListItemIcon>
-          )}
-          <ListItemText primary={item.name} primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }} />
-        </ListItemButton>
-      </ListItem>
-      <Menu
-        open={contextMenu !== null}
-        onClose={handleClose}
-        disablePortal
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
+    useEffect(() => {
+        if (item.isDirectory && isOpen) {
+            const fetchChildren = async () => {
+                const fetchedChildren = await window.electron.readDirectory(item.path);
+                setChildren(fetchedChildren);
+            };
+            fetchChildren();
         }
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            borderRadius: 0,
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
-            border: (theme) => `1px solid ${theme.palette.divider}`,
-          },
-        }}
-        MenuListProps={{ dense: true, sx: { py: 0.5 } }}
-      >
-        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleNewFile}><ListItemText primary="New File" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
-        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleNewFolder}><ListItemText primary="New Folder" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
-        <MenuItem sx={{ py: 0.25, px: 1.5, minHeight: 'auto' }} onClick={handleDelete}><ListItemText primary="Delete" primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} /></MenuItem>
-      </Menu>
-      {item.isDirectory && (
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {children.map((child) => (
-              <TreeViewItem key={child.path} item={child} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={depth + 1} showIcons={showIcons} uiScale={uiScale} />
-            ))}
-          </List>
-        </Collapse>
-      )}
-    </>
-  );
+    }, [isOpen, item.path, item.isDirectory, refreshTreeView]);
+
+    const handleToggle = () => {
+        setSelectedNode(item);
+        if (item.isDirectory) {
+            setIsOpen(!isOpen);
+        }
+    };
+
+    const handleContextMenu = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedNode(item);
+        setContextMenu({ mouseX: event.clientX / uiScale, mouseY: event.clientY / uiScale });
+    };
+
+    const handleClose = () => setContextMenu(null);
+    
+    const handleDelete = async () => {
+        const result = item.isDirectory
+            ? await window.electron.deleteDirectory(item.path)
+            : await window.electron.deleteFile(item.path);
+        if (result.success) {
+            refreshTreeView(); 
+        } else {
+            console.error(result.error);
+        }
+        handleClose();
+    };
+
+    return (
+        <>
+            <ListItem
+                disablePadding
+                sx={{ pl: depth * 1.5, py: 0, backgroundColor: isSelected ? 'action.hover' : 'transparent' }}
+                onContextMenu={handleContextMenu}
+            >
+                <ListItemButton onClick={handleToggle} sx={{ py: 0.2, px: 1 }}>
+                    <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
+                        {item.isDirectory ? (isOpen ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />) : <Box sx={{ width: 20 }} />}
+                    </ListItemIcon>
+                    {showIcons && (
+                        <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5 }}>
+                            {item.isDirectory ? <FolderIcon fontSize="small" /> : <InsertDriveFileIcon fontSize="small" />}
+                        </ListItemIcon>
+                    )}
+                    <ListItemText primary={item.name} primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }} />
+                </ListItemButton>
+            </ListItem>
+            <Menu
+                open={contextMenu !== null}
+                onClose={handleClose}
+                disablePortal
+                anchorReference="anchorPosition"
+                anchorPosition={contextMenu ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+            >
+                <MenuItem onClick={handleDelete}>Delete</MenuItem>
+            </Menu>
+            {item.isDirectory && (
+                <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {children.map((child) => (
+                            <TreeViewItem key={child.path} item={child} depth={depth + 1} {...{ showIcons, uiScale, selectedNode, setSelectedNode, refreshTreeView }} />
+                        ))}
+                    </List>
+                </Collapse>
+            )}
+        </>
+    );
 };
 
-const TreeView = ({ rootPath, onNewItem, refreshTreeView, showIcons, uiScale }) => {
-  const [rootItems, setRootItems] = useState([]);
+const TreeView = (props) => {
+    const { treeData } = props;
 
-  useEffect(() => {
-    const loadRoot = async () => {
-      if (rootPath) {
-        const items = await window.electron.readDirectory(rootPath);
-        setRootItems(items);
-      }
-    };
-    loadRoot();
-  }, [rootPath, refreshTreeView]);
-
-  return (
-    <List dense>
-      {rootItems.map((item) => (
-        <TreeViewItem key={item.path} item={item} refreshTreeView={refreshTreeView} onNewItem={onNewItem} depth={1} showIcons={showIcons} uiScale={uiScale} />
-      ))}
-    </List>
-  );
+    return (
+        <List dense>
+            {treeData.map((item) => (
+                <TreeViewItem key={item.path} item={item} depth={1} {...props} />
+            ))}
+        </List>
+    );
 };
 
 export default TreeView;

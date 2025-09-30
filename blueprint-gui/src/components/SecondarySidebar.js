@@ -12,13 +12,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import CheckIcon from '@mui/icons-material/Check';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useLanguage } from '../contexts/LanguageContext';
 import TreeView from './TreeView';
 
@@ -29,15 +24,14 @@ const maxDrawerWidth = 500;
 const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogConfig, setDialogConfig] = useState({ type: '', path: '' });
-  const [itemName, setItemName] = useState('');
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef(null);
   const [renderTree, setRenderTree] = useState(false);
   const [settingsAnchorPos, setSettingsAnchorPos] = useState(null);
   const [settings, setSettings] = useState({ showIcons: true, showOnStart: false });
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [treeData, setTreeData] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -50,112 +44,70 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
   }, []);
 
   useEffect(() => {
-    // When closing, unmount the tree immediately to prevent lag
-    if (!open) {
-      setRenderTree(false);
-    }
+    if (!open) setRenderTree(false);
   }, [open]);
+
+  useEffect(() => {
+    setSelectedNode(null);
+    const loadTree = async () => {
+        if (workspacePath) {
+            const items = await window.electron.readDirectory(workspacePath);
+            setTreeData(items);
+        } else {
+            setTreeData([]);
+        }
+    };
+    loadTree();
+  }, [workspacePath, refreshKey]);
+
+  const refreshTreeView = () => setRefreshKey(prev => prev + 1);
 
   const handleOpenWorkspace = async () => {
     if (window.electron) {
       const path = await window.electron.setWorkspacePath();
-      if (path) {
-        setWorkspacePath(path);
-      }
+      if (path) setWorkspacePath(path);
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const refreshTreeView = () => {
-    setRefreshKey(prevKey => prevKey + 1);
-  };
-
-  const handleNewItem = (type, path) => {
-    setDialogConfig({ type, path: path || workspacePath });
-    setDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setItemName('');
-  };
-
-  const handleDialogSubmit = async () => {
-    if (!itemName) return;
-    const { type, path } = dialogConfig;
-    const fullPath = `${path}\${itemName}`;
-    let result;
-    if (type === 'file') {
-      result = await window.electron.createFile(fullPath);
-    } else {
-      result = await window.electron.createDirectory(fullPath);
-    }
-    if (result.success) {
-      refreshTreeView();
-    } else {
-      console.error(result.error);
-    }
-    handleDialogClose();
-  };
+  const handleClose = () => setOpen(false);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
     setIsResizing(true);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleMouseMove = useCallback((e) => {
-    if (sidebarRef.current) {
+    if (isResizing && sidebarRef.current) {
       const newWidth = e.clientX - sidebarRef.current.getBoundingClientRect().left;
-      if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
-        window.requestAnimationFrame(() => {
-          if (sidebarRef.current) {
-            sidebarRef.current.style.width = `${newWidth}px`;
-            if (sidebarRef.current.firstChild) {
-              sidebarRef.current.firstChild.style.width = `${newWidth}px`;
-            }
-          }
-        });
-      }
+      if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) setDrawerWidth(newWidth);
     }
-  }, []);
+  }, [isResizing]);
 
-  const handleMouseUp = () => {
-    setIsResizing(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-    if (sidebarRef.current) {
-      const newWidth = parseFloat(sidebarRef.current.style.width);
-      setDrawerWidth(newWidth);
-      sidebarRef.current.style.width = ''; // Clean up inline style to allow CSS transition
-      if (sidebarRef.current.firstChild) {
-        sidebarRef.current.firstChild.style.width = '';
-      }
+  const handleMouseUp = useCallback(() => setIsResizing(false), []);
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
     }
-  };
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const handleSettingsClick = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    setSettingsAnchorPos({
-      top: rect.bottom / uiScale,
-      left: rect.left / uiScale,
-    });
-  };
-
-  const handleSettingsClose = () => {
-    setSettingsAnchorPos(null);
+    setSettingsAnchorPos({ top: rect.bottom / uiScale, left: rect.left / uiScale });
   };
 
   const handleSettingChange = (settingName) => {
     const newSettings = { ...settings, [settingName]: !settings[settingName] };
     setSettings(newSettings);
-    if (window.electron) {
-      window.electron.setWorkspaceSettings(newSettings);
-    }
+    if (window.electron) window.electron.setWorkspaceSettings(newSettings);
   };
 
   return (
@@ -166,141 +118,59 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
         width: open ? drawerWidth : 0,
         flexShrink: 0,
         overflow: 'hidden',
-        transition: isResizing ? 'none' : (theme) =>
-          theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
+        transition: isResizing ? 'none' : (theme) => theme.transitions.create('width'),
         position: 'relative',
       }}
     >
-      <Box sx={{
-        width: drawerWidth,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
-        color: (theme) => theme.palette.mode === 'dark' ? '#cccccc' : '#333333',
-      }}>
+      <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
         <Toolbar />
-        <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between', flexShrink: 0 }}>
+        <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
           <Box>
-            <Tooltip title={t('Open New Workspace')}>
-              <IconButton onClick={handleOpenWorkspace}>
-                <FolderOpenIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('New File')}>
-              <IconButton onClick={() => handleNewItem('file')}>
-                <NoteAddIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('New Folder')}>
-              <IconButton onClick={() => handleNewItem('folder')}>
-                <CreateNewFolderIcon />
-              </IconButton>
-            </Tooltip>
+            <Tooltip title={t('Open New Workspace')}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New File')}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New Folder')}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
           </Box>
           <Box>
-            <Tooltip title={t('Settings')}>
-              <IconButton onClick={handleSettingsClick}>
-                <MoreVertIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('Close Sidebar')}>
-              <IconButton onClick={handleClose}>
-                <CloseIcon />
-              </IconButton>
-            </Tooltip>
+            <Tooltip title={t('Settings')}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Close Sidebar')}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
           </Box>
         </Toolbar>
-        <Box sx={{ overflowY: 'auto', flexGrow: 1, position: 'relative' }}>
-          {isResizing && <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
+        <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
+          {isResizing && <Box sx={{ position: 'absolute', inset: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
           {renderTree && workspacePath ? (
             <TreeView
-              rootPath={workspacePath}
-              key={refreshKey}
-              onNewItem={handleNewItem}
-              refreshTreeView={refreshTreeView}
+              treeData={treeData}
               showIcons={settings.showIcons}
               uiScale={uiScale}
+              selectedNode={selectedNode}
+              setSelectedNode={setSelectedNode}
+              refreshTreeView={refreshTreeView}
             />
           ) : (
             renderTree && !workspacePath && (
               <Box sx={{ p: 2, textAlign: 'center' }}>
-                <Button variant="contained" onClick={handleOpenWorkspace}>
-                  {t('Open Workspace')}
-                </Button>
+                <Button variant="contained" onClick={handleOpenWorkspace}>{t('Open Workspace')}</Button>
               </Box>
             )
           )}
         </Box>
       </Box>
-      <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          width: '5px',
-          cursor: 'col-resize',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 100,
-        }}
-      />
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>{dialogConfig.type === 'file' ? t('Create New File') : t('Create New Folder')}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {t('Please enter a name for the new ' + dialogConfig.type + '.')} 
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label={t('Name')}
-            type="text"
-            fullWidth
-            variant="standard"
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>{t('Cancel')}</Button>
-          <Button onClick={handleDialogSubmit}>{t('Create')}</Button>
-        </DialogActions>
-      </Dialog>
+      <Box onMouseDown={handleMouseDown} sx={{ width: '5px', cursor: 'col-resize', position: 'absolute', top: 0, right: 0, bottom: 0, zIndex: 100 }} />
       <Menu
         open={Boolean(settingsAnchorPos)}
-        onClose={handleSettingsClose}
+        onClose={() => setSettingsAnchorPos(null)}
         disablePortal
         anchorReference="anchorPosition"
         anchorPosition={settingsAnchorPos}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        MenuListProps={{ dense: true, sx: { py: 0.5 } }}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            borderRadius: 0,
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
-            border: (theme) => `1px solid ${theme.palette.divider}`,
-          },
-        }}
       >
-        <MenuItem onClick={() => handleSettingChange('showIcons')} sx={{ pl: 1, py: 0.25, minHeight: 'auto' }}>
-          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center', mr: 0.5 }}>
-            {settings.showIcons && <CheckIcon sx={{ fontSize: '1rem' }} />}
-          </Box>
-          <ListItemText primary={t('Workspace Icons')} primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} />
+        <MenuItem onClick={() => handleSettingChange('showIcons')}>
+          <ListItemIcon>{settings.showIcons && <CheckIcon />}</ListItemIcon>
+          <ListItemText>{t('Workspace Icons')}</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => handleSettingChange('showOnStart')} sx={{ pl: 1, py: 0.25, minHeight: 'auto' }}>
-          <Box sx={{ width: '20px', display: 'flex', alignItems: 'center', mr: 0.5 }}>
-            {settings.showOnStart && <CheckIcon sx={{ fontSize: '1rem' }} />}
-          </Box>
-          <ListItemText primary={t('Show Workspace on Start')} primaryTypographyProps={{ sx: { fontSize: '0.875rem', fontWeight: 400 } }} />
+        <MenuItem onClick={() => handleSettingChange('showOnStart')}>
+          <ListItemIcon>{settings.showOnStart && <CheckIcon />}</ListItemIcon>
+          <ListItemText>{t('Show Workspace on Start')}</ListItemText>
         </MenuItem>
       </Menu>
     </Box>

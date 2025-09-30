@@ -115,28 +115,6 @@ ipcMain.handle('read-directory', async (event, dirPath) => {
   }
 });
 
-// IPC handler for creating a new file
-ipcMain.handle('create-file', async (event, filePath) => {
-  try {
-    fs.writeFileSync(filePath, '');
-    return { success: true };
-  } catch (error) {
-    console.error(`Error creating file ${filePath}:`, error);
-    return { success: false, error: error.message };
-  }
-});
-
-// IPC handler for creating a new directory
-ipcMain.handle('create-directory', async (event, dirPath) => {
-  try {
-    fs.mkdirSync(dirPath);
-    return { success: true };
-  } catch (error) {
-    console.error(`Error creating directory ${dirPath}:`, error);
-    return { success: false, error: error.message };
-  }
-});
-
 // IPC handler for deleting a file
 ipcMain.handle('delete-file', async (event, filePath) => {
   try {
