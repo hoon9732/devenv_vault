@@ -112,7 +112,14 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
     if (sidebarRef.current) {
       const newWidth = e.clientX - sidebarRef.current.getBoundingClientRect().left;
       if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
-        sidebarRef.current.style.width = `${newWidth}px`;
+        window.requestAnimationFrame(() => {
+          if (sidebarRef.current) {
+            sidebarRef.current.style.width = `${newWidth}px`;
+            if (sidebarRef.current.firstChild) {
+              sidebarRef.current.firstChild.style.width = `${newWidth}px`;
+            }
+          }
+        });
       }
     }
   }, []);
@@ -125,6 +132,9 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
       const newWidth = parseFloat(sidebarRef.current.style.width);
       setDrawerWidth(newWidth);
       sidebarRef.current.style.width = ''; // Clean up inline style to allow CSS transition
+      if (sidebarRef.current.firstChild) {
+        sidebarRef.current.firstChild.style.width = '';
+      }
     }
   };
 
@@ -151,69 +161,75 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath }) =>
       sx={{
         width: open ? drawerWidth : 0,
         flexShrink: 0,
-        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
-        color: (theme) => theme.palette.mode === 'dark' ? '#cccccc' : '#333333',
         overflow: 'hidden',
         transition: isResizing ? 'none' : (theme) =>
           theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
-        display: 'flex',
-        flexDirection: 'column',
         position: 'relative',
       }}
     >
-      <Toolbar />
-      <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between', flexShrink: 0 }}>
-        <Box>
-          <Tooltip title={t('Open New Workspace')}>
-            <IconButton onClick={handleOpenWorkspace}>
-              <FolderOpenIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('New File')}>
-            <IconButton onClick={() => handleNewItem('file')}>
-              <NoteAddIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('New Folder')}>
-            <IconButton onClick={() => handleNewItem('folder')}>
-              <CreateNewFolderIcon />
-            </IconButton>
-          </Tooltip>
+      <Box sx={{
+        width: drawerWidth,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#252526' : '#f3f3f3',
+        color: (theme) => theme.palette.mode === 'dark' ? '#cccccc' : '#333333',
+      }}>
+        <Toolbar />
+        <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between', flexShrink: 0 }}>
+          <Box>
+            <Tooltip title={t('Open New Workspace')}>
+              <IconButton onClick={handleOpenWorkspace}>
+                <FolderOpenIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('New File')}>
+              <IconButton onClick={() => handleNewItem('file')}>
+                <NoteAddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('New Folder')}>
+              <IconButton onClick={() => handleNewItem('folder')}>
+                <CreateNewFolderIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Box>
+            <Tooltip title={t('Settings')}>
+              <IconButton onClick={handleSettingsClick}>
+                <MoreVertIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('Close Sidebar')}>
+              <IconButton onClick={handleClose}>
+                <CloseIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Toolbar>
+        <Box sx={{ overflowY: 'auto', flexGrow: 1, position: 'relative' }}>
+          {isResizing && <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
+          {renderTree && workspacePath ? (
+            <TreeView
+              rootPath={workspacePath}
+              key={refreshKey}
+              onNewItem={handleNewItem}
+              refreshTreeView={refreshTreeView}
+              showIcons={settings.showIcons}
+            />
+          ) : (
+            renderTree && !workspacePath && (
+              <Box sx={{ p: 2, textAlign: 'center' }}>
+                <Button variant="contained" onClick={handleOpenWorkspace}>
+                  {t('Open Workspace')}
+                </Button>
+              </Box>
+            )
+          )}
         </Box>
-        <Box>
-          <Tooltip title={t('Settings')}>
-            <IconButton onClick={handleSettingsClick}>
-              <MoreVertIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('Close Sidebar')}>
-            <IconButton onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Toolbar>
-      <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
-        {renderTree && workspacePath ? (
-          <TreeView
-            rootPath={workspacePath}
-            key={refreshKey}
-            onNewItem={handleNewItem}
-            refreshTreeView={refreshTreeView}
-            showIcons={settings.showIcons}
-          />
-        ) : (
-          renderTree && !workspacePath && (
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Button variant="contained" onClick={handleOpenWorkspace}>
-                {t('Open Workspace')}
-              </Button>
-            </Box>
-          )
-        )}
       </Box>
       <Box
         onMouseDown={handleMouseDown}
