@@ -103,7 +103,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -117,7 +117,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
                 <ListItemIcon sx={{ color: item.color }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -131,7 +131,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
               <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)}>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
+                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
                 </ListItemButton>
               </ListItem>
             ))}

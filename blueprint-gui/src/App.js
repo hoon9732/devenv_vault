@@ -176,7 +176,7 @@ function App() {
           height: `${100 / uiScale}vh`,
         }}>
           <CssBaseline />
-          <Topbar handleDrawerToggle={handleDrawerToggle} />
+          <Topbar handleDrawerToggle={handleDrawerToggle} open={open} />
           <Sidebar open={open} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} />
           <Box
             sx={{
