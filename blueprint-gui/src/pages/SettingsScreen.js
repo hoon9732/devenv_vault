@@ -21,13 +21,13 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
 
   const handleScaleChange = (event) => {
     const displayedValue = event.target.value;
-    // Convert the displayed percentage (where 100 means 0.8 scale) to the internal scale value
-    const internalScale = (displayedValue / 100) * 0.8;
+    // Convert the displayed percentage (where 100 means 1 scale) to the internal scale value
+    const internalScale = displayedValue / 100;
     setUiScale(internalScale);
   };
 
-  // Convert the internal scale (where 0.8 is the default) to the displayed percentage (where 100 is the default)
-  const displayedScale = Math.round((uiScale / 0.8) * 100);
+  // Convert the internal scale to the displayed percentage
+  const displayedScale = Math.round(uiScale * 100);
   const scaleOptions = [70, 80, 90, 100, 110, 120, 130, 140, 150];
 
   return (

@@ -1,10 +1,19 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { translations } from '../i18n';
+import { getSettings } from '../utils/settingsManager';
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const settings = await getSettings();
+      setLanguage(settings.language);
+    };
+    loadSettings();
+  }, []);
 
   const t = (key) => {
     return translations[language][key] || key;

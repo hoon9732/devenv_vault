@@ -89,7 +89,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
     } else if (item.text === t('Help')) {
       handleHelpClick();
     } else if (item.text === t('Profile')) {
-      handleModalOpen(item.text);
+      handleModalOpen('Profile');
     }
   };
 

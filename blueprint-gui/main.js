@@ -206,6 +206,45 @@ ipcMain.handle('write-profile', async (event, data) => {
   }
 });
 
+// --- Settings ---
+const settingsFilePath = path.join(app.getPath('userData'), 'settings.json');
+
+const defaultSettings = {
+  theme: 'dark',
+  language: 'en',
+  scale: 1,
+};
+
+function readSettings() {
+  try {
+    if (fs.existsSync(settingsFilePath)) {
+      const settings = JSON.parse(fs.readFileSync(settingsFilePath, 'utf-8'));
+      return { ...defaultSettings, ...settings };
+    } else {
+      fs.writeFileSync(settingsFilePath, JSON.stringify(defaultSettings, null, 2));
+      return defaultSettings;
+    }
+  } catch (error) {
+    console.error('Error reading settings file:', error);
+    return defaultSettings;
+  }
+}
+
+ipcMain.handle('get-settings', () => {
+  return readSettings();
+});
+
+ipcMain.handle('save-settings', (event, settings) => {
+  try {
+    const existingSettings = readSettings();
+    const newSettings = { ...existingSettings, ...settings };
+    fs.writeFileSync(settingsFilePath, JSON.stringify(newSettings, null, 2));
+  } catch (error) {
+    console.error('Error writing settings file:', error);
+  }
+});
+// --- End Settings ---
+
 // IPC handler for opening the help window
 ipcMain.handle('open-help-window', (event, theme) => {
   const helpWin = new BrowserWindow({

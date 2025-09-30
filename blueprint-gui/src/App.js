@@ -18,18 +18,36 @@ import SecondarySidebar from './components/SecondarySidebar';
 import { useLanguage } from './contexts/LanguageContext';
 import AppModal from './components/AppModal';
 import ProfileContent from './components/ProfileContent';
+import { getSettings, saveSettings } from './utils/settingsManager';
 
 function App() {
   const [open, setOpen] = useState(true);
   const [isSecondaryOpen, setIsSecondaryOpen] = useState(false); // Independent state for secondary sidebar visibility
   const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
   const [fileContent, setFileContent] = useState('');
-  const [themeMode, setThemeMode] = useState('light');
-  const [uiScale, setUiScale] = useState(0.8);
+  const [themeMode, setThemeMode] = useState('dark');
+  const [uiScale, setUiScale] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const settings = await getSettings();
+      setThemeMode(settings.theme);
+      setUiScale(settings.scale);
+      setIsLoading(false);
+    };
+    loadSettings();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      saveSettings({ theme: themeMode, scale: uiScale, language });
+    }
+  }, [themeMode, uiScale, language, isLoading]);
 
   // Fetch the workspace path when the app loads
   useEffect(() => {

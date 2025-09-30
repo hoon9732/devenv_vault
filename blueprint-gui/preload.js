@@ -14,6 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
   deleteDirectory: (path) => ipcRenderer.invoke('delete-directory', path),
   getWorkspaceSettings: () => ipcRenderer.invoke('get-workspace-settings'),
   setWorkspaceSettings: (settings) => ipcRenderer.invoke('set-workspace-settings', settings),
+  getSettings: () => ipcRenderer.invoke('get-settings'),
+  saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings),
   path: {
     dirname: (p) => require('path').dirname(p),
   },
