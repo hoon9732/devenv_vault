@@ -34,5 +34,6 @@ export const translations = {
     'Sheet': '시트',
     'Flowchart': '순서도',
     'Docs': '문서',
+    'Delete': '삭제',
   }
 };

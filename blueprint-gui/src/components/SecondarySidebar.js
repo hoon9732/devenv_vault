@@ -101,7 +101,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
 
   const handleSettingsClick = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    setSettingsAnchorPos({ top: rect.bottom / uiScale, left: rect.left / uiScale });
+    setSettingsAnchorPos({ top: rect.bottom, left: rect.left });
   };
 
   const handleSettingChange = (settingName) => {
@@ -126,13 +126,13 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
         <Toolbar />
         <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
           <Box>
-            <Tooltip title={t('Open New Workspace')}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New File')}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New Folder')}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Open New Workspace')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
+            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
           </Box>
           <Box>
-            <Tooltip title={t('Settings')}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
-            <Tooltip title={t('Close Sidebar')}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
           </Box>
         </Toolbar>
         <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
@@ -159,10 +159,16 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
       <Menu
         open={Boolean(settingsAnchorPos)}
         onClose={() => setSettingsAnchorPos(null)}
-        disablePortal
+        transitionDuration={0}
         anchorReference="anchorPosition"
         anchorPosition={settingsAnchorPos}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        PaperProps={{
+            style: {
+                transform: `scale(${uiScale})`,
+                transformOrigin: 'top left',
+            },
+        }}
       >
         <MenuItem onClick={() => handleSettingChange('showIcons')}>
           <ListItemIcon>{settings.showIcons && <CheckIcon />}</ListItemIcon>

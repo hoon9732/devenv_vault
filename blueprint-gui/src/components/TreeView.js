@@ -12,8 +12,10 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelectedNode, refreshTreeView }) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [children, setChildren] = useState([]);
     const [contextMenu, setContextMenu] = useState(null);
@@ -40,7 +42,7 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
         event.preventDefault();
         event.stopPropagation();
         setSelectedNode(item);
-        setContextMenu({ mouseX: event.clientX / uiScale, mouseY: event.clientY / uiScale });
+        setContextMenu({ mouseX: event.clientX, mouseY: event.clientY });
     };
 
     const handleClose = () => setContextMenu(null);
@@ -61,7 +63,7 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
         <>
             <ListItem
                 disablePadding
-                sx={{ pl: depth * 1.5, py: 0, backgroundColor: isSelected ? 'action.hover' : 'transparent' }}
+                sx={{ pl: depth * 1, py: 0, backgroundColor: isSelected ? 'action.hover' : 'transparent' }}
                 onContextMenu={handleContextMenu}
             >
                 <ListItemButton onClick={handleToggle} sx={{ py: 0.2, px: 1 }}>
@@ -79,11 +81,17 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
             <Menu
                 open={contextMenu !== null}
                 onClose={handleClose}
-                disablePortal
+                transitionDuration={0}
                 anchorReference="anchorPosition"
                 anchorPosition={contextMenu ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+                PaperProps={{
+                    style: {
+                        transform: `scale(${uiScale})`,
+                        transformOrigin: 'top left',
+                    },
+                }}
             >
-                <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                <MenuItem onClick={handleDelete}>{t('Delete')}</MenuItem>
             </Menu>
             {item.isDirectory && (
                 <Collapse in={isOpen} timeout="auto" unmountOnExit>
@@ -102,7 +110,7 @@ const TreeView = (props) => {
     const { treeData } = props;
 
     return (
-        <List dense>
+        <List dense sx={{ padding: 0 }}>
             {treeData.map((item) => (
                 <TreeViewItem key={item.path} item={item} depth={1} {...props} />
             ))}
