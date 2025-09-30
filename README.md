@@ -1,11 +1,20 @@
+# 2025-09-30
+
+Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.
+Major Requirement: The resulting software should be responsive and light(resource-wise), also robust and open for later development.
+Current state: I have started developing the most basic UI elements based on react, electron, blueprint.js in a npm-based environment.
+I have concluded that the react based GUI is light and modern, and might be visually simple. However, I still cannot decide how to develop the actual back-end of the SW, which is the core. I have found out about the concept of MBSE development principle done by software like CATIA Magic, which enables a smooth process form UML 2 system diagram to actual simulation and modeling. 
+
+Back-end Requirement: 
+
+Development environment factors: Due to the unstable current development environment, where the developing PC regularly wipes its user-edited files on reboot for security reasons.So the development environment better be light, so that i can redownload the exact environment every time of PC reboot.
+
 # 2025-09-26
 
 So the workspace button is now very crucial. We need to implement a more complex feature.
 1. clicking the workspace button would open up secondary sidebar with only a simple rectange button "Open Workspace" on the top. Clicking the button would open up file explorer window which will make us choose the folder of default workspace that the whole app is working on. 
 2. After the workspace is chosen, the secondary sidebar should work as an in-app file explorer as in modern vscode app. The folders and files should be shown in icons and names, and should be structured as a list. They should be collapsable by clicking '>' or 'V' shaped icons left of the left of the file/folder icon as in vscode.
 3. After any workspace is loaded, there should be a small topbar of icons on top of the secondary sidebar(now called "explorer sidebar") which has icons for 'open new workspace', 'create new file', 'create new folder'(but they have icons only), and a simple close 'X' button to the very right of the explorer sidebar which closes it(but the workspace setting always remains. even after the app is turned off!) which does exactly what it says, just as in vscode.
-4. 
-
 
 # 2025-09-24
 
