@@ -50,10 +50,10 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
       <Typography variant="h4" gutterBottom>{t('Settings')}</Typography>
 
       <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
+        <Box sx={{ mr: 2 }}>
           <Typography variant="h6">{t('UI Scale')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('Adjust the overall size of the application interface.')}
+            {t('Adjust the overall UI scale.')}
           </Typography>
         </Box>
         <FormControl sx={{ width: 240 }}>
@@ -76,7 +76,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
 	  <Divider sx={{ my: 2 }} />
 	  
       <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
+        <Box sx={{ mr: 2 }}>
           <Typography variant="h6">{t('Theme')}</Typography>
           <Typography variant="body2" color="text.secondary">
             {t('Select your preferred color mode.')}
@@ -101,7 +101,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
       <Divider sx={{ my: 2 }} />
 
       <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
+        <Box sx={{ mr: 2 }}>
           <Typography variant="h6">{t('Language')}</Typography>
           <Typography variant="body2" color="text.secondary">
             {t('Choose the application language.')}
