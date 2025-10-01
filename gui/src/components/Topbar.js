@@ -43,7 +43,7 @@ const Topbar = ({ handleDrawerToggle, open, ...props }) => {
         <Divider orientation="vertical" flexItem />
 
         <Typography variant="h6" noWrap component="div" sx={{ pl: 2, color: (theme) => theme.palette.mode === 'dark' ? '#ffffff' : '#000000' }}>
-          ICD Viewer
+          ICDV
         </Typography>
       </Toolbar>
       <Divider />

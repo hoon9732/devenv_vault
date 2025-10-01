@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const url = require('url');
 
 // --- Configuration Management ---
 const configPath = path.join(app.getPath('userData'), 'config.json');
@@ -39,7 +40,11 @@ function createWindow () {
     }
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, 'build/index.html')}`;
+  const startUrl = process.env.ELECTRON_START_URL || url.format({
+    pathname: path.join(__dirname, 'build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  });
   win.loadURL(startUrl);
 }
 
@@ -139,7 +144,6 @@ ipcMain.handle('delete-directory', async (event, dirPath) => {
   }
 });
 
-
 // IPC handler for opening a file dialog
 ipcMain.handle('open-file-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -164,21 +168,34 @@ ipcMain.handle('open-file-dialog', async () => {
 
 // IPC handler for reading profile data
 ipcMain.handle('read-profile', async () => {
-  const profilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+  const userProfilePath = path.join(app.getPath('userData'), 'profile.json');
+  const defaultProfilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+
   try {
-    const content = fs.readFileSync(profilePath, 'utf-8');
+    // If the user profile doesn't exist, create it from the default.
+    if (!fs.existsSync(userProfilePath)) {
+      fs.copyFileSync(defaultProfilePath, userProfilePath);
+    }
+    const content = fs.readFileSync(userProfilePath, 'utf-8');
     return content;
   } catch (error) {
-    console.error('Failed to read profile', error);
-    return null;
+    console.error('Failed to read or create profile', error);
+    // If all else fails, try to return the default profile directly.
+    try {
+      const content = fs.readFileSync(defaultProfilePath, 'utf-8');
+      return content;
+    } catch (defaultError) {
+      console.error('Failed to read default profile', defaultError);
+      return null;
+    }
   }
 });
 
 // IPC handler for writing profile data
 ipcMain.handle('write-profile', async (event, data) => {
-  const profilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+  const userProfilePath = path.join(app.getPath('userData'), 'profile.json');
   try {
-    fs.writeFileSync(profilePath, data, 'utf-8');
+    fs.writeFileSync(userProfilePath, data, 'utf-8');
     return { success: true };
   } catch (error) {
     console.error('Failed to write profile', error);
@@ -187,38 +204,34 @@ ipcMain.handle('write-profile', async (event, data) => {
 });
 
 // --- Settings ---
-const settingsFilePath = path.join(app.getPath('userData'), 'settings.json');
-
-const defaultSettings = {
-  theme: 'dark',
-  language: 'en',
-  scale: 1,
-};
-
-function readSettings() {
-  try {
-    if (fs.existsSync(settingsFilePath)) {
-      const settings = JSON.parse(fs.readFileSync(settingsFilePath, 'utf-8'));
-      return { ...defaultSettings, ...settings };
-    } else {
-      fs.writeFileSync(settingsFilePath, JSON.stringify(defaultSettings, null, 2));
-      return defaultSettings;
-    }
-  } catch (error) {
-    console.error('Error reading settings file:', error);
-    return defaultSettings;
-  }
-}
-
 ipcMain.handle('get-settings', () => {
-  return readSettings();
+  const userSettingsPath = path.join(app.getPath('userData'), 'settings.json');
+  const defaultSettingsPath = path.join(__dirname, 'src', 'profile', 'settings.json');
+
+  try {
+    // If the user settings file doesn't exist, create it from the default.
+    if (!fs.existsSync(userSettingsPath)) {
+      fs.copyFileSync(defaultSettingsPath, userSettingsPath);
+    }
+    const content = fs.readFileSync(userSettingsPath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error('Failed to read or create settings.json', error);
+    // If all else fails, try to return the default settings directly.
+    try {
+      const content = fs.readFileSync(defaultSettingsPath, 'utf-8');
+      return JSON.parse(content);
+    } catch (defaultError) {
+      console.error('Failed to read default settings.json', defaultError);
+      return null; // Return null if even the default is unreadable
+    }
+  }
 });
 
 ipcMain.handle('save-settings', (event, settings) => {
+  const userSettingsPath = path.join(app.getPath('userData'), 'settings.json');
   try {
-    const existingSettings = readSettings();
-    const newSettings = { ...existingSettings, ...settings };
-    fs.writeFileSync(settingsFilePath, JSON.stringify(newSettings, null, 2));
+    fs.writeFileSync(userSettingsPath, JSON.stringify(settings, null, 2));
   } catch (error) {
     console.error('Error writing settings file:', error);
   }
@@ -239,7 +252,12 @@ ipcMain.handle('open-help-window', (event, theme) => {
       contextIsolation: true,
     }
   });
-  const helpUrl = new URL(path.join(__dirname, 'public/help.html'), 'file:');
+  // The path to help.html is different in dev vs. packaged app.
+  const helpPath = process.env.ELECTRON_START_URL
+    ? path.join(__dirname, 'public/help.html')
+    : path.join(__dirname, 'build/help.html');
+
+  const helpUrl = new URL('file:' + helpPath);
   helpUrl.searchParams.set('theme', theme);
   helpWin.loadURL(helpUrl.href);
 });
