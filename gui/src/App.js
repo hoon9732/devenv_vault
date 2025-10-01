@@ -21,7 +21,7 @@ import ProfileContent from './components/ProfileContent';
 import { getSettings, saveSettings } from './utils/settingsManager';
 
 function App() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [isSecondaryOpen, setIsSecondaryOpen] = useState(false); // Independent state for secondary sidebar visibility
   const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
   const [fileContent, setFileContent] = useState('');
@@ -178,7 +178,7 @@ function App() {
         }}>
           <CssBaseline />
           <TitleBar />
-          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} />
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} uiScale={uiScale} />
           <Box
             sx={{
               display: 'flex',

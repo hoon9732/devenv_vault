@@ -7,30 +7,13 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
 import Popover from '@mui/material/Popover';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings';
-import Code from '@mui/icons-material/Code';
-import Face from '@mui/icons-material/Face';
-import Favorite from '@mui/icons-material/Favorite';
-import Fingerprint from '@mui/icons-material/Fingerprint';
-import Home from '@mui/icons-material/Home';
-import Pets from '@mui/icons-material/Pets';
-import Star from '@mui/icons-material/Star';
+import { Icon } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const icons = {
-  AccountCircle: AccountCircle,
-  AdminPanelSettings: AdminPanelSettings,
-  Code: Code,
-  Face: Face,
-  Favorite: Favorite,
-  Fingerprint: Fingerprint,
-  Home: Home,
-  Pets: Pets,
-  Star: Star,
-};
-
-const iconNames = Object.keys(icons);
+const iconNames = [
+  'user', 'person', 'shield', 'new-person', 'endorsed', 'id-number',
+  'code', 'cog', 'comparison',
+];
 
 const ProfileContent = () => {
   const { t } = useLanguage();
@@ -103,7 +86,7 @@ const ProfileContent = () => {
     return <Typography>{t('Loading profile...')}</Typography>;
   }
 
-  const ProfileIcon = icons[isEditMode ? editData.profileIcon : profile.profileIcon];
+  const profileIconName = isEditMode ? editData.profileIcon : profile.profileIcon;
   const dataToShow = isEditMode ? editData : profile;
 
   const textFieldStyles = {
@@ -134,7 +117,7 @@ const ProfileContent = () => {
           </>
         ) : (
           <IconButton onClick={handleEdit}>
-            <EditIcon />
+            <Icon icon="edit" />
           </IconButton>
         )}
       </Box>
@@ -143,12 +126,13 @@ const ProfileContent = () => {
         <IconButton
           onClick={handleIconClick}
           sx={{
-            width: 'clamp(100px, 25vh, 150px)',
-            height: 'clamp(100px, 25vh, 150px)',
-            cursor: isEditMode ? 'pointer' : 'default'
+            width: '120px',
+            height: '120px',
+            cursor: isEditMode ? 'pointer' : 'default',
+            p: 0,
           }}
         >
-          <ProfileIcon sx={{ width: '100%', height: '100%' }} />
+          <Icon icon={profileIconName} size={80} />
           {isEditMode && (
             <Box
               sx={{
@@ -158,7 +142,7 @@ const ProfileContent = () => {
                 borderRadius: '50%', opacity: 0, '&:hover': { opacity: 1 }
               }}
             >
-              <EditIcon />
+              <Icon icon="edit" size={32} />
             </Box>
           )}
         </IconButton>
@@ -167,15 +151,15 @@ const ProfileContent = () => {
           open={open}
           anchorEl={anchorEl}
           onClose={handleIconClose}
-          anchorOrigin={{ vertical: 'center', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'center', horizontal: 'right' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         >
-          <Box sx={{ p: 1, maxWidth: '150px' }}>
+          <Box sx={{ p: 1, width: '150px' }}>
             <Grid container spacing={1}>
               {iconNames.map((name) => (
                 <Grid item xs={4} key={name}>
-                  <IconButton onClick={() => handleIconSelect(name)}>
-                    {React.createElement(icons[name])}
+                  <IconButton sx={{ width: '100%', height: '100%' }} onClick={() => handleIconSelect(name)}>
+                    <Icon icon={name} size={24} />
                   </IconButton>
                 </Grid>
               ))}

@@ -107,6 +107,21 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
     if (window.electron) window.electron.setWorkspaceSettings(newSettings);
   };
 
+  const tooltipProps = {
+    placement: "top",
+    TransitionProps: { timeout: 0 },
+    PopperProps: {
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 2],
+          },
+        },
+      ],
+    },
+  };
+
   return (
     <Box
       ref={sidebarRef}
@@ -123,14 +138,14 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
         <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
           <Box>
-            <Tooltip title={t('Open Workspace')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleOpenWorkspace}><Icon icon="folder-open" /></IconButton></Tooltip>
-            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="document" /></IconButton></Tooltip>
-            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="folder-new" /></IconButton></Tooltip>
-            <Tooltip title={t('Refresh')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath} onClick={refreshTreeView}><Icon icon="refresh" /></IconButton></Tooltip>
+            <Tooltip title={t('Open Workspace')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleOpenWorkspace}><Icon icon="folder-open" /></IconButton></Tooltip>
+            <Tooltip title={t('New File')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="document" /></IconButton></Tooltip>
+            <Tooltip title={t('New Folder')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="folder-new" /></IconButton></Tooltip>
+            <Tooltip title={t('Refresh')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath} onClick={refreshTreeView}><Icon icon="refresh" /></IconButton></Tooltip>
           </Box>
           <Box>
-            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleSettingsClick}><Icon icon="more" /></IconButton></Tooltip>
-            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleClose}><Icon icon="cross" /></IconButton></Tooltip>
+            <Tooltip title={t('Settings')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleSettingsClick}><Icon icon="more" /></IconButton></Tooltip>
+            <Tooltip title={t('Close Sidebar')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleClose}><Icon icon="cross" /></IconButton></Tooltip>
           </Box>
         </Toolbar>
         <Divider sx={{ my: 0 }} />

@@ -8,16 +8,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-
-import HomeIcon from '@mui/icons-material/Home';
-import SearchIcon from '@mui/icons-material/Search';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import SettingsIcon from '@mui/icons-material/Settings';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import TableViewIcon from '@mui/icons-material/TableView';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import DescriptionIcon from '@mui/icons-material/Description';
+import Tooltip from '@mui/material/Tooltip';
+import { Icon } from '@blueprintjs/core';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -65,27 +57,28 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalOpen, handleHelpClick, ...props }) => {
+const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalOpen, handleHelpClick, uiScale, ...props }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
+  const iconSize = (uiScale / 0.8) * 20; // Base size of 20px at 80% scale
 
   const mainNavItems = [
-    { text: t('Home'), icon: <HomeIcon />, path: '/' },
-    { text: t('Search'), icon: <SearchIcon />, path: '/search' },
-    { text: t('Workspace'), icon: <FolderOpenIcon /> },
+    { text: t('Home'), icon: <Icon icon="home" size={iconSize} />, path: '/' },
+    { text: t('Search'), icon: <Icon icon="search" size={iconSize} />, path: '/search' },
+    { text: t('Workspace'), icon: <Icon icon="folder-open" size={iconSize} /> },
   ];
 
   const appNavItems = [
-    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)' },
-    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)' },
-    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)' },
+    { text: t('Sheet'), icon: <Icon icon="th" size={iconSize} color={isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)'} />, path: '/sheet' },
+    { text: t('Flowchart'), icon: <Icon icon="flow-linear" size={iconSize} color={isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)'} />, path: '/flowchart' },
+    { text: t('Docs'), icon: <Icon icon="document" size={iconSize} color={isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)'} />, path: '/docs' },
   ];
 
   const bottomNavItems = [
-      { text: t('Settings'), icon: <SettingsIcon />, path: '/settings' },
-      { text: t('Help'), icon: <HelpOutlineIcon /> },
-      { text: t('Profile'), icon: <AccountCircleIcon /> },
+      { text: t('Settings'), icon: <Icon icon="cog" size={iconSize} />, path: '/settings' },
+      { text: t('Help'), icon: <Icon icon="help" size={iconSize} /> },
+      { text: t('Profile'), icon: <Icon icon="user" size={iconSize} /> },
   ];
 
   const handleBottomNavClick = (item) => {
@@ -96,6 +89,21 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
     } else if (item.text === t('Profile')) {
       handleModalOpen('Profile');
     }
+  };
+
+  const tooltipProps = {
+    placement: "right",
+    TransitionProps: { timeout: 0 },
+    PopperProps: {
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 2], // [skidding, distance]
+          },
+        },
+      ],
+    },
   };
 
   return (
@@ -115,25 +123,26 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
         })}
       />
       <Box sx={{ paddingTop: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Hamburger Menu */}
         {/* Hamburger Menu & Arrow */}
         <Box sx={{ position: 'relative', height: '48px' }}>
           {/* Hamburger button area */}
-          <ListItemButton
-            onClick={handleDrawerToggle}
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: (theme) => `calc(${theme.spacing(7)} + 1px)`,
-              justifyContent: 'center',
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: 0 }}>
-              <MenuIcon />
-            </ListItemIcon>
-          </ListItemButton>
+          <Tooltip title={t('Toggle Sidebar')} {...tooltipProps}>
+            <ListItemButton
+              onClick={handleDrawerToggle}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                width: (theme) => `calc(${theme.spacing(7)} + 1px)`,
+                justifyContent: 'center',
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center' }}>
+                <MenuIcon />
+              </ListItemIcon>
+            </ListItemButton>
+          </Tooltip>
 
           {/* Arrow area */}
           <Box
@@ -162,12 +171,14 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
         {/* Main Navigation */}
         <List disablePadding>
           {mainNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
-              </ListItemButton>
-            </ListItem>
+            <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+              <ListItem disablePadding onClick={() => handleSecondaryToggle(item)}>
+                <ListItemButton sx={{ px: 0 }}>
+                  <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
 
@@ -176,12 +187,14 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
         {/* App Navigation */}
         <List disablePadding>
           {appNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
-              <ListItemButton>
-                <ListItemIcon sx={{ color: item.color }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
-              </ListItemButton>
-            </ListItem>
+            <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+              <ListItem disablePadding onClick={() => handleSecondaryToggle(item)}>
+                <ListItemButton sx={{ px: 0 }}>
+                  <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
 
@@ -190,12 +203,14 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
           <Divider sx={{ my: 0 }} />
           <List disablePadding>
             {bottomNavItems.map((item) => (
-              <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)}>
-                <ListItemButton>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
-                </ListItemButton>
-              </ListItem>
+              <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+                <ListItem disablePadding onClick={() => handleBottomNavClick(item)}>
+                  <ListItemButton sx={{ px: 0 }}>
+                    <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             ))}
           </List>
         </Box>
