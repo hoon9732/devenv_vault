@@ -249,6 +249,7 @@ ipcMain.handle('open-help-window', (event, theme) => {
     frame: true,
     resizable: false,
     movable: true,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
