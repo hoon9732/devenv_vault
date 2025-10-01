@@ -135,7 +135,25 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
             <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
           </Box>
         </Toolbar>
-        <Box sx={{ overflowY: 'scroll', flexGrow: 1 }}>
+        <Box sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          overflowX: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '12px',
+            height: '12px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#555' : '#ccc',
+            borderRadius: '6px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#777' : '#aaa',
+          }
+        }}>
           {isResizing && <Box sx={{ position: 'absolute', inset: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
           {renderTree && workspacePath ? (
             <TreeView

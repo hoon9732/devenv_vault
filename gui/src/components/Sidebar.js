@@ -22,7 +22,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 import { useLanguage } from '../contexts/LanguageContext';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -117,7 +117,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -131,7 +131,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
                 <ListItemIcon sx={{ color: item.color }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -145,7 +145,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
               <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)}>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'h6' }} />
+                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} />
                 </ListItemButton>
               </ListItem>
             ))}
