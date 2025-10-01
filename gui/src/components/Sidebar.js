@@ -10,9 +10,6 @@ import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import { Icon } from '@blueprintjs/core';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import MenuIcon from '@mui/icons-material/Menu';
 
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -57,16 +54,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalOpen, handleHelpClick, uiScale, ...props }) => {
+const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale, ...props }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
   const iconSize = (uiScale / 0.8) * 20; // Base size of 20px at 80% scale
+  const caretIconSize = iconSize * 0.8;
 
   const mainNavItems = [
     { text: t('Home'), icon: <Icon icon="home" size={iconSize} />, path: '/' },
     { text: t('Search'), icon: <Icon icon="search" size={iconSize} />, path: '/search' },
-    { text: t('Workspace'), icon: <Icon icon="folder-open" size={iconSize} /> },
+    { text: t('Explorer'), icon: <Icon icon="folder-open" size={iconSize} /> },
   ];
 
   const appNavItems = [
@@ -77,15 +75,15 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
 
   const bottomNavItems = [
       { text: t('Settings'), icon: <Icon icon="cog" size={iconSize} />, path: '/settings' },
-      { text: t('Help'), icon: <Icon icon="help" size={iconSize} /> },
+      { text: t('About'), icon: <Icon icon="info-sign" size={iconSize} /> },
       { text: t('Profile'), icon: <Icon icon="user" size={iconSize} /> },
   ];
 
   const handleBottomNavClick = (item) => {
     if (item.path) {
-      handleSecondaryToggle(item);
-    } else if (item.text === t('Help')) {
-      handleHelpClick();
+      handleExplorerToggle(item);
+    } else if (item.text === t('About')) {
+      handleAboutClick();
     } else if (item.text === t('Profile')) {
       handleModalOpen('Profile');
     }
@@ -94,16 +92,6 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
   const tooltipProps = {
     placement: "right",
     TransitionProps: { timeout: 0 },
-    PopperProps: {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 2], // [skidding, distance]
-          },
-        },
-      ],
-    },
   };
 
   return (
@@ -139,7 +127,7 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
               }}
             >
               <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center' }}>
-                <MenuIcon />
+                <Icon icon="menu" size={iconSize} />
               </ListItemIcon>
             </ListItemButton>
           </Tooltip>
@@ -154,17 +142,17 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
               right: 0,
               left: (theme) => `calc(${theme.spacing(7)} + 1px)`,
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-end',
               justifyContent: 'flex-end',
               cursor: 'pointer',
               pointerEvents: open ? 'auto' : 'none',
-              pr: open ? 2 : 0,
+              pr: open ? 0 : 2,
               '&:hover': {
                 backgroundColor: open ? 'action.hover' : 'transparent',
               },
             }}
           >
-            {open ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+            {open ? <Icon icon="caret-left" size={caretIconSize} /> : <Icon icon="caret-right" size={caretIconSize} />}
           </Box>
         </Box>
         <Divider sx={{ my: 0 }} />
@@ -172,7 +160,7 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
         <List disablePadding>
           {mainNavItems.map((item) => (
             <Tooltip key={item.text} title={item.text} {...tooltipProps}>
-              <ListItem disablePadding onClick={() => handleSecondaryToggle(item)}>
+              <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
                 <ListItemButton sx={{ px: 0 }}>
                   <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
@@ -188,7 +176,7 @@ const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalO
         <List disablePadding>
           {appNavItems.map((item) => (
             <Tooltip key={item.text} title={item.text} {...tooltipProps}>
-              <ListItem disablePadding onClick={() => handleSecondaryToggle(item)}>
+              <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
                 <ListItemButton sx={{ px: 0 }}>
                   <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />

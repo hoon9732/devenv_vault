@@ -14,7 +14,7 @@ import SettingsScreen from './pages/SettingsScreen';
 import SheetScreen from './pages/SheetScreen';
 import FlowchartScreen from './pages/FlowchartScreen';
 import DocsScreen from './pages/DocsScreen';
-import SecondarySidebar from './components/SecondarySidebar';
+import Explorer from './components/Explorer';
 import { useLanguage } from './contexts/LanguageContext';
 import AppModal from './components/AppModal';
 import ProfileContent from './components/ProfileContent';
@@ -22,7 +22,7 @@ import { getSettings, saveSettings } from './utils/settingsManager';
 
 function App() {
   const [open, setOpen] = useState(false);
-  const [isSecondaryOpen, setIsSecondaryOpen] = useState(false); // Independent state for secondary sidebar visibility
+  const [isExplorerOpen, setIsExplorerOpen] = useState(false); // Independent state for secondary sidebar visibility
   const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
   const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('dark');
@@ -30,8 +30,13 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+
+  useEffect(() => {
+    setIsInitialLoad(false);
+  }, []);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -58,7 +63,7 @@ function App() {
         if (path) {
           setWorkspacePath(path);
           if (settings.showOnStart) {
-            setIsSecondaryOpen(true); // Open sidebar only if the setting is true
+            setIsExplorerOpen(true); // Open sidebar only if the setting is true
           }
         }
       }
@@ -108,15 +113,15 @@ function App() {
     setOpen(!open);
   };
 
-  const handleSecondaryToggle = (item) => {
+  const handleExplorerToggle = (item) => {
     // If the item has a path, navigate to it.
     if (item.path) {
       navigate(item.path);
     }
 
     // Special logic for the Workspace button
-    if (item.text === t('Workspace')) {
-      setIsSecondaryOpen(!isSecondaryOpen);
+    if (item.text === t('Explorer')) {
+      setIsExplorerOpen(!isExplorerOpen);
     }
   };
 
@@ -141,9 +146,9 @@ function App() {
     setIsModalOpen(true);
   };
 
-  const handleHelpClick = () => {
+  const handleAboutClick = () => {
     if (window.electron) {
-      window.electron.openHelpWindow(themeMode);
+      window.electron.openAboutWindow(themeMode);
     }
   };
 
@@ -178,7 +183,7 @@ function App() {
         }}>
           <CssBaseline />
           <TitleBar />
-          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} uiScale={uiScale} />
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
           <Box
             sx={{
               display: 'flex',
@@ -191,12 +196,13 @@ function App() {
                 }),
             }}
           >
-            <SecondarySidebar 
-              open={isSecondaryOpen} 
-              setOpen={setIsSecondaryOpen}
+            <Explorer 
+              open={isExplorerOpen} 
+              setOpen={setIsExplorerOpen}
               workspacePath={workspacePath}
               setWorkspacePath={setWorkspacePath}
               uiScale={uiScale}
+              isInitialLoad={isInitialLoad}
             />
             <Box
               component="main"

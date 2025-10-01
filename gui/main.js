@@ -2,9 +2,11 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
+const { version } = require('./package.json');
 
 // --- Configuration Management ---
 const configPath = path.join(app.getPath('userData'), 'config.json');
+
 
 function readConfig() {
   try {
@@ -38,6 +40,7 @@ function createWindow () {
     title: 'ICDV',
     frame: false,
     titleBarStyle: 'hidden',
+    icon: path.join(__dirname, 'src/assets/favicon.ico'),
     titleBarOverlay: {
       color: 'rgba(0, 0, 0, 0)',
       symbolColor: 'rgba(255, 255, 255, 1)',
@@ -245,30 +248,33 @@ ipcMain.handle('save-settings', (event, settings) => {
 });
 // --- End Settings ---
 
-// IPC handler for opening the help window
-ipcMain.handle('open-help-window', (event, theme) => {
-  const helpWin = new BrowserWindow({
+// IPC handler for opening the about window
+ipcMain.handle('open-about-window', (event, theme) => {
+  const aboutWin = new BrowserWindow({
     width: 800,
-    height: 600,
-    title: 'Help',
-    frame: true,
+    height: 800,
+    title: 'About',
+    frame: false,
     resizable: false,
     movable: true,
-    autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
     webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
     }
   });
-  // The path to help.html is different in dev vs. packaged app.
-  const helpPath = process.env.ELECTRON_START_URL
-    ? path.join(__dirname, 'public/help.html')
-    : path.join(__dirname, 'build/help.html');
+  // The path to about.html is different in dev vs. packaged app.
+  const aboutPath = process.env.ELECTRON_START_URL
+    ? path.join(__dirname, 'public/about.html')
+    : path.join(__dirname, 'build/about.html');
 
-  const helpUrl = new URL('file:' + helpPath);
-  helpUrl.searchParams.set('theme', theme);
-  helpWin.loadURL(helpUrl.href);
+  const aboutUrl = new URL('file:' + aboutPath);
+  aboutUrl.searchParams.set('theme', theme);
+  aboutWin.loadURL(aboutUrl.href);
 });
+
+ipcMain.handle('get-app-version', () => version);
 
 // --- Window Controls ---
 ipcMain.on('minimize-window', () => {

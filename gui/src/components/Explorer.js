@@ -18,7 +18,7 @@ const initialDrawerWidth = 240;
 const minDrawerWidth = 150;
 const maxDrawerWidth = 500;
 
-const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale }) => {
+const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isInitialLoad }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
   const [isResizing, setIsResizing] = useState(false);
@@ -110,16 +110,6 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
   const tooltipProps = {
     placement: "top",
     TransitionProps: { timeout: 0 },
-    PopperProps: {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 2],
-          },
-        },
-      ],
-    },
   };
 
   return (
@@ -130,7 +120,7 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
         width: open ? drawerWidth : 0,
         flexShrink: 0,
         overflow: 'hidden',
-        transition: isResizing ? 'none' : (theme) => theme.transitions.create('width'),
+        transition: isResizing || (open && isInitialLoad) ? 'none' : (theme) => theme.transitions.create('width'),
         position: 'relative',
         paddingTop: '40px',
       }}
@@ -220,4 +210,4 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
     </Box>
   );
 };
-export default SecondarySidebar;
+export default Explorer;
