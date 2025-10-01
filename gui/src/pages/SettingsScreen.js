@@ -53,7 +53,7 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
         <Box sx={{ mr: 2 }}>
           <Typography variant="h6">{t('UI Scale')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('Adjust the overall UI scale.')}
+            {t('Adjust the overall interface scale.')}
           </Typography>
         </Box>
         <FormControl sx={{ width: 240 }}>
