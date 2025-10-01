@@ -36,7 +36,12 @@ function createWindow () {
     minWidth: 960,
     minHeight: 640,
     title: 'ICDV',
-    autoHideMenuBar: true,
+    frame: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: 'rgba(0, 0, 0, 0)',
+      symbolColor: 'rgba(255, 255, 255, 1)',
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -263,4 +268,26 @@ ipcMain.handle('open-help-window', (event, theme) => {
   const helpUrl = new URL('file:' + helpPath);
   helpUrl.searchParams.set('theme', theme);
   helpWin.loadURL(helpUrl.href);
+});
+
+// --- Window Controls ---
+ipcMain.on('minimize-window', () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) win.minimize();
+});
+
+ipcMain.on('maximize-window', () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) {
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  }
+});
+
+ipcMain.on('close-window', () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) win.close();
 });

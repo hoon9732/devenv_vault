@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld('electron', {
   setWorkspaceSettings: (settings) => ipcRenderer.invoke('set-workspace-settings', settings),
   getSettings: () => ipcRenderer.invoke('get-settings'),
   saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings),
+  minimizeWindow: () => ipcRenderer.send('minimize-window'),
+  maximizeWindow: () => ipcRenderer.send('maximize-window'),
+  closeWindow: () => ipcRenderer.send('close-window'),
   pathJoin: (...paths) => require('path').join(...paths),
   pathDirname: (p) => require('path').dirname(p),
 });

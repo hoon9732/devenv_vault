@@ -2,11 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
-import Topbar from './components/Topbar';
+import TitleBar from './components/TitleBar';
 import Sidebar from './components/Sidebar';
 import HomeScreen from './pages/HomeScreen';
 import SearchScreen from './pages/SearchScreen';
@@ -178,8 +177,8 @@ function App() {
           height: `${100 / uiScale}vh`,
         }}>
           <CssBaseline />
-          <Topbar handleDrawerToggle={handleDrawerToggle} open={open} />
-          <Sidebar open={open} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} />
+          <TitleBar />
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleSecondaryToggle={handleSecondaryToggle} handleModalOpen={handleModalOpen} handleHelpClick={handleHelpClick} />
           <Box
             sx={{
               display: 'flex',
@@ -203,11 +202,13 @@ function App() {
               component="main"
               sx={{
                 flexGrow: 1,
-                p: 3,
+                paddingLeft: (theme) => theme.spacing(3),
+                paddingRight: (theme) => theme.spacing(3),
+                paddingBottom: (theme) => theme.spacing(3),
+                paddingTop: '40px',
                 overflowY: 'auto',
               }}
             >
-              <Toolbar />
               <Routes>
                 <Route path="/" element={<HomeScreen />} />
                 <Route path="/search" element={<SearchScreen />} />

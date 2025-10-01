@@ -4,16 +4,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import CloseIcon from '@mui/icons-material/Close';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Icon } from '@blueprintjs/core';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import CheckIcon from '@mui/icons-material/Check';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import { useLanguage } from '../contexts/LanguageContext';
 import TreeView from './TreeView';
 
@@ -120,21 +117,23 @@ const SecondarySidebar = ({ open, setOpen, workspacePath, setWorkspacePath, uiSc
         overflow: 'hidden',
         transition: isResizing ? 'none' : (theme) => theme.transitions.create('width'),
         position: 'relative',
+        paddingTop: '40px',
       }}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
-        <Toolbar />
         <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
           <Box>
-            <Tooltip title={t('Open New Workspace')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleOpenWorkspace}><FolderOpenIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton disabled={!workspacePath}><NoteAddIcon /></IconButton></Tooltip>
-            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton disabled={!workspacePath}><CreateNewFolderIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Open Workspace')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleOpenWorkspace}><Icon icon="folder-open" /></IconButton></Tooltip>
+            <Tooltip title={t('New File')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="document" /></IconButton></Tooltip>
+            <Tooltip title={t('New Folder')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="folder-new" /></IconButton></Tooltip>
+            <Tooltip title={t('Refresh')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath} onClick={refreshTreeView}><Icon icon="refresh" /></IconButton></Tooltip>
           </Box>
           <Box>
-            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleSettingsClick}><MoreVertIcon /></IconButton></Tooltip>
-            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton onClick={handleClose}><CloseIcon /></IconButton></Tooltip>
+            <Tooltip title={t('Settings')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleSettingsClick}><Icon icon="more" /></IconButton></Tooltip>
+            <Tooltip title={t('Close Sidebar')} TransitionProps={{ timeout: 0 }} placement="top" PopperProps={{ modifiers: [{ name: 'offset', options: { offset: [0, -8] } }] }}><IconButton sx={{ p: 0.75 }} onClick={handleClose}><Icon icon="cross" /></IconButton></Tooltip>
           </Box>
         </Toolbar>
+        <Divider sx={{ my: 0 }} />
         <Box sx={{
           flexGrow: 1,
           overflowY: 'auto',

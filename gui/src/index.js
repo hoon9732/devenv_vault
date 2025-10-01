@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import { LanguageProvider } from './contexts/LanguageContext';
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <LanguageProvider>
-      <HashRouter>
+      <Router>
         <App />
-      </HashRouter>
+      </Router>
     </LanguageProvider>
   </React.StrictMode>
 );

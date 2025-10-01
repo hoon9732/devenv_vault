@@ -6,8 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import FolderIcon from '@mui/icons-material/Folder';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { Icon } from '@blueprintjs/core';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Menu from '@mui/material/Menu';
@@ -86,8 +85,14 @@ const TreeViewItem = ({ item, depth, showIcons, uiScale, selectedNode, setSelect
                         {item.isDirectory ? (isOpen ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />) : <Box sx={{ width: 20 }} />}
                     </ListItemIcon>
                     {showIcons && (
-                        <ListItemIcon sx={{ minWidth: 'auto', mr: 0.5, transform: 'translateZ(0)' }}>
-                            {item.isDirectory ? <FolderIcon fontSize="small" /> : <InsertDriveFileIcon fontSize="small" />}
+                        <ListItemIcon sx={{ 
+                            minWidth: 'auto', 
+                            mr: 0.5, 
+                            fontSize: '16px',
+                            '-webkit-font-smoothing': 'subpixel-antialiased',
+                            imageRendering: '-webkit-optimize-contrast'
+                        }}>
+                            {item.isDirectory ? <Icon icon="folder-close" /> : <Icon icon="document" />}
                         </ListItemIcon>
                     )}
                     <ListItemText 

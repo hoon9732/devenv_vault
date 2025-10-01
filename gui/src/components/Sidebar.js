@@ -7,7 +7,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 
 import HomeIcon from '@mui/icons-material/Home';
@@ -19,10 +18,14 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import TableViewIcon from '@mui/icons-material/TableView';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import { useLanguage } from '../contexts/LanguageContext';
 
 const drawerWidth = 200;
+
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -62,7 +65,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick, ...props }) => {
+const Sidebar = ({ open, handleDrawerToggle, handleSecondaryToggle, handleModalOpen, handleHelpClick, ...props }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
@@ -97,7 +100,6 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
 
   return (
     <Drawer variant="permanent" open={open} {...props}>
-      <Toolbar />
       <Box
         sx={(theme) => ({
           position: 'absolute',
@@ -112,9 +114,53 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
           zIndex: theme.zIndex.drawer + 1,
         })}
       />
-      <Box sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ paddingTop: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Hamburger Menu */}
+        {/* Hamburger Menu & Arrow */}
+        <Box sx={{ position: 'relative', height: '48px' }}>
+          {/* Hamburger button area */}
+          <ListItemButton
+            onClick={handleDrawerToggle}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: (theme) => `calc(${theme.spacing(7)} + 1px)`,
+              justifyContent: 'center',
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 0 }}>
+              <MenuIcon />
+            </ListItemIcon>
+          </ListItemButton>
+
+          {/* Arrow area */}
+          <Box
+            onClick={handleDrawerToggle}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: (theme) => `calc(${theme.spacing(7)} + 1px)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              cursor: 'pointer',
+              pointerEvents: open ? 'auto' : 'none',
+              pr: open ? 2 : 0,
+              '&:hover': {
+                backgroundColor: open ? 'action.hover' : 'transparent',
+              },
+            }}
+          >
+            {open ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+          </Box>
+        </Box>
+        <Divider sx={{ my: 0 }} />
         {/* Main Navigation */}
-        <List>
+        <List disablePadding>
           {mainNavItems.map((item) => (
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
@@ -125,10 +171,10 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
           ))}
         </List>
 
-        <Divider />
+        <Divider sx={{ my: 0 }} />
 
         {/* App Navigation */}
-        <List>
+        <List disablePadding>
           {appNavItems.map((item) => (
             <ListItem key={item.text} disablePadding onClick={() => handleSecondaryToggle(item)}>
               <ListItemButton>
@@ -141,8 +187,8 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
 
         {/* Bottom Navigation */}
         <Box sx={{ marginTop: 'auto' }}>
-          <Divider />
-          <List>
+          <Divider sx={{ my: 0 }} />
+          <List disablePadding>
             {bottomNavItems.map((item) => (
               <ListItem key={item.text} disablePadding onClick={() => handleBottomNavClick(item)}>
                 <ListItemButton>
