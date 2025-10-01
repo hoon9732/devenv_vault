@@ -76,18 +76,20 @@ function App() {
             ? {
                 primary: { main: '#90caf9' },
                 background: { default: '#121212', paper: '#1e1e1e' },
+                appBar: { background: '#272727' },
               }
             : {
                 primary: { main: '#1976d2' },
                 background: { default: '#f4f6f8', paper: '#ffffff' },
+                appBar: { background: '#ffffff' },
               }),
         },
         components: {
           MuiDrawer: {
             styleOverrides: {
               paper: {
-                backgroundColor: themeMode === 'dark' ? '#1e1e1e' : '#1f2a38',
-                color: '#ffffff',
+                backgroundColor: themeMode === 'dark' ? '#1e1e1e' : '#ffffff',
+                color: themeMode === 'dark' ? '#ffffff' : '#000000',
               },
             },
           },

@@ -5,41 +5,48 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
-
-const drawerWidth = 240;
+import Box from '@mui/material/Box';
 
 const Topbar = ({ handleDrawerToggle, open, ...props }) => {
-  return (
-    <AppBar position="absolute" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} {...props}>
-      <Toolbar sx={{ position: 'relative' }}>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={handleDrawerToggle}
-          sx={{ mr: 2, ml: '-15px' }}
-        >
-          <MenuIcon />
-        </IconButton>
-        
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{
-            position: 'absolute',
-            left: open ? `${drawerWidth}px` : (theme) => `calc(${theme.spacing(7)} + 1px)`,
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-            transition: (theme) => theme.transitions.create('left', {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
-          }}
-        />
+  const iconAreaWidth = (theme) => theme.spacing(7);
 
-        <Typography variant="h6" noWrap component="div" sx={{ pl: 2 }}>
+  return (
+    <AppBar
+      position="absolute"
+      elevation={0}
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        backgroundColor: (theme) => theme.palette.appBar.background,
+      }}
+      {...props}
+    >
+      <Toolbar disableGutters>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: iconAreaWidth,
+          alignSelf: 'stretch',
+          backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#333333' : '#e0e0e0',
+        }}>
+          <IconButton
+            aria-label="open drawer"
+            onClick={handleDrawerToggle}
+            sx={{
+              color: (theme) => theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+
+        <Divider orientation="vertical" flexItem />
+
+        <Typography variant="h6" noWrap component="div" sx={{ pl: 2, color: (theme) => theme.palette.mode === 'dark' ? '#ffffff' : '#000000' }}>
           ICD Viewer
         </Typography>
       </Toolbar>
+      <Divider />
     </AppBar>
   );
 };

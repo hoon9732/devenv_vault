@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -64,6 +64,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick, ...props }) => {
   const { t } = useLanguage();
+  const theme = useTheme();
+  const isLightTheme = theme.palette.mode === 'light';
 
   const mainNavItems = [
     { text: t('Home'), icon: <HomeIcon />, path: '/' },
@@ -72,9 +74,9 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
   ];
 
   const appNavItems = [
-    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: 'rgba(102, 255, 102, 0.7)' },
-    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: 'rgba(255, 178, 102, 0.7)' },
-    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: 'rgba(102, 178, 255, 0.7)' },
+    { text: t('Sheet'), icon: <TableViewIcon />, path: '/sheet', color: isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)' },
+    { text: t('Flowchart'), icon: <AccountTreeIcon />, path: '/flowchart', color: isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)' },
+    { text: t('Docs'), icon: <DescriptionIcon />, path: '/docs', color: isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)' },
   ];
 
   const bottomNavItems = [
