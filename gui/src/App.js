@@ -182,6 +182,7 @@ function App() {
             sx={{
               display: 'flex',
               flexGrow: 1,
+              minWidth: 0, // Prevent content from overflowing
               transition: (theme) =>
                 theme.transitions.create('margin-left', {
                   easing: theme.transitions.easing.sharp,
@@ -201,6 +202,7 @@ function App() {
               sx={{
                 flexGrow: 1,
                 p: 3,
+                overflowY: 'auto',
               }}
             >
               <Toolbar />

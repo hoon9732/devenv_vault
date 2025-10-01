@@ -8,9 +8,9 @@ import Divider from '@mui/material/Divider';
 
 const drawerWidth = 240;
 
-const Topbar = ({ handleDrawerToggle, open }) => {
+const Topbar = ({ handleDrawerToggle, open, ...props }) => {
   return (
-    <AppBar position="absolute" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="absolute" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} {...props}>
       <Toolbar sx={{ position: 'relative' }}>
         <IconButton
           color="inherit"

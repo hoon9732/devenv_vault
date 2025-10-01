@@ -125,7 +125,7 @@ const ProfileContent = () => {
   };
 
   return (
-    <Box sx={{ p: 2, width: 'clamp(450px, 50vw, 600px)' }}>
+    <Box sx={{ p: 2, width: 'clamp(350px, 40vw, 500px)' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, minHeight: '48px' }}>
         {isEditMode ? (
           <>
@@ -143,8 +143,8 @@ const ProfileContent = () => {
         <IconButton
           onClick={handleIconClick}
           sx={{
-            width: 'clamp(120px, 30vh, 180px)',
-            height: 'clamp(120px, 30vh, 180px)',
+            width: 'clamp(100px, 25vh, 150px)',
+            height: 'clamp(100px, 25vh, 150px)',
             cursor: isEditMode ? 'pointer' : 'default'
           }}
         >
@@ -191,14 +191,14 @@ const ProfileContent = () => {
         value={dataToShow.name}
         onChange={handleFieldChange('name')}
         sx={{ ...textFieldStyles, mb: 2 }}
-        inputProps={{ style: { textAlign: 'center', fontSize: '2.125rem', padding: '8.5px 14px' } }}
+        inputProps={{ style: { textAlign: 'center', fontSize: '1.5rem', padding: '6px 12px' } }}
       />
 
-      <Grid container spacing={2} justifyContent="center">
+      <Grid container spacing={1.5}>
         {['id', 'email', 'department'].map((field) => (
-          <Grid item container alignItems="center" xs={12} sm={10} md={8} key={field}>
+          <Grid item container alignItems="center" xs={12} key={field}>
             <Grid item xs={4}>
-              <Typography variant="subtitle1" align="left" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="body2" align="left">
                 {t(field.charAt(0).toUpperCase() + field.slice(1))}:
               </Typography>
             </Grid>
@@ -210,7 +210,7 @@ const ProfileContent = () => {
                 value={dataToShow[field]}
                 onChange={handleFieldChange(field)}
                 sx={textFieldStyles}
-                inputProps={{style: {padding: '8.5px 14px'}}}
+                inputProps={{style: {padding: '6px 12px'}}}
               />
             </Grid>
           </Grid>

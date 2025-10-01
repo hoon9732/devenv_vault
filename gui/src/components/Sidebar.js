@@ -62,7 +62,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick }) => {
+const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick, ...props }) => {
   const { t } = useLanguage();
 
   const mainNavItems = [
@@ -94,7 +94,7 @@ const Sidebar = ({ open, handleSecondaryToggle, handleModalOpen, handleHelpClick
   };
 
   return (
-    <Drawer variant="permanent" open={open}>
+    <Drawer variant="permanent" open={open} {...props}>
       <Toolbar />
       <Box
         sx={(theme) => ({
