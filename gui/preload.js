@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('electron', {
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   closeWindow: () => ipcRenderer.send('close-window'),
   updateTheme: (theme) => ipcRenderer.send('update-theme', theme),
+  readFileContent: (path) => ipcRenderer.invoke('read-file-content', path),
   updateTitleBarColors: (colors) => ipcRenderer.send('update-titlebar-colors', colors),
   pathJoin: (...paths) => require('path').join(...paths),
   pathDirname: (p) => require('path').dirname(p),

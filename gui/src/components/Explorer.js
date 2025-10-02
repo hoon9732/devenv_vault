@@ -4,21 +4,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { Icon } from '@blueprintjs/core';
+import { Icon, Tree } from '@blueprintjs/core';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import CheckIcon from '@mui/icons-material/Check';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 import { useLanguage } from '../contexts/LanguageContext';
-import TreeView from './TreeView';
 
 const initialDrawerWidth = 240;
 const minDrawerWidth = 150;
 const maxDrawerWidth = 500;
 
-const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isInitialLoad }) => {
+const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isInitialLoad, onOpenFile }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
   const [isResizing, setIsResizing] = useState(false);
@@ -26,9 +24,21 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
   const [renderTree, setRenderTree] = useState(false);
   const [settingsAnchorPos, setSettingsAnchorPos] = useState(null);
   const [settings, setSettings] = useState({ showIcons: true, showOnStart: false });
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [treeData, setTreeData] = useState([]);
+  const [nodes, setNodes] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Helper function to convert file system items to Blueprint Tree nodes
+  const toTreeNodes = (items) => {
+    return items.map(item => ({
+      id: item.path,
+      label: item.name,
+      icon: item.isDirectory ? "folder-close" : "document",
+      hasCaret: item.isDirectory,
+      isExpanded: false,
+      childNodes: [],
+      nodeData: item,
+    }));
+  };
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -44,20 +54,79 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
     if (!open) setRenderTree(false);
   }, [open]);
 
+  // Effect to load the root of the tree when workspacePath changes
   useEffect(() => {
-    setSelectedNode(null);
-    const loadTree = async () => {
-        if (workspacePath) {
-            const items = await window.electron.readDirectory(workspacePath);
-            setTreeData(items);
-        } else {
-            setTreeData([]);
-        }
+    const loadRoot = async () => {
+      if (workspacePath) {
+        const items = await window.electron.readDirectory(workspacePath);
+        setNodes(toTreeNodes(items));
+      } else {
+        setNodes([]);
+      }
     };
-    loadTree();
+    loadRoot();
   }, [workspacePath, refreshKey]);
 
   const refreshTreeView = () => setRefreshKey(prev => prev + 1);
+
+  // Recursively find a node by its ID (path) and apply a mutation
+  const findAndMutateNode = (nodes, id, mutation) => {
+    return nodes.map(node => {
+      if (node.id === id) {
+        return mutation(node);
+      }
+      if (node.childNodes) {
+        return { ...node, childNodes: findAndMutateNode(node.childNodes, id, mutation) };
+      }
+      return node;
+    });
+  };
+
+  const handleNodeExpand = async (node) => {
+    // Fetch children if they haven't been loaded yet
+    if (node.childNodes.length === 0) {
+      const children = await window.electron.readDirectory(node.id);
+      const childNodes = toTreeNodes(children);
+      setNodes(currentNodes => findAndMutateNode(currentNodes, node.id, n => ({ ...n, isExpanded: true, childNodes: childNodes })));
+    } else {
+      // Just expand the node if children are already loaded
+      setNodes(currentNodes => findAndMutateNode(currentNodes, node.id, n => ({ ...n, isExpanded: true })));
+    }
+  };
+
+  const handleNodeCollapse = (node) => {
+    setNodes(currentNodes => findAndMutateNode(currentNodes, node.id, n => ({ ...n, isExpanded: false })));
+  };
+
+  const handleNodeClick = (node) => {
+    // Use a safe, immutable recursive function to update selection
+    const forEachNode = (nodes, callback) => {
+      for (const n of nodes) {
+        callback(n);
+        if (n.childNodes) {
+          forEachNode(n.childNodes, callback);
+        }
+      }
+    };
+    
+    // Create a deep clone to avoid state mutation issues
+    const newNodes = JSON.parse(JSON.stringify(nodes));
+    forEachNode(newNodes, n => (n.isSelected = false));
+
+    setNodes(findAndMutateNode(newNodes, node.id, n => ({ ...n, isSelected: true })));
+
+    // If it's a file, call the open file handler
+    if (node.nodeData && !node.nodeData.isDirectory) {
+      onOpenFile(node.id);
+    } else {
+      // If it's a directory, toggle its expansion
+      if (node.isExpanded) {
+        handleNodeCollapse(node);
+      } else {
+        handleNodeExpand(node);
+      }
+    }
+  };
 
   const handleOpenWorkspace = async () => {
     if (window.electron) {
@@ -78,9 +147,9 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       const newWidth = e.clientX - sidebarRef.current.getBoundingClientRect().left;
       if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) setDrawerWidth(newWidth);
     }
-  }, [isResizing]);
+  }, [isResizing, sidebarRef, setDrawerWidth]);
 
-  const handleMouseUp = useCallback(() => setIsResizing(false), []);
+  const handleMouseUp = useCallback(() => setIsResizing(false), [setIsResizing]);
 
   useEffect(() => {
     if (isResizing) {
@@ -141,30 +210,15 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
           flexGrow: 1,
           overflowY: 'auto',
           overflowX: 'auto',
-          '&::-webkit-scrollbar': {
-            width: '12px',
-            height: '12px',
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#555' : '#ccc',
-            borderRadius: '6px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#777' : '#aaa',
-          }
         }}>
           {isResizing && <Box sx={{ position: 'absolute', inset: 0, zIndex: 1, backgroundColor: 'rgba(0,0,0,0.05)' }} />}
           {renderTree && workspacePath ? (
-            <TreeView
-              treeData={treeData}
-              showIcons={settings.showIcons}
-              uiScale={uiScale}
-              selectedNode={selectedNode}
-              setSelectedNode={setSelectedNode}
-              refreshTreeView={refreshTreeView}
+            <Tree
+              contents={nodes}
+              onNodeClick={handleNodeClick}
+              onNodeCollapse={handleNodeCollapse}
+              onNodeExpand={handleNodeExpand}
+              className="explorer-tree"
             />
           ) : (
             renderTree && !workspacePath && (

@@ -173,6 +173,19 @@ function App() {
     }
   };
 
+  const handleOpenFile = async (filePath) => {
+    if (window.electron) {
+      const result = await window.electron.readFileContent(filePath);
+      if (result.success) {
+        setFileContent(result.content);
+        navigate('/file-viewer');
+      } else {
+        console.error("Failed to read file:", result.error);
+        // Optionally, show an error to the user
+      }
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles styles={{
@@ -214,6 +227,7 @@ function App() {
                 setWorkspacePath={setWorkspacePath}
                 uiScale={uiScale}
                 isInitialLoad={isInitialLoad}
+                onOpenFile={handleOpenFile}
               />
               <Box sx={{ 
                 display: 'flex', 

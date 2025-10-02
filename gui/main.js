@@ -296,6 +296,17 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale, titleBarColor }) =
 
 ipcMain.handle('get-app-version', () => version);
 
+// IPC handler for reading file content
+ipcMain.handle('read-file-content', async (event, filePath) => {
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    return { success: true, content };
+  } catch (error) {
+    console.error(`Error reading file ${filePath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
 // --- Window Controls ---
 ipcMain.on('minimize-window', () => {
   const win = BrowserWindow.getFocusedWindow();
