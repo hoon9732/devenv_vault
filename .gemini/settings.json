@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "hideBanner": true,
+    "showMemoryUsage": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  },
+  "general": {
+    "vimMode": false
+  }
+}

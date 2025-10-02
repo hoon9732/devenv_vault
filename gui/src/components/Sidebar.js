@@ -1,86 +1,39 @@
 import React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
-import { Icon } from '@blueprintjs/core';
-import Toolbar from '@mui/material/Toolbar';
-
+import { Classes, Menu, MenuItem, Tooltip, Divider, Icon } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const drawerWidth = 200;
+const collapsedWidth = 57; // Approx theme.spacing(7)
 
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(6)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(7)} + 1px)`,
-  },
-});
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': { ...openedMixin(theme), border: 0 },
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': { ...closedMixin(theme), border: 0 },
-    }),
-  }),
-);
-
-const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale, ...props }) => {
+const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
-  const iconSize = (uiScale / 0.8) * 20; // Base size of 20px at 80% scale
+  const iconSize = (uiScale / 0.8) * 20;
 
   const mainNavItems = [
-    { text: t('Home'), icon: <Icon icon="home" size={iconSize} />, path: '/' },
-    { text: t('Explorer'), icon: <Icon icon="folder-open" size={iconSize} /> },
-    { text: t('Search'), icon: <Icon icon="search" size={iconSize} />, path: '/search' },
+    { text: t('Home'), icon: "home", path: '/' },
+    { text: t('Explorer'), icon: "folder-open" },
+    { text: t('Search'), icon: "search", path: '/search' },
   ];
 
   const appNavItems = [
-    { text: t('Sheet'), icon: <Icon icon="th" size={iconSize} color={isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)'} />, path: '/sheet' },
-    { text: t('Graphs'), icon: <Icon icon="data-lineage" size={iconSize} color={isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)'} />, path: '/graphs' },
-    { text: t('Docs'), icon: <Icon icon="document-share" size={iconSize} color={isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)'} />, path: '/docs' },
+    { text: t('Sheet'), icon: "th", path: '/sheet', color: isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)' },
+    { text: t('Graphs'), icon: "data-lineage", path: '/graphs', color: isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)' },
+    { text: t('Docs'), icon: "document-share", path: '/docs', color: isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)' },
   ];
 
   const bottomNavItems = [
-      { text: t('Settings'), icon: <Icon icon="cog" size={iconSize} />, path: '/settings' },
-      { text: t('About'), icon: <Icon icon="info-sign" size={iconSize} /> },
-      { text: t('Profile'), icon: <Icon icon="user" size={iconSize} /> },
+      { text: t('Settings'), icon: "cog", path: '/settings' },
+      { text: t('About'), icon: "info-sign" },
+      { text: t('Profile'), icon: "user" },
   ];
 
-  const handleBottomNavClick = (item) => {
+  const handleItemClick = (item) => {
     if (item.path) {
+      handleExplorerToggle(item); // Re-using this handler for navigation
+    } else if (item.text === t('Explorer')) {
       handleExplorerToggle(item);
     } else if (item.text === t('About')) {
       handleAboutClick();
@@ -89,98 +42,84 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
     }
   };
 
-  const tooltipProps = {
-    placement: "right",
-    TransitionProps: { timeout: 0 },
+  const renderMenuItem = (item) => {
+    const menuItem = (
+      <MenuItem
+        className="sidebar-menu-item"
+        onClick={() => handleItemClick(item)}
+        style={{ height: '48px', padding: 0, color: theme.palette.text.primary, alignItems: 'center' }}
+        text={
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
+            <div style={{ width: `${collapsedWidth}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+              <Icon icon={item.icon} size={iconSize} color={item.color} />
+            </div>
+          </div>
+        }
+      />
+    );
+
+    return (
+      <Tooltip content={item.text} placement="right" usePortal={false} key={item.text}>
+        {menuItem}
+      </Tooltip>
+    );
   };
 
   return (
-    <Drawer variant="permanent" open={open} {...props}>
-      <Box
-        sx={(theme) => ({
-          position: 'absolute',
-          left: theme.spacing(6),
-          [theme.breakpoints.up('sm')]: {
-            left: theme.spacing(7),
-          },
-          top: 0,
-          height: '100%',
-          width: '1px',
-          backgroundColor: theme.palette.divider,
-          zIndex: theme.zIndex.drawer + 1,
-        })}
-      />
-      <Box sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Hamburger Menu */}
-        <Toolbar disableGutters sx={{ minHeight: '48px !important', height: '48px', backgroundColor: 'topbar.background' }}>
-          <ListItemButton
-            onClick={handleDrawerToggle}
-            sx={{
-              height: '100%',
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              px: 0,
-              py: 0,
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              },
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center', width: (theme) => theme.spacing(7) }}>
-              <Icon icon={open ? "menu-closed" : "menu-open"} size={iconSize} />
-            </ListItemIcon>
-          </ListItemButton>
-        </Toolbar>
-        {/* Main Navigation */}
-        <List disablePadding>
-          {mainNavItems.map((item) => (
-            <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
-              <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
-                <ListItemButton sx={{ px: 0 }}>
-                  <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
-                </ListItemButton>
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
+    <Box
+      sx={{
+        width: collapsedWidth,
+        flexShrink: 0,
+        backgroundColor: theme.palette.mode === 'dark' ? '#000000' : theme.palette.background.paper,
+        borderRight: `1px solid ${theme.palette.divider}`,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+      className={`${Classes.FOCUS_DISABLED} ${theme.palette.mode === 'dark' ? Classes.DARK : ''}`}
+    >
+      <Menu style={{ padding: 0, flexShrink: 0, width: collapsedWidth }}>
+        <MenuItem 
+          className="sidebar-menu-item"
+          style={{ 
+            height: '48px', 
+            padding: 0,
+            backgroundColor: theme.palette.topbar.background, 
+            color: theme.palette.text.primary,
+            alignItems: 'center'
+          }}
+          text={
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
+              <div style={{ width: `${collapsedWidth}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+                <Icon icon="menu" size={iconSize} />
+              </div>
+            </div>
+          }
+        />
+      </Menu>
 
-        <Divider sx={{ my: 0 }} />
+      <Menu style={{ overflowY: 'auto', overflowX: 'hidden', padding: 0, width: collapsedWidth }}>
+        {mainNavItems.flatMap((item, index) => [
+          renderMenuItem(item),
+          index < mainNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-main-${index}`} /> : null
+        ]).filter(Boolean)}
+        <Divider style={{ margin: 0 }} />
+        {appNavItems.flatMap((item, index) => [
+          renderMenuItem(item),
+          index < appNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-app-${index}`} /> : null
+        ]).filter(Boolean)}
+      </Menu>
 
-        {/* App Navigation */}
-        <List disablePadding>
-          {appNavItems.map((item) => (
-            <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
-              <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
-                <ListItemButton sx={{ px: 0 }}>
-                  <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
-                </ListItemButton>
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
-
-        {/* Bottom Navigation */}
-        <Box sx={{ marginTop: 'auto' }}>
-          <Divider sx={{ my: 0 }} />
-          <List disablePadding>
-            {bottomNavItems.map((item) => (
-              <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
-                <ListItem disablePadding onClick={() => handleBottomNavClick(item)}>
-                  <ListItemButton sx={{ px: 0 }}>
-                    <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body1' }} sx={{ ml: 2 }} />
-                  </ListItemButton>
-                </ListItem>
-              </Tooltip>
-            ))}
-          </List>
-        </Box>
+      <Box sx={{ marginTop: 'auto', flexShrink: 0 }}>
+        <Menu style={{ padding: 0, width: collapsedWidth }}>
+          <Divider style={{ margin: 0 }} />
+          {bottomNavItems.flatMap((item, index) => [
+            renderMenuItem(item),
+            index < bottomNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-bottom-${index}`} /> : null
+          ]).filter(Boolean)}
+        </Menu>
       </Box>
-    </Drawer>
+    </Box>
   );
 };
 

@@ -1311,3 +1311,59 @@ STATUS mtsShaStart(void) {
 		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG7)\n");
 		return ERROR;
 	}
+	
+	WAIT_RESPONSE_MASK(GCU_RESPONSE_TIME, 1, 0x1, g_pTmGf7->m_NAV_STS, usNavSts, 0xF, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%X", usNavSts & 0xF);
+	
+	return OK;
+}
+
+STATUS mtsGcaDone(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	int waitTImeSec;
+	int refVal, targetVal;
+	
+	TRY_STR_TO_LONG(waitTimeSec, 0, int);
+	TRY_STR_TO_LONG(refVal, 1, int);
+	
+	for (; waitTimeSec > 0; waitTimeSec--) {
+		DELAY_SEC(1);
+		
+		targetVal = g_pTmGf7->m_ALIGN_STS;
+		
+		UdpSendOpsTxResult(RESULT_TYPE_ONGOING, "0x%04X", targetVal);
+		
+		eResult = mtsCheckEqual(refVal, targetVal & g_dwArgMask);
+		if (eResult == RESULT_TYPE_PASS)
+			break;
+	}
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", targetVal);
+	
+	return OK;
+}
+
+	UdpSendOpsTxResult(eResult, "0x%04X", targetVal);
+	
+	return OK;
+}
+
+STATUS mtsGcuMslGpsModeSet(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usResp;
+	
+	memset((void *)g_pTmFg5, 0, sizeof(TM_TYPE_FG5));
+	
+	g_pTmFg5->m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg5->m_CONTROL = TM_FG5_SDLC_CONTROL;
+	g_pTmFg5->m_OPCODE = TM_FG5_OPCODE;
+	
+	TRY_STR_TO_LONG(g_pTmFg5->m_VALID_WORD, 0, UINT16);
+	TRY_STR_TO_LONG(g_pTmFg5->m_AR_MODE, 1, UINT16);
+	TRY_STR_TO_LONG(g_pTmFg5->m_SBAS_SELECT, 2, UINT16);
+	TRY_STR_TO_LONG(g_pTmFg5->m_SET_AJ_MODE, 3, UINT16);
+	TRY_STR_TO_LONG(g_pTmFg5->m_SET_RCV_MODE, 4, UINT16);
+	
+	LOGMSG("VALID_WORD = 0x%04X\n", g_pTMFg5->m_VALID_WORD);
+	LOGMSG("AR_MODE = %d\n", g_p

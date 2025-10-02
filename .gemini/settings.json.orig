@@ -1,0 +1,6 @@
+{
+  "hideBanner": true,
+  "showMemoryUsage": true,
+  "selectedAuthType": "gemini-api-key",
+  "vimMode": false
+}

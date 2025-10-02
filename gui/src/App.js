@@ -22,7 +22,6 @@ import { getSettings, saveSettings } from './utils/settingsManager';
 import { Dialog, Classes } from '@blueprintjs/core';
 
 function App() {
-  const [open, setOpen] = useState(false);
   const [isExplorerOpen, setIsExplorerOpen] = useState(false); // Independent state for secondary sidebar visibility
   const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
   const [fileContent, setFileContent] = useState('');
@@ -126,10 +125,6 @@ function App() {
     [themeMode],
   );
 
-  const handleDrawerToggle = () => {
-    setOpen(!open);
-  };
-
   const handleExplorerToggle = (item) => {
     // If the item has a path, navigate to it.
     if (item.path) {
@@ -208,6 +203,7 @@ function App() {
         flexDirection: 'column',
         height: '100vh',
         overflow: 'hidden',
+        backgroundColor: theme.palette.background.default,
       }}>
         <TitleBar theme={theme} />
         <Box sx={{ flex: 1, minHeight: 0 }}>
@@ -219,7 +215,7 @@ function App() {
             height: `${100 / uiScale}%`,
           }} className={`${themeMode}-theme`}>
             <CssBaseline />
-            <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
+            <Sidebar handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
               <Explorer 
                 open={isExplorerOpen} 
                 setOpen={setIsExplorerOpen}
@@ -244,19 +240,20 @@ function App() {
                   component="main"
                   sx={{
                     flexGrow: 1,
-                    padding: (theme) => theme.spacing(3),
                     overflowY: 'auto',
                   }}
                 >
-                  <Routes>
-                    <Route path="/" element={<HomeScreen />} />
-                    <Route path="/search" element={<SearchScreen />} />
-                    <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
-                    <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
-                    <Route path="/sheet" element={<SheetScreen />} />
-                    <Route path="/graphs" element={<GraphsScreen />} />
-                    <Route path="/docs" element={<DocsScreen />} />
-                  </Routes>
+                  <Box sx={{ padding: (theme) => theme.spacing(3) }}>
+                    <Routes>
+                      <Route path="/" element={<HomeScreen />} />
+                      <Route path="/search" element={<SearchScreen />} />
+                      <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
+                      <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
+                      <Route path="/sheet" element={<SheetScreen />} />
+                      <Route path="/graphs" element={<GraphsScreen />} />
+                      <Route path="/docs" element={<DocsScreen />} />
+                    </Routes>
+                  </Box>
                 </Box>
               </Box>
           </Box>

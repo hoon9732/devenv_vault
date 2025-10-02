@@ -24,4 +24,6 @@
   color: inherit;
   flex-grow: 1;
   padding-left: 10px;
+  font-size: 14px;
+  line-height: 40px; /* Center text vertically */
 }

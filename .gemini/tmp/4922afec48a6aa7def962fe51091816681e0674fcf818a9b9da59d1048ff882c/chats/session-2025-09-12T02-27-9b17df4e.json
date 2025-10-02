@@ -1,0 +1,14 @@
+{
+  "sessionId": "9b17df4e-99aa-43bb-bec1-36b5d31ab9f1",
+  "projectHash": "4922afec48a6aa7def962fe51091816681e0674fcf818a9b9da59d1048ff882c",
+  "startTime": "2025-09-12T02:28:15.462Z",
+  "lastUpdated": "2025-09-12T02:28:15.462Z",
+  "messages": [
+    {
+      "id": "f90158ee-164b-4d97-906b-6b73616816eb",
+      "timestamp": "2025-09-12T02:28:15.462Z",
+      "type": "user",
+      "content": "can you tell me how to connect to github MCP server?"
+    }
+  ]
+}

@@ -13,6 +13,33 @@ code {
     monospace;
 }
 
+/* --- Sidebar Styling --- */
+/* Center the icon inside the menu item */
+.sidebar-menu-item .bp5-icon {
+  margin: 0 auto;
+}
+
+/*
+ * This is the definitive fix for the overflowing sidebar items.
+ * The Blueprint.js MenuItem component renders an inner element
+ * which has a default min-width and padding from the library's stylesheet.
+ * This rule targets that specific inner element and overrides those
+ * defaults to ensure the item fits within our narrow sidebar.
+*/
+.sidebar-menu-item > * {
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+/* Apply hover effect directly to the menu item */
+.dark-theme .sidebar-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.light-theme .sidebar-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
 /* Blueprint.js Navbar Theming */
 .dark-theme .bp5-navbar {
   background-color: #2d2d2d; /* Corresponds to theme.palette.topbar.background */

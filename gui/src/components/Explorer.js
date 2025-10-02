@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { Button as MuiButton } from '@mui/material';
-import { Alignment, Button, Classes, Navbar, Tree, Popover, Menu, MenuItem, Tooltip } from '@blueprintjs/core';
+import { Alignment, Button, Classes, Navbar, Tree, Popover, Menu, MenuItem, Tooltip, Divider } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const initialDrawerWidth = 240;
@@ -191,25 +191,29 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       className={Classes.FOCUS_DISABLED}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
-                <Navbar style={{
-                  height: '48px',
-                  padding: '0 8px',
-                  backgroundColor: theme.palette.topbar.background,
-                  color: theme.palette.text.primary
-                }}>
-                  <Navbar.Group align={Alignment.LEFT}>
-                    <Tooltip content={t('Open Workspace')} placement="top"><Button minimal icon="folder-open" onClick={handleOpenWorkspace} /></Tooltip>
-                    <Tooltip content={t('New File')} placement="top"><Button minimal icon="document" disabled={!workspacePath} /></Tooltip>
-                    <Tooltip content={t('New Folder')} placement="top"><Button minimal icon="folder-new" disabled={!workspacePath} /></Tooltip>
-                  </Navbar.Group>
-                  <Navbar.Group align={Alignment.RIGHT}>
-                    <Tooltip content={t('Refresh')} placement="top"><Button minimal icon="refresh" disabled={!workspacePath} onClick={refreshTreeView} /></Tooltip>
-                    <Popover content={settingsMenu} placement="bottom-end">
-                      <Tooltip content={t('Settings')} placement="top"><Button minimal icon="more" /></Tooltip>
-                    </Popover>
-                    <Tooltip content={t('Close Sidebar')} placement="top"><Button minimal icon="cross" onClick={handleClose} /></Tooltip>
-                  </Navbar.Group>
-                </Navbar>        <Box sx={{
+                        <Navbar style={{ 
+                          height: '48px', 
+                          padding: '0 8px', 
+                          backgroundColor: theme.palette.topbar.background,
+                          color: theme.palette.text.primary
+                        }}>
+          <Navbar.Group align={Alignment.LEFT}>
+            <Tooltip content={t('Open Workspace')} placement="top" usePortal={false}><Button minimal icon="folder-open" onClick={handleOpenWorkspace} /></Tooltip>
+            <Tooltip content={t('New File')} placement="top" usePortal={false}><Button minimal icon="document" disabled={!workspacePath} /></Tooltip>
+            <Tooltip content={t('New Folder')} placement="top" usePortal={false}><Button minimal icon="folder-new" disabled={!workspacePath} /></Tooltip>
+          </Navbar.Group>
+          <Navbar.Group align={Alignment.RIGHT}>
+            <Tooltip content={t('Refresh')} placement="top" usePortal={false}><Button minimal icon="refresh" disabled={!workspacePath} onClick={refreshTreeView} /></Tooltip>
+            <Popover content={settingsMenu} placement="bottom-end">
+              <Tooltip content={t('Settings')} placement="top" usePortal={false}><Button minimal icon="more" /></Tooltip>
+            </Popover>
+            <Button 
+              minimal 
+              icon="cross" 
+              onClick={handleClose}
+            />
+          </Navbar.Group>                        </Navbar>        <Divider style={{ margin: 0 }} />
+        <Box sx={{
           flexGrow: 1,
           overflowY: 'auto',
           overflowX: 'auto',

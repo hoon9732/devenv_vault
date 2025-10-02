@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Divider from '@mui/material/Divider';
+import { Divider } from '@blueprintjs/core';
 import './PageTopbar.css';
 
 const PageTopbar = ({ page, theme }) => {
@@ -29,6 +29,7 @@ const PageTopbar = ({ page, theme }) => {
       <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 16px !important' }}>
         {renderTopbarContent()}
       </Toolbar>
+      <Divider style={{ margin: 0 }} />
     </Box>
   );
 };
