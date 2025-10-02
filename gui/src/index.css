@@ -12,3 +12,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Blueprint.js Navbar Theming */
+.dark-theme .bp5-navbar {
+  background-color: #2d2d2d; /* Corresponds to theme.palette.topbar.background */
+}
+
+.light-theme .bp5-navbar {
+  background-color: #ebebeb; /* Corresponds to theme.palette.topbar.background */
+}

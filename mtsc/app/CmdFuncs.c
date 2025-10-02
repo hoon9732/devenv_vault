@@ -1263,3 +1263,51 @@ STATUS mtsChkGf3NavData(void) {
 	} else if (strcmp(g_szArgs[0], "IMU_LA_X") == 0) {
 		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_IMU_LA_X);
 		return OK;
+	} else if (strcmp(g_szArgs[0], "IMU_LA_Y") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_IMU_LA_Y);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "IMU_LA_Z") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_IMU_LA_Z);
+		return OK;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+}
+
+STATUS mtsGcaStart(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usNavResp, usNavSts;
+	
+	memset((void *)(g_pTmFg7), 0, sizeof(TM_TYPE_FG7));
+	
+	g_pTmFg7->fg7_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg7->fg7_1.m_CONTROL = TM_FG7_SDLC_CONTROL;
+	g_pTmFg7->fg7_1.m_OPCODE = TM_FG7_1_OPCODE_GCA;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG7) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG7)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG7_1_OPCODE_GCA, g_pTmGf7->m_NAV_RESP, usNavResp, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%X", usNavSts & 0xF);
+	
+	return OK;
+}
+
+STATUS mtsShaStart(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usNavResp, usNavSts;
+	
+	memset((void *)(g_pTmFg7), 0, sizeof(TM_TYPE_FG7));
+	
+	g_pTmFg7->fg7_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg7->fg7_1.m_CONTROL = TM_FG7_SDLC_CONTROL;
+	g_pTmFg7->fg7_1.m_OPCODE = TM_FG7_1_OPCODE_SHA;
+	
+	if (PostCmd)(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG7) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG7)\n");
+		return ERROR;
+	}

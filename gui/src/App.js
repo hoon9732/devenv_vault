@@ -228,6 +228,7 @@ function App() {
                 uiScale={uiScale}
                 isInitialLoad={isInitialLoad}
                 onOpenFile={handleOpenFile}
+                theme={theme}
               />
               <Box sx={{ 
                 display: 'flex', 

@@ -1,28 +1,19 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import { Icon, Tree } from '@blueprintjs/core';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import CheckIcon from '@mui/icons-material/Check';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import { Button as MuiButton } from '@mui/material';
+import { Alignment, Button, Classes, Navbar, Tree, Popover, Menu, MenuItem, Tooltip } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const initialDrawerWidth = 240;
 const minDrawerWidth = 150;
 const maxDrawerWidth = 500;
 
-const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isInitialLoad, onOpenFile }) => {
+const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isInitialLoad, onOpenFile, theme }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef(null);
   const [renderTree, setRenderTree] = useState(false);
-  const [settingsAnchorPos, setSettingsAnchorPos] = useState(null);
   const [settings, setSettings] = useState({ showIcons: true, showOnStart: false });
   const [nodes, setNodes] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -165,21 +156,26 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  const handleSettingsClick = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setSettingsAnchorPos({ top: rect.bottom, left: rect.left });
-  };
-
   const handleSettingChange = (settingName) => {
     const newSettings = { ...settings, [settingName]: !settings[settingName] };
     setSettings(newSettings);
     if (window.electron) window.electron.setWorkspaceSettings(newSettings);
   };
 
-  const tooltipProps = {
-    placement: "top",
-    TransitionProps: { timeout: 0 },
-  };
+  const settingsMenu = (
+    <Menu>
+      <MenuItem
+        icon={settings.showIcons ? "tick" : "blank"}
+        text={t('Workspace Icons')}
+        onClick={() => handleSettingChange('showIcons')}
+      />
+      <MenuItem
+        icon={settings.showOnStart ? "tick" : "blank"}
+        text={t('Show Workspace on Start')}
+        onClick={() => handleSettingChange('showOnStart')}
+      />
+    </Menu>
+  );
 
   return (
     <Box
@@ -192,21 +188,28 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
         transition: isResizing || (open && isInitialLoad) ? 'none' : (theme) => theme.transitions.create('width'),
         position: 'relative',
       }}
+      className={Classes.FOCUS_DISABLED}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
-        <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 8px !important', justifyContent: 'space-between', backgroundColor: 'topbar.background' }}>
-          <Box>
-            <Tooltip title={t('Open Workspace')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleOpenWorkspace}><Icon icon="folder-open" /></IconButton></Tooltip>
-            <Tooltip title={t('New File')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="document" /></IconButton></Tooltip>
-            <Tooltip title={t('New Folder')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="folder-new" /></IconButton></Tooltip>
-            <Tooltip title={t('Refresh')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath} onClick={refreshTreeView}><Icon icon="refresh" /></IconButton></Tooltip>
-          </Box>
-          <Box>
-            <Tooltip title={t('Settings')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleSettingsClick}><Icon icon="more" /></IconButton></Tooltip>
-            <Tooltip title={t('Close Sidebar')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleClose}><Icon icon="cross" /></IconButton></Tooltip>
-          </Box>
-        </Toolbar>
-        <Box sx={{
+                <Navbar style={{
+                  height: '48px',
+                  padding: '0 8px',
+                  backgroundColor: theme.palette.topbar.background,
+                  color: theme.palette.text.primary
+                }}>
+                  <Navbar.Group align={Alignment.LEFT}>
+                    <Tooltip content={t('Open Workspace')} placement="top"><Button minimal icon="folder-open" onClick={handleOpenWorkspace} /></Tooltip>
+                    <Tooltip content={t('New File')} placement="top"><Button minimal icon="document" disabled={!workspacePath} /></Tooltip>
+                    <Tooltip content={t('New Folder')} placement="top"><Button minimal icon="folder-new" disabled={!workspacePath} /></Tooltip>
+                  </Navbar.Group>
+                  <Navbar.Group align={Alignment.RIGHT}>
+                    <Tooltip content={t('Refresh')} placement="top"><Button minimal icon="refresh" disabled={!workspacePath} onClick={refreshTreeView} /></Tooltip>
+                    <Popover content={settingsMenu} placement="bottom-end">
+                      <Tooltip content={t('Settings')} placement="top"><Button minimal icon="more" /></Tooltip>
+                    </Popover>
+                    <Tooltip content={t('Close Sidebar')} placement="top"><Button minimal icon="cross" onClick={handleClose} /></Tooltip>
+                  </Navbar.Group>
+                </Navbar>        <Box sx={{
           flexGrow: 1,
           overflowY: 'auto',
           overflowX: 'auto',
@@ -223,42 +226,13 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
           ) : (
             renderTree && !workspacePath && (
               <Box sx={{ p: 2, textAlign: 'center' }}>
-                <Button variant="contained" onClick={handleOpenWorkspace}>{t('Open Workspace')}</Button>
+                <MuiButton variant="contained" onClick={handleOpenWorkspace}>{t('Open Workspace')}</MuiButton>
               </Box>
             )
           )}
         </Box>
       </Box>
       <Box onMouseDown={handleMouseDown} sx={{ width: '5px', cursor: 'col-resize', position: 'absolute', top: 0, right: 0, bottom: 0, zIndex: 100 }} />
-      <Menu
-        open={Boolean(settingsAnchorPos)}
-        onClose={() => setSettingsAnchorPos(null)}
-        transitionDuration={0}
-        anchorReference="anchorPosition"
-        anchorPosition={settingsAnchorPos}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        PaperProps={{
-            style: {
-                transform: `scale(${uiScale})`,
-                transformOrigin: 'top left',
-                borderRadius: 0,
-            },
-        }}
-        MenuListProps={{
-            sx: {
-                py: 0,
-            },
-        }}
-      >
-        <MenuItem sx={{ pl: 1 }} onClick={() => handleSettingChange('showIcons')}>
-          <ListItemIcon>{settings.showIcons && <CheckIcon />}</ListItemIcon>
-          <ListItemText>{t('Workspace Icons')}</ListItemText>
-        </MenuItem>
-        <MenuItem sx={{ pl: 1 }} onClick={() => handleSettingChange('showOnStart')}>
-          <ListItemIcon>{settings.showOnStart && <CheckIcon />}</ListItemIcon>
-          <ListItemText>{t('Show Workspace on Start')}</ListItemText>
-        </MenuItem>
-      </Menu>
     </Box>
   );
 };
