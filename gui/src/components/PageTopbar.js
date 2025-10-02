@@ -1,4 +1,7 @@
 import React from 'react';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Divider from '@mui/material/Divider';
 import './PageTopbar.css';
 
 const PageTopbar = ({ page, theme }) => {
@@ -22,15 +25,11 @@ const PageTopbar = ({ page, theme }) => {
   };
 
   return (
-    <div 
-      className="page-topbar" 
-      style={{ 
-        backgroundColor: theme.palette.topbar.background,
-        borderBottomColor: theme.palette.divider
-      }}
-    >
-      {renderTopbarContent()}
-    </div>
+    <Box sx={{ backgroundColor: 'topbar.background' }}>
+      <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 16px !important' }}>
+        {renderTopbarContent()}
+      </Toolbar>
+    </Box>
   );
 };
 

@@ -61,6 +61,15 @@ function App() {
     }
   }, [themeMode, uiScale, language, isLoading]);
 
+  useEffect(() => {
+    if (!isLoading && window.electron) {
+      const colors = themeMode === 'dark'
+        ? { backgroundColor: '#272727', symbolColor: '#cccccc' }
+        : { backgroundColor: '#ffffff', symbolColor: '#333333' };
+      window.electron.updateTitleBarColors(colors);
+    }
+  }, [themeMode, isLoading]);
+
   // Fetch the workspace path when the app loads
   useEffect(() => {
     const loadWorkspace = async () => {
@@ -182,51 +191,60 @@ function App() {
         },
       }} />
       <Box sx={{
-        width: '100vw',
+        display: 'flex',
+        flexDirection: 'column',
         height: '100vh',
         overflow: 'hidden',
       }}>
-        <Box sx={{ 
-          display: 'flex',
-          transform: `scale(${uiScale})`,
-          transformOrigin: 'top left',
-          width: `${100 / uiScale}vw`,
-          height: `${100 / uiScale}vh`,
-        }} className={`${themeMode}-theme`}>
-          <CssBaseline />
-          <TitleBar theme={theme} />
-          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
-            <Explorer 
-              open={isExplorerOpen} 
-              setOpen={setIsExplorerOpen}
-              workspacePath={workspacePath}
-              setWorkspacePath={setWorkspacePath}
-              uiScale={uiScale}
-              isInitialLoad={isInitialLoad}
-            />
-            <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0, paddingTop: '40px' }}>
-              <div>
-                <PageTopbar page={currentPage} theme={theme} />
-              </div>
-              <Box
-                component="main"
-                sx={{
-                  flexGrow: 1,
-                  padding: (theme) => theme.spacing(3),
-                  overflowY: 'auto',
-                }}
-              >
-                <Routes>
-                  <Route path="/" element={<HomeScreen />} />
-                  <Route path="/search" element={<SearchScreen />} />
-                  <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
-                  <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
-                  <Route path="/sheet" element={<SheetScreen />} />
-                  <Route path="/graphs" element={<GraphsScreen />} />
-                  <Route path="/docs" element={<DocsScreen />} />
-                </Routes>
+        <TitleBar theme={theme} />
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box sx={{ 
+            display: 'flex',
+            transform: `scale(${uiScale})`,
+            transformOrigin: 'top left',
+            width: `${100 / uiScale}%`,
+            height: `${100 / uiScale}%`,
+          }} className={`${themeMode}-theme`}>
+            <CssBaseline />
+            <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
+              <Explorer 
+                open={isExplorerOpen} 
+                setOpen={setIsExplorerOpen}
+                workspacePath={workspacePath}
+                setWorkspacePath={setWorkspacePath}
+                uiScale={uiScale}
+                isInitialLoad={isInitialLoad}
+              />
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                flexGrow: 1, 
+                minWidth: 0,
+                borderLeft: isExplorerOpen ? (theme) => `1px solid ${theme.palette.divider}` : 'none',
+              }}>
+                <div>
+                  <PageTopbar page={currentPage} theme={theme} />
+                </div>
+                <Box
+                  component="main"
+                  sx={{
+                    flexGrow: 1,
+                    padding: (theme) => theme.spacing(3),
+                    overflowY: 'auto',
+                  }}
+                >
+                  <Routes>
+                    <Route path="/" element={<HomeScreen />} />
+                    <Route path="/search" element={<SearchScreen />} />
+                    <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
+                    <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
+                    <Route path="/sheet" element={<SheetScreen />} />
+                    <Route path="/graphs" element={<GraphsScreen />} />
+                    <Route path="/docs" element={<DocsScreen />} />
+                  </Routes>
+                </Box>
               </Box>
-            </Box>
+          </Box>
         </Box>
       </Box>
       <AppModal open={isModalOpen} handleClose={() => setIsModalOpen(false)}>

@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import { Icon } from '@blueprintjs/core';
+import Toolbar from '@mui/material/Toolbar';
 
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -45,11 +46,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     boxSizing: 'border-box',
     ...(open && {
       ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
+      '& .MuiDrawer-paper': { ...openedMixin(theme), border: 0 },
     }),
     ...(!open && {
       ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
+      '& .MuiDrawer-paper': { ...closedMixin(theme), border: 0 },
     }),
   }),
 );
@@ -59,7 +60,6 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
   const iconSize = (uiScale / 0.8) * 20; // Base size of 20px at 80% scale
-  const caretIconSize = iconSize * 0.8;
 
   const mainNavItems = [
     { text: t('Home'), icon: <Icon icon="home" size={iconSize} />, path: '/' },
@@ -110,17 +110,17 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
           zIndex: theme.zIndex.drawer + 1,
         })}
       />
-      <Box sx={{ paddingTop: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Hamburger Menu & Arrow */}
-        <Box sx={{ height: '48px', backgroundColor: theme.palette.topbar.background }}>
+      <Box sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Hamburger Menu */}
+        <Toolbar disableGutters sx={{ minHeight: '48px !important', height: '48px', backgroundColor: 'topbar.background' }}>
           <ListItemButton
             onClick={handleDrawerToggle}
             sx={{
-              position: 'relative', // Parent for absolute positioning
               height: '100%',
+              width: '100%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-start', // Align hamburger to the left
+              justifyContent: 'flex-start',
               px: 0,
               py: 0,
               '&:hover': {
@@ -129,21 +129,10 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
             }}
           >
             <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center', width: (theme) => theme.spacing(7) }}>
-              <Icon icon="menu" size={iconSize} />
+              <Icon icon={open ? "menu-closed" : "menu-open"} size={iconSize} />
             </ListItemIcon>
-            
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-              }}
-            >
-              {open ? <Icon icon="caret-left" size={caretIconSize} /> : <Icon icon="caret-right" size={caretIconSize} />}
-            </Box>
           </ListItemButton>
-        </Box>
-        <Divider sx={{ my: 0 }} />
+        </Toolbar>
         {/* Main Navigation */}
         <List disablePadding>
           {mainNavItems.map((item) => (

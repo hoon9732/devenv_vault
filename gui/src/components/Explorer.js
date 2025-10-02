@@ -122,7 +122,6 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
         overflow: 'hidden',
         transition: isResizing || (open && isInitialLoad) ? 'none' : (theme) => theme.transitions.create('width'),
         position: 'relative',
-        paddingTop: '40px',
       }}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
@@ -138,7 +137,6 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
             <Tooltip title={t('Close Sidebar')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleClose}><Icon icon="cross" /></IconButton></Tooltip>
           </Box>
         </Toolbar>
-        <Divider sx={{ my: 0 }} />
         <Box sx={{
           flexGrow: 1,
           overflowY: 'auto',

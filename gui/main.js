@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const url = require('url');
 const { version } = require('./package.json');
+const WinState = require('electron-win-state').default;
 
 // --- Configuration Management ---
 const configPath = path.join(app.getPath('userData'), 'config.json');
@@ -32,18 +33,29 @@ function writeConfig(config) {
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 function createWindow () {
+  const winState = new WinState({
+    defaultWidth: 1200,
+    defaultHeight: 800,
+  });
+
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    ...winState.winOptions,
     minWidth: 960,
     minHeight: 640,
     title: 'ICDV',
-    frame: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#272727', // Default to dark mode color
+      symbolColor: '#cccccc', // Default to dark mode symbol color
+      height: 40
+    },
     icon: path.join(__dirname, 'src/assets/favicon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   });
+
+  winState.manage(win);
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, 'build/index.html'),
@@ -52,6 +64,17 @@ function createWindow () {
   });
   win.loadURL(startUrl);
 }
+
+// IPC handler for updating title bar colors
+ipcMain.on('update-titlebar-colors', (event, { backgroundColor, symbolColor }) => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) {
+    win.setTitleBarOverlay({
+      color: backgroundColor,
+      symbolColor: symbolColor
+    });
+  }
+});
 
 app.whenReady().then(() => {
   createWindow();
