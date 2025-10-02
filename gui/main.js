@@ -39,12 +39,7 @@ function createWindow () {
     minHeight: 640,
     title: 'ICDV',
     frame: false,
-    titleBarStyle: 'hidden',
     icon: path.join(__dirname, 'src/assets/favicon.ico'),
-    titleBarOverlay: {
-      color: 'rgba(0, 0, 0, 0)',
-      symbolColor: 'rgba(255, 255, 255, 1)',
-    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -249,10 +244,10 @@ ipcMain.handle('save-settings', (event, settings) => {
 // --- End Settings ---
 
 // IPC handler for opening the about window
-ipcMain.handle('open-about-window', (event, theme) => {
+ipcMain.handle('open-about-window', (event, { theme, uiScale, titleBarColor }) => {
   const aboutWin = new BrowserWindow({
     width: 800,
-    height: 800,
+    height: 600,
     title: 'About',
     frame: false,
     resizable: false,
@@ -271,6 +266,8 @@ ipcMain.handle('open-about-window', (event, theme) => {
 
   const aboutUrl = new URL('file:' + aboutPath);
   aboutUrl.searchParams.set('theme', theme);
+  aboutUrl.searchParams.set('uiScale', uiScale);
+  aboutUrl.searchParams.set('titleBarColor', titleBarColor);
   aboutWin.loadURL(aboutUrl.href);
 });
 

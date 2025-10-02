@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('electron', {
   minimizeWindow: () => ipcRenderer.send('minimize-window'),
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   closeWindow: () => ipcRenderer.send('close-window'),
+  updateTheme: (theme) => ipcRenderer.send('update-theme', theme),
   pathJoin: (...paths) => require('path').join(...paths),
   pathDirname: (p) => require('path').dirname(p),
 });

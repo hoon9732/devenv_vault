@@ -1,18 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 import TitleBar from './components/TitleBar';
+import PageTopbar from './components/PageTopbar';
 import Sidebar from './components/Sidebar';
 import HomeScreen from './pages/HomeScreen';
 import SearchScreen from './pages/SearchScreen';
 import FileViewerScreen from './pages/FileViewerScreen';
 import SettingsScreen from './pages/SettingsScreen';
 import SheetScreen from './pages/SheetScreen';
-import FlowchartScreen from './pages/FlowchartScreen';
+import GraphsScreen from './pages/GraphsScreen';
 import DocsScreen from './pages/DocsScreen';
 import Explorer from './components/Explorer';
 import { useLanguage } from './contexts/LanguageContext';
@@ -32,7 +33,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, language } = useLanguage();
+
+  const currentPage = location.pathname.substring(1) || 'home';
 
   useEffect(() => {
     setIsInitialLoad(false);
@@ -51,6 +55,9 @@ function App() {
   useEffect(() => {
     if (!isLoading) {
       saveSettings({ theme: themeMode, scale: uiScale, language });
+      if (window.electron) {
+        window.electron.updateTheme(themeMode);
+      }
     }
   }, [themeMode, uiScale, language, isLoading]);
 
@@ -79,13 +86,14 @@ function App() {
           ...(themeMode === 'dark'
             ? {
                 primary: { main: '#90caf9' },
-                background: { default: '#121212', paper: '#1e1e1e' },
                 appBar: { background: '#272727' },
+                topbar: { background: '#2d2d2d' },
               }
             : {
                 primary: { main: '#1976d2' },
                 background: { default: '#f4f6f8', paper: '#ffffff' },
                 appBar: { background: '#ffffff' },
+                topbar: { background: '#ebebeb' },
               }),
         },
         components: {
@@ -148,7 +156,11 @@ function App() {
 
   const handleAboutClick = () => {
     if (window.electron) {
-      window.electron.openAboutWindow(themeMode);
+      window.electron.openAboutWindow({
+        theme: themeMode,
+        uiScale: uiScale,
+        titleBarColor: theme.palette.appBar.background
+      });
     }
   };
 
@@ -180,22 +192,10 @@ function App() {
           transformOrigin: 'top left',
           width: `${100 / uiScale}vw`,
           height: `${100 / uiScale}vh`,
-        }}>
+        }} className={`${themeMode}-theme`}>
           <CssBaseline />
-          <TitleBar />
+          <TitleBar theme={theme} />
           <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
-          <Box
-            sx={{
-              display: 'flex',
-              flexGrow: 1,
-              minWidth: 0, // Prevent content from overflowing
-              transition: (theme) =>
-                theme.transitions.create('margin-left', {
-                  easing: theme.transitions.easing.sharp,
-                  duration: theme.transitions.duration.enteringScreen,
-                }),
-            }}
-          >
             <Explorer 
               open={isExplorerOpen} 
               setOpen={setIsExplorerOpen}
@@ -204,28 +204,29 @@ function App() {
               uiScale={uiScale}
               isInitialLoad={isInitialLoad}
             />
-            <Box
-              component="main"
-              sx={{
-                flexGrow: 1,
-                paddingLeft: (theme) => theme.spacing(3),
-                paddingRight: (theme) => theme.spacing(3),
-                paddingBottom: (theme) => theme.spacing(3),
-                paddingTop: '40px',
-                overflowY: 'auto',
-              }}
-            >
-              <Routes>
-                <Route path="/" element={<HomeScreen />} />
-                <Route path="/search" element={<SearchScreen />} />
-                <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
-                <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
-                <Route path="/sheet" element={<SheetScreen />} />
-                <Route path="/flowchart" element={<FlowchartScreen />} />
-                <Route path="/docs" element={<DocsScreen />} />
-              </Routes>
+            <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0, paddingTop: '40px' }}>
+              <div>
+                <PageTopbar page={currentPage} theme={theme} />
+              </div>
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  padding: (theme) => theme.spacing(3),
+                  overflowY: 'auto',
+                }}
+              >
+                <Routes>
+                  <Route path="/" element={<HomeScreen />} />
+                  <Route path="/search" element={<SearchScreen />} />
+                  <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
+                  <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
+                  <Route path="/sheet" element={<SheetScreen />} />
+                  <Route path="/graphs" element={<GraphsScreen />} />
+                  <Route path="/docs" element={<DocsScreen />} />
+                </Routes>
+              </Box>
             </Box>
-          </Box>
         </Box>
       </Box>
       <AppModal open={isModalOpen} handleClose={() => setIsModalOpen(false)}>

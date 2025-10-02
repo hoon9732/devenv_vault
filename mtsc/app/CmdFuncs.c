@@ -1251,8 +1251,15 @@ STATUS mtsChkGf3NavData(void) {
 	} else if (strcmp(g_szArgs[0], "HL") == 0) {
 		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_HL);
 		return OK;
-	} else if (strcmp(g_szArgs[0], "XLONL") == 0) {
-		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLONL);
+	} else if (strcmp(g_szArgs[0], "XLATT") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLATT);
 		return OK;
-	}
-	
+	} else if (strcmp(g_szArgs[0], "XLONT") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XLONT);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "HT") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_XHT);
+		return OK;
+	} else if (strcmp(g_szArgs[0], "IMU_LA_X") == 0) {
+		UdpSendOpsTxResult(RESULT_TYPE_PASS, szValueFormat, g_pTmGf3->gf3_1.m_IMU_LA_X);
+		return OK;

@@ -126,7 +126,7 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       }}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper' }}>
-        <Toolbar sx={{ minHeight: '48px !important', p: '0 8px !important', justifyContent: 'space-between' }}>
+        <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 8px !important', justifyContent: 'space-between', backgroundColor: 'topbar.background' }}>
           <Box>
             <Tooltip title={t('Open Workspace')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} onClick={handleOpenWorkspace}><Icon icon="folder-open" /></IconButton></Tooltip>
             <Tooltip title={t('New File')} {...tooltipProps}><IconButton sx={{ p: 0.75 }} disabled={!workspacePath}><Icon icon="document" /></IconButton></Tooltip>

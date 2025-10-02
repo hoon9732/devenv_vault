@@ -63,14 +63,14 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
 
   const mainNavItems = [
     { text: t('Home'), icon: <Icon icon="home" size={iconSize} />, path: '/' },
-    { text: t('Search'), icon: <Icon icon="search" size={iconSize} />, path: '/search' },
     { text: t('Explorer'), icon: <Icon icon="folder-open" size={iconSize} /> },
+    { text: t('Search'), icon: <Icon icon="search" size={iconSize} />, path: '/search' },
   ];
 
   const appNavItems = [
     { text: t('Sheet'), icon: <Icon icon="th" size={iconSize} color={isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)'} />, path: '/sheet' },
-    { text: t('Flowchart'), icon: <Icon icon="flow-linear" size={iconSize} color={isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)'} />, path: '/flowchart' },
-    { text: t('Docs'), icon: <Icon icon="document" size={iconSize} color={isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)'} />, path: '/docs' },
+    { text: t('Graphs'), icon: <Icon icon="data-lineage" size={iconSize} color={isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)'} />, path: '/graphs' },
+    { text: t('Docs'), icon: <Icon icon="document-share" size={iconSize} color={isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)'} />, path: '/docs' },
   ];
 
   const bottomNavItems = [
@@ -112,54 +112,42 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
       />
       <Box sx={{ paddingTop: '40px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Hamburger Menu & Arrow */}
-        <Box sx={{ position: 'relative', height: '48px' }}>
-          {/* Hamburger button area */}
-          <Tooltip title={t('Toggle Sidebar')} {...tooltipProps}>
-            <ListItemButton
-              onClick={handleDrawerToggle}
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                bottom: 0,
-                width: (theme) => `calc(${theme.spacing(7)} + 1px)`,
-                justifyContent: 'center',
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center' }}>
-                <Icon icon="menu" size={iconSize} />
-              </ListItemIcon>
-            </ListItemButton>
-          </Tooltip>
-
-          {/* Arrow area */}
-          <Box
+        <Box sx={{ height: '48px', backgroundColor: theme.palette.topbar.background }}>
+          <ListItemButton
             onClick={handleDrawerToggle}
             sx={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: (theme) => `calc(${theme.spacing(7)} + 1px)`,
+              position: 'relative', // Parent for absolute positioning
+              height: '100%',
               display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              cursor: 'pointer',
-              pointerEvents: open ? 'auto' : 'none',
-              pr: open ? 0 : 2,
+              alignItems: 'center',
+              justifyContent: 'flex-start', // Align hamburger to the left
+              px: 0,
+              py: 0,
               '&:hover': {
-                backgroundColor: open ? 'action.hover' : 'transparent',
+                backgroundColor: 'action.hover',
               },
             }}
           >
-            {open ? <Icon icon="caret-left" size={caretIconSize} /> : <Icon icon="caret-right" size={caretIconSize} />}
-          </Box>
+            <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center', width: (theme) => theme.spacing(7) }}>
+              <Icon icon="menu" size={iconSize} />
+            </ListItemIcon>
+            
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+              }}
+            >
+              {open ? <Icon icon="caret-left" size={caretIconSize} /> : <Icon icon="caret-right" size={caretIconSize} />}
+            </Box>
+          </ListItemButton>
         </Box>
         <Divider sx={{ my: 0 }} />
         {/* Main Navigation */}
         <List disablePadding>
           {mainNavItems.map((item) => (
-            <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+            <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
               <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
                 <ListItemButton sx={{ px: 0 }}>
                   <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
@@ -175,7 +163,7 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
         {/* App Navigation */}
         <List disablePadding>
           {appNavItems.map((item) => (
-            <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+            <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
               <ListItem disablePadding onClick={() => handleExplorerToggle(item)}>
                 <ListItemButton sx={{ px: 0 }}>
                   <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>
@@ -191,7 +179,7 @@ const Sidebar = ({ open, handleDrawerToggle, handleExplorerToggle, handleModalOp
           <Divider sx={{ my: 0 }} />
           <List disablePadding>
             {bottomNavItems.map((item) => (
-              <Tooltip key={item.text} title={item.text} {...tooltipProps}>
+              <Tooltip key={item.text} title={item.text} {...tooltipProps} disableHoverListener={open}>
                 <ListItem disablePadding onClick={() => handleBottomNavClick(item)}>
                   <ListItemButton sx={{ px: 0 }}>
                     <ListItemIcon sx={{ width: (theme) => theme.spacing(7), justifyContent: 'center' }}>{item.icon}</ListItemIcon>

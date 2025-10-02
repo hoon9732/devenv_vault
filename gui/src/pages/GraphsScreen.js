@@ -2,9 +2,9 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const FlowchartScreen = () => {
+const GraphsScreen = () => {
   const { t } = useLanguage();
-  return <Typography variant="h4">{t('Flowchart')}</Typography>;
+  return <Typography variant="h4">{t('Graphs')}</Typography>;
 };
 
-export default FlowchartScreen;
+export default GraphsScreen;
