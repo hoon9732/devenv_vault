@@ -17,9 +17,9 @@ import GraphsScreen from './pages/GraphsScreen';
 import DocsScreen from './pages/DocsScreen';
 import Explorer from './components/Explorer';
 import { useLanguage } from './contexts/LanguageContext';
-import AppModal from './components/AppModal';
 import ProfileContent from './components/ProfileContent';
 import { getSettings, saveSettings } from './utils/settingsManager';
+import { Dialog, Classes } from '@blueprintjs/core';
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -211,7 +211,7 @@ function App() {
       }}>
         <TitleBar theme={theme} />
         <Box sx={{ flex: 1, minHeight: 0 }}>
-          <Box sx={{ 
+          <Box sx={{
             display: 'flex',
             transform: `scale(${uiScale})`,
             transformOrigin: 'top left',
@@ -230,7 +230,7 @@ function App() {
                 onOpenFile={handleOpenFile}
                 theme={theme}
               />
-              <Box sx={{ 
+              <Box sx={{
                 display: 'flex', 
                 flexDirection: 'column', 
                 flexGrow: 1, 
@@ -262,11 +262,17 @@ function App() {
           </Box>
         </Box>
       </Box>
-      <AppModal open={isModalOpen} handleClose={() => setIsModalOpen(false)}>
-        {modalContent}
-      </AppModal>
+      <Dialog
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={t('Profile')}
+        className={themeMode === 'dark' ? Classes.DARK : ''}
+      >
+        <Box sx={{ p: 2 }}>
+          {modalContent}
+        </Box>
+      </Dialog>
     </ThemeProvider>
   );
 }
-
 export default App;
