@@ -16,6 +16,9 @@ export const translations = {
     'Sheet': 'Sheet',
     'Flowchart': 'Flowchart',
     'Docs': 'Docs',
+    'Default Workspace': 'Default Workspace',
+    'Hardware Acceleration': 'Hardware Acceleration',
+    'Enable hardware acceleration for smoother animations. May increase resource usage.': 'Enable hardware acceleration for smoother animations. May increase resource usage.',
   },
   ko: {
     'Home': '홈',
@@ -35,5 +38,8 @@ export const translations = {
     'Flowchart': '순서도',
     'Docs': '문서',
     'Delete': '삭제',
+    'Default Workspace': '기본 작업공간',
+    'Hardware Acceleration': '하드웨어 가속',
+    'Enable hardware acceleration for smoother animations. May increase resource usage.': '더 부드러운 애니메이션을 위해 하드웨어 가속을 활성화합니다. 리소스 사용량이 증가할 수 있습니다.',
   }
 };

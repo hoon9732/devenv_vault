@@ -20,17 +20,17 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
   const [refreshKey, setRefreshKey] = useState(0);
 
   // Helper function to convert file system items to Blueprint Tree nodes
-  const toTreeNodes = (items) => {
+  const toTreeNodes = useCallback((items) => {
     return items.map(item => ({
       id: item.path,
       label: item.name,
-      icon: item.isDirectory ? "folder-close" : "document",
+      icon: settings.showIcons ? (item.isDirectory ? "folder-close" : "document") : undefined,
       hasCaret: item.isDirectory,
       isExpanded: false,
       childNodes: [],
       nodeData: item,
     }));
-  };
+  }, [settings.showIcons]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -57,7 +57,7 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       }
     };
     loadRoot();
-  }, [workspacePath, refreshKey]);
+  }, [workspacePath, refreshKey, toTreeNodes]);
 
   const refreshTreeView = () => setRefreshKey(prev => prev + 1);
 
@@ -172,11 +172,12 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       />
       <MenuItem
         icon={settings.showOnStart ? "tick" : "blank"}
-        text={t('Show Workspace on Start')}
+        text={t('Default Workspace')}
         onClick={() => handleSettingChange('showOnStart')}
       />
     </Menu>
   );
+
 
   return (
     <Box
@@ -202,10 +203,9 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
             </div>
                             <div className="explorer-topbar-right">
               <Tooltip content={t('Refresh')} placement="top" usePortal={false}><Button minimal icon="refresh" disabled={!workspacePath} onClick={refreshTreeView} /></Tooltip>
-              <Popover content={settingsMenu} placement="bottom-end">
-                <Tooltip content={t('Settings')} placement="top" usePortal={false}><Button minimal icon="more" /></Tooltip>
-              </Popover>
-              <Button 
+                                      <Popover content={settingsMenu} placement="bottom-end" usePortal={false}>
+                                        <Tooltip content={t('Settings')} placement="top" usePortal={false}><Button minimal icon="more" /></Tooltip>
+                                      </Popover>              <Button 
                 minimal 
                 icon="cross" 
                 onClick={handleClose}
@@ -217,7 +217,9 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
                             <span>{workspacePath ? workspacePath.split('\\').pop() : t('No Workspace')}</span>
                           </div>
                         </div>
-        <Box sx={{
+        <Box 
+          className="explorer-tree-container"
+          sx={{
           flexGrow: 1,
           overflowY: 'auto',
           overflowX: 'auto',

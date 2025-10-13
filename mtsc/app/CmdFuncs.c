@@ -1555,4 +1555,98 @@ STATUS mtsAcuSlewEnd(void) {
 		return ERROR;
 	}
 	
-	WAIT_RESPONSE(GET_DELAY_TICK(3500), 1, TM_FG2_1_OPCODE
+	WAIT_RESPONSE(GET_DELAY_TICK(3500), 1, TM_FG2_1_OPCODE_ACT_TEST_END, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usGcuResp);
+	
+	return OK;
+}
+
+STATUS mtsAcuWingCommandSetErrorDeg(void) {
+	UINT usFInNum;
+	INT16 sDeg;
+	int nDegError;
+	int idx;
+	CODE usGcuResp;
+	INT16 sFinFb;
+	OPS_TYPE_RESULT_TYPE eResult;
+	
+	TRY_STR_TO_LONG(usFinNum, 0, UINT16);
+	TRY_STR_TO_LONG(sDeg, 1, INT16);
+	TRY_STR_TO_LONG(nDegError, 2, int);
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_3.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_3.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_3.m_OPCODE = TM_FG2_3_OPCODE;
+	g_pTmFg2->fg2_3.m_ACTNO = usFinNum;
+	g_pTmFg2->fg2_3.m_VALUE = sDeg;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_3_OPCDE, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	for (idx = 0; idx < 35; idx++) {
+		DELAY_MS(100);
+		
+		switch (usFinNum) {
+			case 1:
+				sFinFb = g_pTmGf2->m_FIN1_FB;
+				break;
+			case 2:
+				sFinFb = g_pTmGf2->m_FIN2_FB;
+				break;
+			case 3:
+				sFinFb = g_pTmGf2->m_FIN3_FB;
+				break;
+			case 4:
+				sFinFb = g_pTmGf2->m_FIN4_FB;
+				break;
+		}
+		UdpSendOpsTxResult(RESULT_TYPE_ONGOING, "%0.3f", sFinFb / 1000.);
+	}
+	
+	switch (usFinNum) {
+		case 1:
+			sFinFb = g_pTmGf2->m_FIN1_FB;
+			break;
+		case 2:
+			sFinFb = g_pTmGf2->m_FIN2_FB;
+			break;
+		case 3:
+			sFinFb = g_pTmGf2->m_FIN3_FB;
+			break;
+		case 4:
+			sFinFb = g_pTmGf2->m_FIN4_FB;
+			break;
+	}
+	
+	eResult = mtsCheckRange(sDeg - nDegError, sDeg + nDegError, sFinFb);
+	UdpSendOpsTxResult(RESULT_TYPE_ONGOING, "%0.3f", sFinFb / 1000.);
+	
+	return OK;
+}
+
+STATUS mtsArm1OnOff(void) {
+	STATUS gcuDioValid = OK;
+	
+	LOGMSG("GCU_DIO_STS : 0x%04X\n", g_pTmGf2->m_GCU_DIO_STS;
+	if ((g_pTmGf2->m_GCU_DIO_STS >> 7 & 0x1) != 0x0) {
+		gcuDioValid = ERROR;
+	}
+	
+	if (mtsLibDoSysArm1On(1) == ERROR) {
+		REPORT_ERROR("mtsLibDoSysArm1On(1) Error.\n");
+		return ERROR;
+	}
+	
+	DELAY MS(GCU_RESPONSE_TIME);

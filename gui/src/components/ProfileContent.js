@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Popover from '@mui/material/Popover';
 import { Icon } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
+import './ProfileContent.css';
 
 const iconNames = [
   'user', 'person', 'shield', 'new-person', 'endorsed', 'id-number',

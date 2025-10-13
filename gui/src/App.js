@@ -22,11 +22,13 @@ import { getSettings, saveSettings } from './utils/settingsManager';
 import { Dialog, Classes } from '@blueprintjs/core';
 
 function App() {
-  const [isExplorerOpen, setIsExplorerOpen] = useState(false); // Independent state for secondary sidebar visibility
-  const [workspacePath, setWorkspacePath] = useState(null); // Holds the path to the current workspace
+  const [isExplorerOpen, setIsExplorerOpen] = useState(false);
+  const [lastOpenBar, setLastOpenBar] = useState('explorer'); // Default to explorer
+  const [workspacePath, setWorkspacePath] = useState(null);
   const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('dark');
   const [uiScale, setUiScale] = useState(1);
+  const [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +48,7 @@ function App() {
       const settings = await getSettings();
       setThemeMode(settings.theme);
       setUiScale(settings.scale);
+      setIsHardwareAccelerationEnabled(settings.hardwareAcceleration ?? true); // Default to true
       setIsLoading(false);
     };
     loadSettings();
@@ -53,12 +56,12 @@ function App() {
 
   useEffect(() => {
     if (!isLoading) {
-      saveSettings({ theme: themeMode, scale: uiScale, language });
+      saveSettings({ theme: themeMode, scale: uiScale, language, hardwareAcceleration: isHardwareAccelerationEnabled });
       if (window.electron) {
         window.electron.updateTheme(themeMode);
       }
     }
-  }, [themeMode, uiScale, language, isLoading]);
+  }, [themeMode, uiScale, language, isLoading, isHardwareAccelerationEnabled]);
 
   useEffect(() => {
     if (!isLoading && window.electron) {
@@ -126,6 +129,21 @@ function App() {
     [themeMode],
   );
 
+  const handleHamburgerClick = () => {
+    // If any bar is open, close them all.
+    if (isExplorerOpen) {
+      setIsExplorerOpen(false);
+      // Add other bars here in the future, e.g., setIsWhateverOpen(false);
+      return;
+    }
+
+    // Otherwise, open the last opened bar.
+    if (lastOpenBar === 'explorer') {
+      setIsExplorerOpen(true);
+    }
+    // Add other bars here in the future, e.g., if (lastOpenBar === 'whatever') { setIsWhateverOpen(true); }
+  };
+
   const handleExplorerToggle = (item) => {
     // If the item has a path, navigate to it.
     if (item.path) {
@@ -134,7 +152,11 @@ function App() {
 
     // Special logic for the Workspace button
     if (item.text === t('Explorer')) {
-      setIsExplorerOpen(!isExplorerOpen);
+      const newOpenState = !isExplorerOpen;
+      setIsExplorerOpen(newOpenState);
+      if (newOpenState) {
+        setLastOpenBar('explorer');
+      }
     }
   };
 
@@ -204,10 +226,10 @@ function App() {
         height: '100vh',
         overflow: 'hidden',
         backgroundColor: theme.palette.background.default,
-      }} className={themeMode === 'dark' ? Classes.DARK : ''}>
+      }} className={`${themeMode === 'dark' ? Classes.DARK : 'bp6-light'} ${isHardwareAccelerationEnabled ? 'hw-acceleration-enabled' : ''}`}>
         <CssBaseline />
         <TitleBar theme={theme} />
-        <Box sx={{ flex: 1, minHeight: 0 }}>
+        <Box sx={{ flex: 1, minHeight: 0, borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', overflow: 'hidden', transform: 'translateZ(0)' }}>
           <Box sx={{
             display: 'flex',
             transform: `scale(${uiScale})`,
@@ -215,7 +237,15 @@ function App() {
             width: `${100 / uiScale}%`,
             height: `${100 / uiScale}%`,
           }}>
-            <Sidebar handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
+            <Sidebar 
+              handleFileOpen={handleFileOpen} 
+              handleHamburgerClick={handleHamburgerClick} 
+              handleExplorerToggle={handleExplorerToggle} 
+              handleModalOpen={handleModalOpen} 
+              handleAboutClick={handleAboutClick} 
+              uiScale={uiScale}
+              isExplorerOpen={isExplorerOpen}
+            />
               <Explorer 
                 open={isExplorerOpen} 
                 setOpen={setIsExplorerOpen}
@@ -247,7 +277,14 @@ function App() {
                       <Route path="/" element={<HomeScreen />} />
                       <Route path="/search" element={<SearchScreen />} />
                       <Route path="/file-viewer" element={<FileViewerScreen fileContent={fileContent} />} />
-                      <Route path="/settings" element={<SettingsScreen themeMode={themeMode} setThemeMode={setThemeMode} uiScale={uiScale} setUiScale={setUiScale} />} />
+                      <Route path="/settings" element={<SettingsScreen 
+                        themeMode={themeMode} 
+                        setThemeMode={setThemeMode} 
+                        uiScale={uiScale} 
+                        setUiScale={setUiScale}
+                        isHardwareAccelerationEnabled={isHardwareAccelerationEnabled}
+                        setIsHardwareAccelerationEnabled={setIsHardwareAccelerationEnabled}
+                      />} />
                       <Route path="/sheet" element={<SheetScreen />} />
                       <Route path="/graphs" element={<GraphsScreen />} />
                       <Route path="/docs" element={<DocsScreen />} />

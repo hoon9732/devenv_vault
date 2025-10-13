@@ -15,6 +15,10 @@
   flex-shrink: 0;
 }
 
+.bp6-dark .explorer-topbar-upper {
+  background-color: rgba(255, 255, 255, 0.15); /* Lighter background for dark mode */
+}
+
 .explorer-topbar-lower {
   display: flex;
   align-items: center;
@@ -26,7 +30,7 @@
 }
 
 .bp6-light .explorer-topbar-lower {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1); /* Use semi-transparent for subtle contrast */
   color: rgba(0, 0, 0, 0.6); /* Greyed out text */
 }
 
@@ -39,7 +43,6 @@
 .explorer-topbar-right {
   display: flex;
   align-items: center;
-  gap: 4px;
 }
 
 .explorer-topbar-right {
@@ -48,4 +51,14 @@
 
 .explorer-tree .bp6-tree-node-label {
   font-size: 14px;
+}
+
+/* Lighten the tree background in dark mode */
+.bp6-dark .explorer-tree-container {
+  background-color: #30404d; /* A lighter Blueprint grey */
+}
+
+/* Force hardware acceleration on tree nodes to prevent flicker during animation */
+.hw-acceleration-enabled .explorer-tree .bp6-tree-node {
+  transform: translateZ(0);
 }

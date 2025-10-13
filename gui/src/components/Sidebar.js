@@ -3,14 +3,15 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Classes, Menu, MenuItem, Tooltip, Divider, Icon } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
+import './Sidebar.css';
 
 const collapsedWidth = 57; // Approx theme.spacing(7)
 
-const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale }) => {
+const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale, handleHamburgerClick, isExplorerOpen }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
-  const iconSize = (uiScale / 0.8) * 20;
+  const iconSize = 20 + (uiScale - 1) * 10;
 
   const mainNavItems = [
     { text: t('Home'), icon: "home", path: '/' },
@@ -80,6 +81,7 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
       <Menu style={{ padding: 0, flexShrink: 0, width: collapsedWidth, borderRadius: 0, overflow: 'hidden' }}>
         <MenuItem 
           className="sidebar-menu-item"
+          onClick={handleHamburgerClick}
           style={{ 
             height: '64px', 
             padding: 0,
@@ -90,7 +92,7 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
           text={
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
               <div style={{ width: `${collapsedWidth}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
-                <Icon icon="menu" size={iconSize} />
+                <Icon icon={isExplorerOpen ? "menu-closed" : "menu-open"} size={iconSize} />
               </div>
             </div>
           }

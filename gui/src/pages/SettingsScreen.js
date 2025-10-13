@@ -1,15 +1,15 @@
 import React from 'react';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
+import { Card, H4, H5, Text, HTMLSelect, Switch } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
+const SettingsScreen = ({ 
+  themeMode, 
+  setThemeMode, 
+  uiScale, 
+  setUiScale,
+  isHardwareAccelerationEnabled,
+  setIsHardwareAccelerationEnabled
+}) => {
   const { language, setLanguage, t } = useLanguage();
 
   const handleThemeChange = (event) => {
@@ -26,103 +26,74 @@ const SettingsScreen = ({ themeMode, setThemeMode, uiScale, setUiScale }) => {
     setUiScale(internalScale);
   };
 
+  const handleHardwareAccelerationChange = () => {
+    setIsHardwareAccelerationEnabled(!isHardwareAccelerationEnabled);
+  };
+
   const displayedScale = Math.round(uiScale * 100);
   const scaleOptions = [70, 80, 90, 100, 110, 120, 130, 140, 150];
 
-  const menuProps = {
-    transitionDuration: 0,
-    PaperProps: {
-      style: {
-        transform: `scale(${uiScale})`,
-        transformOrigin: 'top left',
-        borderRadius: 0,
-      },
-    },
-    MenuListProps: {
-      sx: {
-        py: 0,
-      },
-    },
-  };
-
   return (
-    <Box sx={{ width: '100%', maxWidth: 800 }}>
-      <Typography variant="h4" gutterBottom>{t('Settings')}</Typography>
+    <div style={{ width: '100%', maxWidth: 800 }}>
+      <H4 style={{ marginBottom: '20px' }}>{t('Settings')}</H4>
 
-      <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ mr: 2 }}>
-          <Typography variant="h6">{t('UI Scale')}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('Adjust the overall interface scale.')}
-          </Typography>
-        </Box>
-        <FormControl sx={{ width: 240 }}>
-          <InputLabel id="scale-select-label">{t('Scale')}</InputLabel>
-          <Select
-            labelId="scale-select-label"
-            id="scale-select"
-            value={displayedScale}
-            label={t('Scale')}
-            onChange={handleScaleChange}
-            MenuProps={menuProps}
-          >
-            {scaleOptions.map(option => (
-              <MenuItem key={option} value={option}>{option}%</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Paper>
+      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <H5>{t('UI Scale')}</H5>
+          <Text muted>{t('Adjust the overall interface scale.')}</Text>
+        </div>
+        <HTMLSelect
+          style={{ minWidth: '150px' }}
+          value={displayedScale}
+          onChange={handleScaleChange}
+          options={scaleOptions.map(o => ({ label: `${o}%`, value: o }))}
+        />
+      </Card>
 	  
-	  <Divider sx={{ my: 2 }} />
-	  
-      <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ mr: 2 }}>
-          <Typography variant="h6">{t('Theme')}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('Select your preferred color mode.')}
-          </Typography>
-        </Box>
-        <FormControl sx={{ width: 240 }}>
-          <InputLabel id="theme-select-label">{t('Theme')}</InputLabel>
-          <Select
-            labelId="theme-select-label"
-            id="theme-select"
-            value={themeMode}
-            label={t('Theme')}
-            onChange={handleThemeChange}
-            MenuProps={menuProps}
-          >
-            <MenuItem value="light">Light</MenuItem>
-            <MenuItem value="dark">Dark</MenuItem>
-          </Select>
-        </FormControl>
-      </Paper>
+      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <H5>{t('Theme')}</H5>
+          <Text muted>{t('Select your preferred color mode.')}</Text>
+        </div>
+        <HTMLSelect
+          style={{ minWidth: '150px' }}
+          value={themeMode}
+          onChange={handleThemeChange}
+          options={[
+            { label: 'Light', value: 'light' },
+            { label: 'Dark', value: 'dark' },
+          ]}
+        />
+      </Card>
 
-      <Divider sx={{ my: 2 }} />
+      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <H5>{t('Language')}</H5>
+          <Text muted>{t('Choose the application language.')}</Text>
+        </div>
+        <HTMLSelect
+          style={{ minWidth: '150px' }}
+          value={language}
+          onChange={handleLanguageChange}
+          options={[
+            { label: 'English', value: 'en' },
+            { label: 'Korean', value: 'ko' },
+          ]}
+        />
+      </Card>
 
-      <Paper elevation={3} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ mr: 2 }}>
-          <Typography variant="h6">{t('Language')}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('Choose the application language.')}
-          </Typography>
-        </Box>
-        <FormControl sx={{ width: 240 }}>
-          <InputLabel id="language-select-label">{t('Language')}</InputLabel>
-          <Select
-            labelId="language-select-label"
-            id="language-select"
-            value={language}
-            label={t('Language')}
-            onChange={handleLanguageChange}
-            MenuProps={menuProps}
-          >
-            <MenuItem value="en">English</MenuItem>
-            <MenuItem value="ko">Korean</MenuItem>
-          </Select>
-        </FormControl>
-      </Paper>
-    </Box>
+      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <H5>{t('Hardware Acceleration')}</H5>
+          <Text muted>{t('Enable hardware acceleration for smoother animations. May increase resource usage.')}</Text>
+        </div>
+        <Switch
+          checked={isHardwareAccelerationEnabled}
+          onChange={handleHardwareAccelerationChange}
+          large
+        />
+      </Card>
+    </div>
   );
 };
 
