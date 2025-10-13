@@ -12,7 +12,7 @@ with the focus on node creation and editing on the fly, and easy switching of in
 
 Give me detailed steps on what i should do based on the current codebase, referencing the github repo I showed you.
 
-The 'gui' folder is the root of the app(others are unimportant data).
+The 'gui' folder is the root of the app(others are unimportant data, and ignore gui/node_modules).
 
 # 2025-09-30
 
