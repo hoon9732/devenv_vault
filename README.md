@@ -1,7 +1,9 @@
 # 2025-09-30
 
 Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.
+
 Major Requirement: The resulting software should be responsive and light(resource-wise), also robust and open for later development.
+
 Current state: I have started developing the most basic UI elements based on react, electron, blueprint.js in a npm-based environment.
 I have concluded that the react based GUI is light and modern, and might be visually simple. However, I still cannot decide how to develop the actual back-end of the SW, which is the core. I have found out about the concept of MBSE development principle done by software like CATIA Magic, which enables a smooth process form UML 2 system diagram to actual simulation and modeling.
 
@@ -10,7 +12,12 @@ Back-end Requirement: My first goal is to choose the appropriate coding language
 My superior recommends C# for back-end development. Would it be a good option? Or would you suggest otherwise?
 The frontend is developed on electron, so I am not sure how to connect the backend with it? 
 
+Here is the repository address for you to have insight on the current GUI development:
+github.com/hoon9732/devenv_vault
+
 Development environment factors: Due to the unstable current development environment, where the developing PC regularly wipes its user-edited files on reboot for security reasons.So the development environment better be light, so that i can redownload the exact environment every time of PC reboot.
+
+
 
 # 2025-09-26
 
