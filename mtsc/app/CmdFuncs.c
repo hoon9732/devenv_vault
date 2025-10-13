@@ -1779,3 +1779,25 @@ STATUS mtsChkGf7(void) {
 	
 	return OK;
 }
+
+STATUS mtsGcuLoad(void) {
+	FILE *fpFile;
+	char *pBuffer;
+	int nReadBytes;
+	
+	g_nGcuImgTotalBytes = 0;
+	memset((void *)g_pGcuImgBuf, 0, sizeof(g_pGcuImgBuf));
+	
+	printf("\n fopen %s . . . ", GCU_IMG_FILE);
+	if ((fpFile = fopen(GCU_IMG_FILE, "rb")) == NULL) {
+		printf("ERROR.\n");
+		
+		REPORT_ERROR("GCU File Open Error.\n");
+		return ERROR;
+	}
+	printf("OK.");
+	
+	printf("\n read %s ", GCU_IMG_FILE);
+	pBuffer = (char *)g_pGcuImgBuf;
+	FOREVER {
+		

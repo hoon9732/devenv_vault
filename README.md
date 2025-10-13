@@ -3,9 +3,12 @@
 Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.
 Major Requirement: The resulting software should be responsive and light(resource-wise), also robust and open for later development.
 Current state: I have started developing the most basic UI elements based on react, electron, blueprint.js in a npm-based environment.
-I have concluded that the react based GUI is light and modern, and might be visually simple. However, I still cannot decide how to develop the actual back-end of the SW, which is the core. I have found out about the concept of MBSE development principle done by software like CATIA Magic, which enables a smooth process form UML 2 system diagram to actual simulation and modeling. 
+I have concluded that the react based GUI is light and modern, and might be visually simple. However, I still cannot decide how to develop the actual back-end of the SW, which is the core. I have found out about the concept of MBSE development principle done by software like CATIA Magic, which enables a smooth process form UML 2 system diagram to actual simulation and modeling.
 
-Back-end Requirement: 
+Back-end Requirement: My first goal is to choose the appropriate coding language and data saving format(XML or json) for saving E-ICD(Electrical ICD) or D-ICD(Digital ICD) elements, which saves numerous sheet data for nodes and links in between(signal id, voltage, signal type etc.) So I am imagining a robust back-end for a software where you can easily create a node on a blank diagram and add unlimited amount of properties as as a sheet and unlimited levels of subproperties within. And also be able to connect the nodes with a simple drag-and-drop mouse movement, which forms a orthogonal line in between. And the line can also be edited of its numerous properties. You can either edit the diagram in diagram mode or the sheet mode, and can import or export it in numerous extensions(ex: .xls for sheet, .dwg for diagram)
+
+My superior recommends C# for back-end development. Would it be a good option? Or would you suggest otherwise?
+The frontend is developed on electron, so I am not sure how to connect the backend with it? 
 
 Development environment factors: Due to the unstable current development environment, where the developing PC regularly wipes its user-edited files on reboot for security reasons.So the development environment better be light, so that i can redownload the exact environment every time of PC reboot.
 
