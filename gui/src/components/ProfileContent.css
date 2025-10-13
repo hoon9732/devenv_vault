@@ -1,0 +1,139 @@
+.profile-container {
+  padding: 16px;
+  width: clamp(350px, 40vw, 500px);
+  margin: auto;
+}
+
+.profile-top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  min-height: 48px;
+}
+
+.profile-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.profile-icon-button {
+  width: 120px;
+  height: 120px;
+  cursor: default;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.profile-icon-button.editable {
+  cursor: pointer;
+}
+
+.profile-icon-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.profile-icon-button.editable:hover .profile-icon-overlay {
+  opacity: 1;
+}
+
+.icon-popover-content {
+  padding: 8px;
+  width: 150px;
+}
+
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.icon-grid-item {
+  width: calc(33.333% - 4px);
+  flex-grow: 1;
+}
+
+.profile-name-input .bp6-input {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 6px 12px;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  color: inherit;
+}
+
+.profile-name-input.editable .bp6-input {
+  border-color: #D8DCE1 !important;
+  background-color: white !important;
+}
+
+.profile-name-input.editable .bp6-input:focus {
+    box-shadow: 0 0 0 1px #1F76C2, 0 0 0 3px rgba(31, 118, 194, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
+}
+
+.profile-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-detail-row {
+  display: flex;
+  align-items: center;
+}
+
+.profile-detail-label {
+  width: 33.33%;
+  text-align: left;
+  padding-right: 8px;
+}
+
+.profile-detail-value {
+  width: 66.67%;
+}
+
+.profile-detail-value .bp6-input {
+    padding: 6px 12px;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: inherit;
+}
+
+.profile-detail-value.editable .bp6-input {
+    border-color: #D8DCE1 !important;
+    background-color: white !important;
+}
+
+.profile-detail-value.editable .bp6-input:focus {
+    box-shadow: 0 0 0 1px #1F76C2, 0 0 0 3px rgba(31, 118, 194, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
+}
+
+/* Dark theme adjustments */
+.bp6-dark .profile-name-input.editable .bp6-input,
+.bp6-dark .profile-detail-value.editable .bp6-input {
+    background-color: #394B59 !important;
+    color: #F5F8FA;
+}
+
+.bp6-dark .profile-name-input .bp6-input,
+.bp6-dark .profile-detail-value .bp6-input {
+    color: #F5F8FA;
+}
