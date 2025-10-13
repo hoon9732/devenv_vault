@@ -1,3 +1,19 @@
+# 2025-10-14
+
+My development environment is currently the greatest risk factor due to several reasons:
+1. My corporate PC seems to render certain IDEs useless(Visual studio code, visual studio), so I am not sure how I can develop with .Net 8.0
+2. Node.js works, but i am currently redownloading npm required library every time I reboot.
+3. I am using notepad++ as code editor, and I run 'npm run electron' for testing and debug. Debugging is mostly done by AI assisted CLI
+4. Currently SQLite 3.50.4 version has been installed, and seems to be safe from security restrictions
+
+
+I would like you to recommend me stack and workflow to start with fast prototype development of the software I described
+with the focus on node creation and editing on the fly, and easy switching of interface between 'sheet' and 'diagram' on the fly.
+
+Give me detailed steps on what i should do based on the current codebase, referencing the github repo I showed you.
+
+The 'gui' folder is the root of the app(others are unimportant data).
+
 # 2025-09-30
 
 Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.
@@ -16,8 +32,6 @@ Here is the repository address for you to have insight on the current GUI develo
 github.com/hoon9732/devenv_vault
 
 Development environment factors: Due to the unstable current development environment, where the developing PC regularly wipes its user-edited files on reboot for security reasons.So the development environment better be light, so that i can redownload the exact environment every time of PC reboot.
-
-
 
 # 2025-09-26
 
