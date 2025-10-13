@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Elevation, H3, H5, InputGroup, Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
+import {
+  Button,
+  Card,
+  Elevation,
+  H5,
+  InputGroup,
+  Icon,
+  Popover,
+} from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 import './ProfileContent.css';
 
 const iconNames = [
-  'user', 'person', 'shield', 'new-person', 'endorsed', 'id-number',
-  'code', 'cog', 'comparison',
+  'user',
+  'person',
+  'shield',
+  'new-person',
+  'endorsed',
+  'id-number',
+  'code',
+  'cog',
+  'comparison',
 ];
 
 const ProfileContent = () => {
@@ -23,7 +38,7 @@ const ProfileContent = () => {
           setProfile(parsedProfile);
           setEditData(parsedProfile);
         } catch (error) {
-          console.error("Failed to read or parse profile:", error);
+          console.error('Failed to read or parse profile:', error);
         }
       }
     };
@@ -47,7 +62,7 @@ const ProfileContent = () => {
         setProfile(editData);
         setIsEditMode(false);
       } catch (error) {
-        console.error("Failed to save profile:", error);
+        console.error('Failed to save profile:', error);
       }
     }
   };
@@ -87,19 +102,30 @@ const ProfileContent = () => {
       <div className="profile-top-actions">
         {isEditMode ? (
           <>
-            <Button intent="primary" text={t('Save')} onClick={handleSave} style={{ marginRight: '8px' }} />
+            <Button
+              intent="primary"
+              text={t('Save')}
+              onClick={handleSave}
+              style={{ marginRight: '8px' }}
+            />
             <Button text={t('Cancel')} onClick={handleCancel} />
           </>
         ) : (
-          <Button icon="edit" minimal large className="profile-edit-button" onClick={handleEdit} />
+          <Button
+            icon="edit"
+            minimal
+            large
+            className="profile-edit-button"
+            onClick={handleEdit}
+          />
         )}
       </div>
 
       <div className="profile-icon-container">
         <Popover content={iconMenu} placement="right" disabled={!isEditMode}>
-          <Button 
+          <Button
             className={`profile-icon-button ${isEditMode ? 'editable' : ''}`}
-            large 
+            large
             minimal
           >
             <Icon icon={dataToShow.profileIcon} size={160} />
@@ -125,8 +151,12 @@ const ProfileContent = () => {
       <div className="profile-details-grid">
         {['id', 'email', 'department'].map((field) => (
           <React.Fragment key={field}>
-            <H5 className="profile-detail-label">{t(field.charAt(0).toUpperCase() + field.slice(1))}:</H5>
-            <div className={`profile-detail-value ${isEditMode ? 'editable' : ''}`}>
+            <H5 className="profile-detail-label">
+              {t(field.charAt(0).toUpperCase() + field.slice(1))}:
+            </H5>
+            <div
+              className={`profile-detail-value ${isEditMode ? 'editable' : ''}`}
+            >
               <InputGroup
                 disabled={!isEditMode}
                 value={dataToShow[field]}

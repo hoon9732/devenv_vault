@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Card, H4, H5, Text, HTMLSelect, Switch } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const SettingsScreen = ({ 
-  themeMode, 
-  setThemeMode, 
-  uiScale, 
+const SettingsScreen = ({
+  themeMode,
+  setThemeMode,
+  uiScale,
   setUiScale,
   isHardwareAccelerationEnabled,
-  setIsHardwareAccelerationEnabled
+  setIsHardwareAccelerationEnabled,
 }) => {
   const { language, setLanguage, t } = useLanguage();
 
@@ -37,7 +38,15 @@ const SettingsScreen = ({
     <div style={{ width: '100%', maxWidth: 800 }}>
       <H4 style={{ marginBottom: '20px' }}>{t('Settings')}</H4>
 
-      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Card
+        elevation={2}
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
           <H5>{t('UI Scale')}</H5>
           <Text muted>{t('Adjust the overall interface scale.')}</Text>
@@ -46,11 +55,19 @@ const SettingsScreen = ({
           style={{ minWidth: '150px' }}
           value={displayedScale}
           onChange={handleScaleChange}
-          options={scaleOptions.map(o => ({ label: `${o}%`, value: o }))}
+          options={scaleOptions.map((o) => ({ label: `${o}%`, value: o }))}
         />
       </Card>
-	  
-      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+      <Card
+        elevation={2}
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
           <H5>{t('Theme')}</H5>
           <Text muted>{t('Select your preferred color mode.')}</Text>
@@ -66,7 +83,15 @@ const SettingsScreen = ({
         />
       </Card>
 
-      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Card
+        elevation={2}
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
           <H5>{t('Language')}</H5>
           <Text muted>{t('Choose the application language.')}</Text>
@@ -82,10 +107,22 @@ const SettingsScreen = ({
         />
       </Card>
 
-      <Card elevation={2} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Card
+        elevation={2}
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
           <H5>{t('Hardware Acceleration')}</H5>
-          <Text muted>{t('Enable hardware acceleration for smoother animations. May increase resource usage.')}</Text>
+          <Text muted>
+            {t(
+              'Enable hardware acceleration for smoother animations. May increase resource usage.',
+            )}
+          </Text>
         </div>
         <Switch
           checked={isHardwareAccelerationEnabled}
@@ -95,6 +132,15 @@ const SettingsScreen = ({
       </Card>
     </div>
   );
+};
+
+SettingsScreen.propTypes = {
+  themeMode: PropTypes.string.isRequired,
+  setThemeMode: PropTypes.func.isRequired,
+  uiScale: PropTypes.number.isRequired,
+  setUiScale: PropTypes.func.isRequired,
+  isHardwareAccelerationEnabled: PropTypes.bool.isRequired,
+  setIsHardwareAccelerationEnabled: PropTypes.func.isRequired,
 };
 
 export default SettingsScreen;

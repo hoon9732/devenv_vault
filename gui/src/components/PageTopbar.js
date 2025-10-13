@@ -1,10 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Divider } from '@blueprintjs/core';
 import './PageTopbar.css';
 
-const PageTopbar = ({ page, theme }) => {
+const PageTopbar = ({ page }) => {
   const renderTopbarContent = () => {
     switch (page) {
       case 'home':
@@ -28,11 +28,17 @@ const PageTopbar = ({ page, theme }) => {
 
   return (
     <Box sx={{ backgroundColor: 'topbar.background' }}>
-      <Toolbar sx={{ minHeight: '64px !important', height: '64px', p: '0 16px !important' }}>
+      <Toolbar
+        sx={{ minHeight: '64px !important', height: '64px', p: '0 16px !important' }}
+      >
         {renderTopbarContent()}
       </Toolbar>
     </Box>
   );
+};
+
+PageTopbar.propTypes = {
+  page: PropTypes.string.isRequired,
 };
 
 export default PageTopbar;

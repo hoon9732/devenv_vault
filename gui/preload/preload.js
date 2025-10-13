@@ -11,7 +11,8 @@ contextBridge.exposeInMainWorld('electron', {
   deleteFile: (path) => ipcRenderer.invoke('delete-file', path),
   deleteDirectory: (path) => ipcRenderer.invoke('delete-directory', path),
   getWorkspaceSettings: () => ipcRenderer.invoke('get-workspace-settings'),
-  setWorkspaceSettings: (settings) => ipcRenderer.invoke('set-workspace-settings', settings),
+  setWorkspaceSettings: (settings) =>
+    ipcRenderer.invoke('set-workspace-settings', settings),
   getSettings: () => ipcRenderer.invoke('get-settings'),
   saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
@@ -20,7 +21,8 @@ contextBridge.exposeInMainWorld('electron', {
   closeWindow: () => ipcRenderer.send('close-window'),
   updateTheme: (theme) => ipcRenderer.send('update-theme', theme),
   readFileContent: (path) => ipcRenderer.invoke('read-file-content', path),
-  updateTitleBarColors: (colors) => ipcRenderer.send('update-titlebar-colors', colors),
+  updateTitleBarColors: (colors) =>
+    ipcRenderer.send('update-titlebar-colors', colors),
   pathJoin: (...paths) => require('path').join(...paths),
   pathDirname: (p) => require('path').dirname(p),
 });

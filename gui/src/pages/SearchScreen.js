@@ -5,7 +5,9 @@ const SearchScreen = () => {
   return (
     <div>
       <Typography variant="h4">Search</Typography>
-      <Typography paragraph>Search functionality will be implemented here.</Typography>
+      <Typography paragraph>
+        Search functionality will be implemented here.
+      </Typography>
     </div>
   );
 };

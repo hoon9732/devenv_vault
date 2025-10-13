@@ -108,12 +108,15 @@
 }
 
 .profile-name-input.editable .bp6-input {
-  border-color: #D8DCE1 !important;
+  border-color: #d8dce1 !important;
   background-color: white !important;
 }
 
 .profile-name-input.editable .bp6-input:focus {
-    box-shadow: 0 0 0 1px #1F76C2, 0 0 0 3px rgba(31, 118, 194, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
+  box-shadow:
+    0 0 0 1px #1f76c2,
+    0 0 0 3px rgba(31, 118, 194, 0.3),
+    inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
 }
 
 .profile-details-grid {
@@ -131,30 +134,33 @@
 }
 
 .profile-detail-value .bp6-input {
-    padding: 6px 12px;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    background-color: transparent !important;
-    color: inherit;
+  padding: 6px 12px;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  color: inherit;
 }
 
 .profile-detail-value.editable .bp6-input {
-    border-color: #D8DCE1 !important;
-    background-color: white !important;
+  border-color: #d8dce1 !important;
+  background-color: white !important;
 }
 
 .profile-detail-value.editable .bp6-input:focus {
-    box-shadow: 0 0 0 1px #1F76C2, 0 0 0 3px rgba(31, 118, 194, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
+  box-shadow:
+    0 0 0 1px #1f76c2,
+    0 0 0 3px rgba(31, 118, 194, 0.3),
+    inset 0 1px 1px rgba(16, 22, 26, 0.1) !important;
 }
 
 /* Dark theme adjustments */
 .bp6-dark .profile-name-input.editable .bp6-input,
 .bp6-dark .profile-detail-value.editable .bp6-input {
-    background-color: #394B59 !important;
-    color: #F5F8FA;
+  background-color: #394b59 !important;
+  color: #f5f8fa;
 }
 
 .bp6-dark .profile-name-input .bp6-input,
 .bp6-dark .profile-detail-value .bp6-input {
-    color: #F5F8FA;
+  color: #f5f8fa;
 }

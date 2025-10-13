@@ -1,11 +1,11 @@
 {
   "name": "icdv",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ICD(Interface Control Document) viewer/editor.",
   "author": "David Jean, PGM Systems R&D Team 4, Hanwha Aerospace",
   "private": true,
   "homepage": "./",
-  "main": "main.js",
+  "main": "main/main.js",
   "dependencies": {
     "@blueprintjs/core": "^6.3.1",
     "@blueprintjs/icons": "^6.1.0",
@@ -14,9 +14,10 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "electron-win-state": "^1.1.22",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "^6.2.23",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -33,9 +34,9 @@
     "productName": "ICDV",
     "files": [
       "build/**/*",
-      "main.js",
-      "preload.js",
-      "src/profile/**/*"
+      "main/main.js",
+      "preload/preload.js",
+      "src/data/**/*"
     ],
     "win": {
       "target": "nsis"
@@ -68,6 +69,8 @@
     "cross-env": "^7.0.3",
     "electron": "^29.1.5",
     "electron-builder": "^24.13.3",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
     "wait-on": "^7.2.0"
   }
 }

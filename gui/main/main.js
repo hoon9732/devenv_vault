@@ -2,12 +2,11 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
-const { version } = require('./package.json');
+const { version } = require('../package.json');
 const WinState = require('electron-win-state').default;
 
 // --- Configuration Management ---
 const configPath = path.join(app.getPath('userData'), 'config.json');
-
 
 function readConfig() {
   try {
@@ -32,7 +31,7 @@ function writeConfig(config) {
 // Force hardware acceleration
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
-function createWindow () {
+function createWindow() {
   const winState = new WinState({
     defaultWidth: 1200,
     defaultHeight: 800,
@@ -47,35 +46,40 @@ function createWindow () {
     titleBarOverlay: {
       color: '#ffffff', // Default to light mode color
       symbolColor: '#333333', // Default to light mode symbol color
-      height: 40
+      height: 40,
     },
-    icon: path.join(__dirname, 'src/assets/favicon.ico'),
+    icon: path.join(__dirname, '../src/assets/favicon.ico'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, '../preload/preload.js'),
+    },
   });
 
   winState.manage(win);
 
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, 'build/index.html'),
-    protocol: 'file:',
-    slashes: true
-  });
+  const startUrl =
+    process.env.ELECTRON_START_URL ||
+    url.format({
+      pathname: path.join(__dirname, '../build/index.html'),
+      protocol: 'file:',
+      slashes: true,
+    });
   win.loadURL(startUrl);
 }
 
 // IPC handler for updating title bar colors
-ipcMain.on('update-titlebar-colors', (event, { backgroundColor, symbolColor }) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) {
-    win.setTitleBarOverlay({
-      color: backgroundColor,
-      symbolColor: symbolColor,
-      height: 40
-    });
-  }
-});
+ipcMain.on(
+  'update-titlebar-colors',
+  (event, { backgroundColor, symbolColor }) => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.setTitleBarOverlay({
+        color: backgroundColor,
+        symbolColor: symbolColor,
+        height: 40,
+      });
+    }
+  },
+);
 
 app.whenReady().then(() => {
   createWindow();
@@ -122,7 +126,7 @@ ipcMain.handle('set-workspace-settings', (event, settings) => {
 // Open a dialog to select a new workspace path and save it
 ipcMain.handle('set-workspace-path', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ['openDirectory']
+    properties: ['openDirectory'],
   });
 
   if (canceled || filePaths.length === 0) {
@@ -140,10 +144,10 @@ ipcMain.handle('set-workspace-path', async () => {
 ipcMain.handle('read-directory', async (event, dirPath) => {
   try {
     const dirents = fs.readdirSync(dirPath, { withFileTypes: true });
-    return dirents.map(dirent => ({
+    return dirents.map((dirent) => ({
       name: dirent.name,
       isDirectory: dirent.isDirectory(),
-      path: path.join(dirPath, dirent.name)
+      path: path.join(dirPath, dirent.name),
     }));
   } catch (error) {
     console.error(`Error reading directory ${dirPath}:`, error);
@@ -177,9 +181,7 @@ ipcMain.handle('delete-directory', async (event, dirPath) => {
 ipcMain.handle('open-file-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [
-      { name: 'JSON Files', extensions: ['json'] }
-    ]
+    filters: [{ name: 'JSON Files', extensions: ['json'] }],
   });
 
   if (canceled || filePaths.length === 0) {
@@ -198,7 +200,7 @@ ipcMain.handle('open-file-dialog', async () => {
 // IPC handler for reading profile data
 ipcMain.handle('read-profile', async () => {
   const userProfilePath = path.join(app.getPath('userData'), 'profile.json');
-  const defaultProfilePath = path.join(__dirname, 'src', 'profile', 'profile.json');
+  const defaultProfilePath = path.join(__dirname, '../src/data/profile.json');
 
   try {
     // If the user profile doesn't exist, create it from the default.
@@ -235,7 +237,7 @@ ipcMain.handle('write-profile', async (event, data) => {
 // --- Settings ---
 ipcMain.handle('get-settings', () => {
   const userSettingsPath = path.join(app.getPath('userData'), 'settings.json');
-  const defaultSettingsPath = path.join(__dirname, 'src', 'profile', 'settings.json');
+  const defaultSettingsPath = path.join(__dirname, '../src/data/settings.json');
 
   try {
     // If the user settings file doesn't exist, create it from the default.
@@ -278,15 +280,15 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
     movable: true,
     titleBarStyle: 'hidden',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../preload/preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-    }
+    },
   });
   // The path to about.html is different in dev vs. packaged app.
   const aboutPath = process.env.ELECTRON_START_URL
-    ? path.join(__dirname, 'public/about.html')
-    : path.join(__dirname, 'build/about.html');
+    ? path.join(__dirname, '../public/about.html')
+    : path.join(__dirname, '../build/about.html');
 
   const aboutUrl = new URL('file:' + aboutPath);
   aboutUrl.searchParams.set('theme', theme);

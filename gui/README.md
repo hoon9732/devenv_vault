@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# ICDV - Interface Control Document Viewer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ICDV is a desktop application designed for viewing and managing Interface Control Documents (ICDs). It provides a user-friendly interface for developers and engineers to explore workspace directories, view file contents, and manage project-specific profiles and settings.
 
-## Available Scripts
+Built with Electron and React, it offers a modern, cross-platform experience.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## How to Run and Maintain
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+-   [Node.js](https://nodejs.org/) (LTS version recommended)
+-   [npm](https://www.npmjs.com/) (comes with Node.js)
 
-### `npm test`
+### 1. Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Clone the repository and install the required dependencies.
 
-### `npm run build`
+```bash
+# Clone the repository
+git clone <your-repository-url>
+cd gui
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Install dependencies
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Running in Development Mode
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To run the application in a live-reloading development environment, use the following command. This will start the React development server and the Electron application simultaneously.
 
-### `npm run eject`
+```bash
+npm run electron:start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3. Building for Production
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To build a distributable installer for your platform, run the following command. The packaged application will be located in the `dist` folder.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm run electron:build
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 4. Code Formatting
 
-## Learn More
+This project uses Prettier for automated code formatting. To format all files, run:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npx prettier --write .
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## Version Update Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### v0.0.3 (Current)
+*   **Major Refactor:** Reorganized the entire codebase to align with industry-standard practices for Electron + React applications.
+    *   Separated code by Electron process (`main`, `preload`, `src` for renderer).
+    *   Restructured the React `src` directory to be feature-based for better scalability.
+*   **Added Code Quality Tools:**
+    *   Integrated **Prettier** for automated, consistent code formatting.
+    *   Added **ESLint** configuration (`.eslintrc.cjs`, `.eslintignore`) to enforce code quality and catch errors.
+    *   Included an **`.editorconfig`** file for consistent editor settings.
+*   **Bug Fixes:** Resolved all ESLint warnings and errors, including adding `prop-types` validation to all components.
 
-### Analyzing the Bundle Size
+### v0.0.2
+*   General stability improvements and minor bug fixes.
+*   Enhanced IPC communication between the main and renderer processes.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### v0.0.1
+*   Initial release of the ICDV application.
+*   Core features implemented:
+    *   File explorer for workspace navigation.
+    *   File content viewer.
+    *   Application settings and user profile management.

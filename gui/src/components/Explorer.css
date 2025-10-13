@@ -16,7 +16,12 @@
 }
 
 .bp6-dark .explorer-topbar-upper {
-  background-color: rgba(255, 255, 255, 0.15); /* Lighter background for dark mode */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.15
+  ); /* Lighter background for dark mode */
 }
 
 .explorer-topbar-lower {
@@ -30,7 +35,12 @@
 }
 
 .bp6-light .explorer-topbar-lower {
-  background-color: rgba(0, 0, 0, 0.1); /* Use semi-transparent for subtle contrast */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.1
+  ); /* Use semi-transparent for subtle contrast */
   color: rgba(0, 0, 0, 0.6); /* Greyed out text */
 }
 
