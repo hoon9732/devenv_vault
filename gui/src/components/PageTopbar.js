@@ -29,7 +29,6 @@ const PageTopbar = ({ page, theme }) => {
       <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 16px !important' }}>
         {renderTopbarContent()}
       </Toolbar>
-      <Divider style={{ margin: 0 }} />
     </Box>
   );
 };

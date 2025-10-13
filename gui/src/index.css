@@ -31,6 +31,11 @@ code {
   padding: 0 !important;
 }
 
+/* Ensure Blueprint.js dialog overlay covers the custom title bar */
+.bp6-overlay-backdrop {
+  z-index: 100 !important;
+}
+
 /* Apply hover effect directly to the menu item */
 .dark-theme .sidebar-menu-item:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;

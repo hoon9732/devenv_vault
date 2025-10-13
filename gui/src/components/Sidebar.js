@@ -70,7 +70,6 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
       sx={{
         width: collapsedWidth,
         flexShrink: 0,
-        backgroundColor: theme.palette.mode === 'dark' ? '#000000' : theme.palette.background.paper,
         borderRight: `1px solid ${theme.palette.divider}`,
         display: 'flex',
         flexDirection: 'column',
@@ -101,12 +100,12 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
       <Menu style={{ overflowY: 'auto', overflowX: 'hidden', padding: 0, width: collapsedWidth }}>
         {mainNavItems.flatMap((item, index) => [
           renderMenuItem(item),
-          index < mainNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-main-${index}`} /> : null
+          index < mainNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-main-${index}`} /> : null
         ]).filter(Boolean)}
         <Divider style={{ margin: 0 }} />
         {appNavItems.flatMap((item, index) => [
           renderMenuItem(item),
-          index < appNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-app-${index}`} /> : null
+          index < appNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-app-${index}`} /> : null
         ]).filter(Boolean)}
       </Menu>
 
@@ -115,7 +114,7 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
           <Divider style={{ margin: 0 }} />
           {bottomNavItems.flatMap((item, index) => [
             renderMenuItem(item),
-            index < bottomNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: theme.palette.background.paper }} key={`d-bottom-${index}`} /> : null
+            index < bottomNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-bottom-${index}`} /> : null
           ]).filter(Boolean)}
         </Menu>
       </Box>

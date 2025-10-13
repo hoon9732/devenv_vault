@@ -2,6 +2,15 @@
   display: flex;
   align-items: center;
   height: 40px; /* Match the height in main.js */
+  color: var(--bp-text-color);
+}
+
+.bp6-light .title-bar {
+  background-color: #ffffff;
+}
+
+.bp6-dark .title-bar {
+  background-color: #293742;
 }
 
 .draggable {

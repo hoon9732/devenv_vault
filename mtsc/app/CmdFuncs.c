@@ -1366,4 +1366,67 @@ STATUS mtsGcuMslGpsModeSet(void) {
 	TRY_STR_TO_LONG(g_pTmFg5->m_SET_RCV_MODE, 4, UINT16);
 	
 	LOGMSG("VALID_WORD = 0x%04X\n", g_pTMFg5->m_VALID_WORD);
-	LOGMSG("AR_MODE = %d\n", g_p
+	LOGMSG("AR_MODE = %d\n", g_pTmFg5->m_AR_MODE);
+	LOGMSG("SBAS_SELECT" = %d\n", g_TmFg5->m_SBAS_SELECT);
+	LOGMSG("SET_AJ_MODE" = %d\n", g_pTmFg5->m_SET_AJ_MODE);
+	LOGMSG("SET_RCV_MODE" = %d\n", g_pTmFg5->m_SET_RCV_MODE);
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG5) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG5)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_GF5_OPCODE, g_pTmGf5->m_MAR_RESP, usResp, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usResp);
+	
+	return OK;
+}
+
+STATUS mtsMslGpsTrkStart(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usResp;
+	
+	memset((void *)g_pTmFg5, 0, sizeof(TM_TYPE_FG5));
+	
+	g_pTMFg5->m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg5->m_CONTROL = TM_FG5_SDLC_CONTROL;
+	g_pTmFg5->m_OPCODE = TM_FG5_OPCODE;
+	
+	g_pTmFg5->m_VALID_WORD = 0x0200;
+	TRY_STR_TO_LONG(g_pTMFg5->m_TRK_START, 0, UINT16);
+	
+	LOGMSG("VALID_WORD = 0x%04X\n", g_pTMFg5->m_VALID_WORD);
+	LOGMSG("TRK_START = %d\n", g_pTMFg5->m_TRK_START);
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG5) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG5)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_GF5_OPCODE, g_pTmGf5->m_MAR_RESP, usResp, eResult);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usResp);
+	
+	return OK;
+}
+
+STATUS mtsActMotorOn(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	int refVal;
+	CODE usGcuResp, usGcuMode;
+	
+	TRY_STR_TO_LONG(refVal, 0, int);
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_1_OPCODE_MSL_MOTOR_ON;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MSL_MOTOR_ON, g_pTmFg2->m_GCU_RESP, usGcuResp, eResult);
+	

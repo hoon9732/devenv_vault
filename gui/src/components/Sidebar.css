@@ -4,15 +4,14 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: var(--bp-background-color-hover);
 }
 
 .bp6-light .sidebar-container {
-  background-color: #ffffff;
   border-right: 1px solid rgba(16, 22, 26, 0.15);
 }
 
 .bp6-dark .sidebar-container {
-  background-color: #293742;
   border-right: 1px solid rgba(16, 22, 26, 0.4);
 }
 

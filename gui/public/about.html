@@ -26,12 +26,20 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 40px;
+      height: 50px; /* Increased height */
       display: flex;
       align-items: center;
       justify-content: space-between;
       -webkit-app-region: drag;
       z-index: 9999;
+    }
+    .light-theme .title-bar {
+      background-color: #ffffff;
+      color: #182026;
+    }
+    .dark-theme .title-bar {
+      background-color: #293742;
+      color: #f5f8fa;
     }
     .title-bar-title {
       margin-left: 12px;
@@ -48,7 +56,7 @@
       font-size: 16px;
       padding: 0 15px;
       cursor: pointer;
-      line-height: 40px;
+      line-height: 50px; /* Increased height */
       color: inherit;
     }
     .title-bar-controls button:hover {
@@ -64,10 +72,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: calc(100% - 40px); /* Adjusted for title bar */
+      height: calc(100% - 50px); /* Adjusted for title bar */
       padding: 20px;
       box-sizing: border-box;
-      margin-top: 40px; /* Adjusted for title bar */
+      margin-top: 50px; /* Adjusted for title bar */
     }
     .logo {
       width: 60%;
@@ -326,17 +334,12 @@
     document.body.className = theme + '-theme';
 
     const uiScale = parseFloat(params.get('uiScale')) || 1.0;
-    const titleBarColor = params.get('titleBarColor');
 
     const titleBar = document.querySelector('.title-bar');
     const container = document.querySelector('.container');
 
-    if (titleBarColor) {
-      titleBar.style.backgroundColor = titleBarColor;
-    }
-
     if (uiScale !== 1.0) {
-      const originalHeight = 40;
+      const originalHeight = 50;
       const newHeight = originalHeight * uiScale;
       titleBar.style.height = `${newHeight}px`;
       container.style.marginTop = `${newHeight}px`;

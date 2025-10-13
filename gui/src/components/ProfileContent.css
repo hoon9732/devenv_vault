@@ -2,6 +2,9 @@
   padding: 16px;
   width: clamp(350px, 40vw, 500px);
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-top-actions {
@@ -9,6 +12,13 @@
   justify-content: flex-end;
   margin-bottom: 8px;
   min-height: 48px;
+  width: 100%; /* Ensure it takes full width to justify content to the end */
+}
+
+.profile-edit-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .profile-icon-container {

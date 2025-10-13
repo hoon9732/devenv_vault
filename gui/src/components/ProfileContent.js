@@ -115,7 +115,7 @@ const ProfileContent = () => {
             <Button onClick={handleCancel} color="secondary">{t('Cancel')}</Button>
           </>
         ) : (
-          <IconButton onClick={handleEdit}>
+          <IconButton onClick={handleEdit} className="profile-edit-button">
             <Icon icon="edit" />
           </IconButton>
         )}

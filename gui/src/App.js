@@ -63,8 +63,8 @@ function App() {
   useEffect(() => {
     if (!isLoading && window.electron) {
       const colors = themeMode === 'dark'
-        ? { backgroundColor: '#272727', symbolColor: '#cccccc' }
-        : { backgroundColor: '#ffffff', symbolColor: '#333333' };
+        ? { backgroundColor: '#293742', symbolColor: '#f5f8fa' } // Blueprint dark theme colors
+        : { backgroundColor: '#ffffff', symbolColor: '#182026' }; // Blueprint light theme colors
       window.electron.updateTitleBarColors(colors);
     }
   }, [themeMode, isLoading]);
@@ -94,7 +94,7 @@ function App() {
           ...(themeMode === 'dark'
             ? {
                 primary: { main: '#90caf9' },
-                appBar: { background: '#272727' },
+                appBar: { background: '#293742' },
                 topbar: { background: '#2d2d2d' },
               }
             : {
@@ -162,8 +162,7 @@ function App() {
     if (window.electron) {
       window.electron.openAboutWindow({
         theme: themeMode,
-        uiScale: uiScale,
-        titleBarColor: theme.palette.appBar.background
+        uiScale: uiScale
       });
     }
   };
@@ -205,7 +204,7 @@ function App() {
         overflow: 'hidden',
         backgroundColor: theme.palette.background.default,
       }}>
-        <TitleBar theme={theme} />
+        <TitleBar />
         <Box sx={{ flex: 1, minHeight: 0 }}>
           <Box sx={{
             display: 'flex',
@@ -231,7 +230,6 @@ function App() {
                 flexDirection: 'column', 
                 flexGrow: 1, 
                 minWidth: 0,
-                borderLeft: isExplorerOpen ? (theme) => `1px solid ${theme.palette.divider}` : 'none',
               }}>
                 <div>
                   <PageTopbar page={currentPage} theme={theme} />

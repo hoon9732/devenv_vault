@@ -212,7 +212,7 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
               icon="cross" 
               onClick={handleClose}
             />
-          </Navbar.Group>                        </Navbar>        <Divider style={{ margin: 0 }} />
+          </Navbar.Group>                        </Navbar>
         <Box sx={{
           flexGrow: 1,
           overflowY: 'auto',

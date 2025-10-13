@@ -45,8 +45,8 @@ function createWindow () {
     title: 'ICDV',
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: '#272727', // Default to dark mode color
-      symbolColor: '#cccccc', // Default to dark mode symbol color
+      color: '#ffffff', // Default to light mode color
+      symbolColor: '#333333', // Default to light mode symbol color
       height: 40
     },
     icon: path.join(__dirname, 'src/assets/favicon.ico'),
@@ -267,7 +267,7 @@ ipcMain.handle('save-settings', (event, settings) => {
 // --- End Settings ---
 
 // IPC handler for opening the about window
-ipcMain.handle('open-about-window', (event, { theme, uiScale, titleBarColor }) => {
+ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
   const aboutWin = new BrowserWindow({
     width: 800,
     height: 600,
@@ -276,6 +276,11 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale, titleBarColor }) =
     resizable: false,
     movable: true,
     titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: theme === 'dark' ? '#293742' : '#ffffff',
+      symbolColor: theme === 'dark' ? '#f5f8fa' : '#182026',
+      height: 40
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -290,7 +295,6 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale, titleBarColor }) =
   const aboutUrl = new URL('file:' + aboutPath);
   aboutUrl.searchParams.set('theme', theme);
   aboutUrl.searchParams.set('uiScale', uiScale);
-  aboutUrl.searchParams.set('titleBarColor', titleBarColor);
   aboutWin.loadURL(aboutUrl.href);
 });
 
