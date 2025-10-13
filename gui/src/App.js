@@ -15,22 +15,20 @@ import SettingsScreen from './pages/SettingsScreen';
 import SheetScreen from './pages/SheetScreen';
 import GraphsScreen from './pages/GraphsScreen';
 import DocsScreen from './pages/DocsScreen';
+import ProfileScreen from './pages/ProfileScreen';
 import Explorer from './components/Explorer';
 import { useLanguage } from './contexts/LanguageContext';
-import ProfileContent from './components/ProfileContent';
 import { getSettings, saveSettings } from './utils/settingsManager';
-import { Dialog, Classes } from '@blueprintjs/core';
+import { Classes } from '@blueprintjs/core';
 
 function App() {
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
-  const [lastOpenBar, setLastOpenBar] = useState('explorer'); // Default to explorer
+  const [lastOpenBar, setLastOpenBar] = useState('explorer');
   const [workspacePath, setWorkspacePath] = useState(null);
   const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('dark');
   const [uiScale, setUiScale] = useState(1);
   const [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const navigate = useNavigate();
@@ -48,7 +46,7 @@ function App() {
       const settings = await getSettings();
       setThemeMode(settings.theme);
       setUiScale(settings.scale);
-      setIsHardwareAccelerationEnabled(settings.hardwareAcceleration ?? true); // Default to true
+      setIsHardwareAccelerationEnabled(settings.hardwareAcceleration ?? true);
       setIsLoading(false);
     };
     loadSettings();
@@ -66,13 +64,12 @@ function App() {
   useEffect(() => {
     if (!isLoading && window.electron) {
       const colors = themeMode === 'dark'
-        ? { backgroundColor: '#293742', symbolColor: '#f5f8fa' } // Blueprint dark theme colors
-        : { backgroundColor: '#ffffff', symbolColor: '#182026' }; // Blueprint light theme colors
+        ? { backgroundColor: '#293742', symbolColor: '#f5f8fa' }
+        : { backgroundColor: '#ffffff', symbolColor: '#182026' };
       window.electron.updateTitleBarColors(colors);
     }
   }, [themeMode, isLoading]);
 
-  // Fetch the workspace path when the app loads
   useEffect(() => {
     const loadWorkspace = async () => {
       if (window.electron) {
@@ -81,7 +78,7 @@ function App() {
         if (path) {
           setWorkspacePath(path);
           if (settings.showOnStart) {
-            setIsExplorerOpen(true); // Open sidebar only if the setting is true
+            setIsExplorerOpen(true);
           }
         }
       }
@@ -130,27 +127,19 @@ function App() {
   );
 
   const handleHamburgerClick = () => {
-    // If any bar is open, close them all.
     if (isExplorerOpen) {
       setIsExplorerOpen(false);
-      // Add other bars here in the future, e.g., setIsWhateverOpen(false);
       return;
     }
-
-    // Otherwise, open the last opened bar.
     if (lastOpenBar === 'explorer') {
       setIsExplorerOpen(true);
     }
-    // Add other bars here in the future, e.g., if (lastOpenBar === 'whatever') { setIsWhateverOpen(true); }
   };
 
   const handleExplorerToggle = (item) => {
-    // If the item has a path, navigate to it.
     if (item.path) {
       navigate(item.path);
     }
-
-    // Special logic for the Workspace button
     if (item.text === t('Explorer')) {
       const newOpenState = !isExplorerOpen;
       setIsExplorerOpen(newOpenState);
@@ -176,9 +165,8 @@ function App() {
 
   const handleModalOpen = (content) => {
     if (content === 'Profile') {
-      setModalContent(<ProfileContent />);
+      navigate('/profile');
     }
-    setIsModalOpen(true);
   };
 
   const handleAboutClick = () => {
@@ -198,7 +186,6 @@ function App() {
         navigate('/file-viewer');
       } else {
         console.error("Failed to read file:", result.error);
-        // Optionally, show an error to the user
       }
     }
   };
@@ -272,7 +259,7 @@ function App() {
                     overflowY: 'auto',
                   }}
                 >
-                  <Box sx={{ padding: (theme) => theme.spacing(3) }}>
+                  <Box sx={{ padding: (theme) => theme.spacing(3), height: '100%' }}>
                     <Routes>
                       <Route path="/" element={<HomeScreen />} />
                       <Route path="/search" element={<SearchScreen />} />
@@ -288,6 +275,7 @@ function App() {
                       <Route path="/sheet" element={<SheetScreen />} />
                       <Route path="/graphs" element={<GraphsScreen />} />
                       <Route path="/docs" element={<DocsScreen />} />
+                      <Route path="/profile" element={<ProfileScreen />} />
                     </Routes>
                   </Box>
                 </Box>
@@ -295,16 +283,6 @@ function App() {
           </Box>
         </Box>
       </Box>
-      <Dialog
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={t('Profile')}
-        className={themeMode === 'dark' ? Classes.DARK : ''}
-      >
-        <Box sx={{ p: 2 }}>
-          {modalContent}
-        </Box>
-      </Dialog>
     </ThemeProvider>
   );
 }

@@ -1650,3 +1650,102 @@ STATUS mtsArm1OnOff(void) {
 	}
 	
 	DELAY MS(GCU_RESPONSE_TIME);
+	
+	/* ARM1_GOOD check */
+	LOGMSG("GCU_DIO_STS : 0x%04X\n", g_pTMGf2->m_GCU_DIO_STS);
+	if ((g_pTmGf2->m_GCU_DIO_STS >> 7 & 0x1) != 0x1) {
+		gcuDioValid = ERROR;
+	}
+	
+	DELAY_MS(GCU_RESPONSE_TIME);
+	
+	if (mtsLibDoSysArm1On(0) == ERROR) {
+		REPORT_ERROR("mtsLibDoSysArm1On(0) Error.\n");
+		return ERROR;
+	}
+	
+	DELAY_MS(GCU_RESPONSE_TIME);
+	
+	LOGMSG("GCU_DIO_STS : 0x%04X\n", g_pTmGf2->m_GCU_DIO_STS);
+	if ((g_pTmGf2->m_GCU_DIO_STS >> 7 & 0x1) != 0x0) {
+		gcuDioValid = ERROR;
+	}
+	
+	if (gcuDioValid == ERROR) {
+		REPORT_ERROR("GCU_DIO_STS is ERROR.\n");
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	
+	return OK;
+}
+
+STATUS mtsBit(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	UINT32 regVal;
+	
+	if (strcmp(g_szArgs[0], "SPB") == 0) {
+		regVal = mtsLibDiBitSpbPg();
+	} else if (strcmp(g_szArgs[0], "ESB") == 0) {
+		regVal = mtsLibDiBitEsuPg();
+	} else if (strcmp(g_szArgs[0], "IOB") == 0) {
+		regVal = mtsLibDiBitIobPg();
+	} else if (strcmp(g_szArgs[0], "PCB") == 0) {
+		regVal = mtsLibDiBitPcbPg();
+	} else if (strcmp(g_szArgs[0], "MCB") == 0) {
+		regVal = 1;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	eResult = mtsCheckEqual(0x1, regVal);
+	UdpSendOpsTxResult(eResult, "0x%X", regVal);
+	
+	return OK;
+}
+
+STATUS steBit(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	UINT32 regVal;
+	
+	if (strcmp(g_szArgs[0], "IOB1") == 0) {
+		regVal = steLibDiBitIob1Pg();
+	} else if (strcmp(g_szArgs[0], "IOB2") == 0) {
+		regVal = steLibDiBitIob2Pg();
+	} else if (strcmp(g_szArgs[0], "PCB1") == 0) {
+		regVal = steLibDiBitPcb1Pg();
+	} else if (strcmp(g_szArgs[0], "PCB2") == 0) {
+		regVal = steLibDiBitPcb2Pg();
+	} else if (strcmp(g_szArgs[0], "ESB") == 0) {
+		regVal = steLibDiBitEsuPg();
+	} else if (strcmp(g_szArgs[0], "MCB") == 0) {
+		regVal = 1;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	eResult = mtsCheckEqual(0x1, regVal);
+	UdpSendOpsTxResult(eResult, "0x%X", regVal);
+	
+	return OK;
+}
+
+STATUS mtsChkGf7(void) {
+	OPS_TYPE_RESULT_TYPE eResult = RESULT_TYPE_FAIL;
+	int refVal, nValue;
+	double dValue;
+	
+	if (strcmp(g_szArgs[0], "NAV_STS") == 0) {
+		TRY_STR_TO_LONG(refVal, 1, int);
+		nValue = g_pTmGf7->m_NAV_STS;
+		
+		SET_RESULT_VALUE("0x%04X", nValue);
+		eResult = mtsCheckEqual(refVal, nValue & g_dwArgMask);
+	} else if (strcmp(g_szArgs[0], "ALIGN_STS") == 0) {
+		TRY_STR_TO_LONG(refVal, 1, int);
+		nValue = g_pTmGf7->m_ALIGN_STS;
+		
+		SET_RESULT_VALUE("0x%04X", nValue);

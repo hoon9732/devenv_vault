@@ -19,6 +19,8 @@ const PageTopbar = ({ page, theme }) => {
         return <div>Sheet Topbar</div>;
       case 'settings':
         return <div>Settings Topbar</div>;
+      case 'profile':
+        return <div>Profile Topbar</div>;
       default:
         return null;
     }

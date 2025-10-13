@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
-import Popover from '@mui/material/Popover';
-import { Icon } from '@blueprintjs/core';
+import { Button, Card, Elevation, H3, H5, InputGroup, Icon, Popover, Menu, MenuItem } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 import './ProfileContent.css';
 
@@ -20,7 +13,6 @@ const ProfileContent = () => {
   const [profile, setProfile] = useState(null);
   const [editData, setEditData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -64,143 +56,87 @@ const ProfileContent = () => {
     setEditData({ ...editData, [field]: event.target.value });
   };
 
-  const handleIconClick = (event) => {
-    if (isEditMode) {
-      setAnchorEl(event.currentTarget);
-    }
-  };
-
-  const handleIconClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleIconSelect = (iconName) => {
     setEditData({ ...editData, profileIcon: iconName });
-    handleIconClose();
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'icon-popover' : undefined;
 
   if (!profile) {
-    return <Typography>{t('Loading profile...')}</Typography>;
+    return <div>{t('Loading profile...')}</div>;
   }
 
-  const profileIconName = isEditMode ? editData.profileIcon : profile.profileIcon;
   const dataToShow = isEditMode ? editData : profile;
 
-  const textFieldStyles = {
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: isEditMode ? 'rgba(0, 0, 0, 0.23)' : 'transparent',
-      },
-      '&:hover fieldset': {
-        borderColor: isEditMode ? 'rgba(0, 0, 0, 0.87)' : 'transparent',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: isEditMode ? 'primary.main' : 'transparent',
-      },
-    },
-    // Ensure input text color is correct in dark mode
-    '& .MuiInputBase-input.Mui-disabled': {
-        '-webkit-text-fill-color': (theme) => theme.palette.text.primary,
-      },
-  };
+  const iconMenu = (
+    <div className="icon-popover-content">
+      <div className="icon-grid">
+        {iconNames.map((name) => (
+          <Button
+            key={name}
+            className="icon-grid-item"
+            icon={<Icon icon={name} size={24} />}
+            onClick={() => handleIconSelect(name)}
+            minimal
+          />
+        ))}
+      </div>
+    </div>
+  );
 
   return (
-    <Box sx={{ p: 2, width: 'clamp(350px, 40vw, 500px)' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, minHeight: '48px' }}>
+    <Card elevation={Elevation.TWO} className="profile-container">
+      <div className="profile-top-actions">
         {isEditMode ? (
           <>
-            <Button onClick={handleSave} sx={{ mr: 1 }}>{t('Save')}</Button>
-            <Button onClick={handleCancel} color="secondary">{t('Cancel')}</Button>
+            <Button intent="primary" text={t('Save')} onClick={handleSave} style={{ marginRight: '8px' }} />
+            <Button text={t('Cancel')} onClick={handleCancel} />
           </>
         ) : (
-          <IconButton onClick={handleEdit} className="profile-edit-button">
-            <Icon icon="edit" />
-          </IconButton>
+          <Button icon="edit" minimal large className="profile-edit-button" onClick={handleEdit} />
         )}
-      </Box>
+      </div>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-        <IconButton
-          onClick={handleIconClick}
-          sx={{
-            width: '120px',
-            height: '120px',
-            cursor: isEditMode ? 'pointer' : 'default',
-            p: 0,
-          }}
-        >
-          <Icon icon={profileIconName} size={80} />
-          {isEditMode && (
-            <Box
-              sx={{
-                position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                backgroundColor: 'rgba(0,0,0,0.4)', color: 'white',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '50%', opacity: 0, '&:hover': { opacity: 1 }
-              }}
-            >
-              <Icon icon="edit" size={32} />
-            </Box>
-          )}
-        </IconButton>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleIconClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        >
-          <Box sx={{ p: 1, width: '150px' }}>
-            <Grid container spacing={1}>
-              {iconNames.map((name) => (
-                <Grid item xs={4} key={name}>
-                  <IconButton sx={{ width: '100%', height: '100%' }} onClick={() => handleIconSelect(name)}>
-                    <Icon icon={name} size={24} />
-                  </IconButton>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+      <div className="profile-icon-container">
+        <Popover content={iconMenu} placement="right" disabled={!isEditMode}>
+          <Button 
+            className={`profile-icon-button ${isEditMode ? 'editable' : ''}`}
+            large 
+            minimal
+          >
+            <Icon icon={dataToShow.profileIcon} size={160} />
+            {isEditMode && (
+              <div className="profile-icon-overlay">
+                <Icon icon="edit" size={64} color="white" />
+              </div>
+            )}
+          </Button>
         </Popover>
-      </Box>
+      </div>
 
-      <TextField
-        fullWidth
-        variant="outlined"
-        disabled={!isEditMode}
-        value={dataToShow.name}
-        onChange={handleFieldChange('name')}
-        sx={{ ...textFieldStyles, mb: 2 }}
-        inputProps={{ style: { textAlign: 'center', fontSize: '1.5rem', padding: '6px 12px' } }}
-      />
+      <div className="profile-name-input-container">
+        <InputGroup
+          large
+          disabled={!isEditMode}
+          value={dataToShow.name}
+          onChange={handleFieldChange('name')}
+          className={`profile-name-input ${isEditMode ? 'editable' : ''}`}
+        />
+      </div>
 
-      <Grid container spacing={1.5}>
+      <div className="profile-details-grid">
         {['id', 'email', 'department'].map((field) => (
-          <Grid item container alignItems="center" xs={12} key={field}>
-            <Grid item xs={4}>
-              <Typography variant="body2" align="left">
-                {t(field.charAt(0).toUpperCase() + field.slice(1))}:
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                fullWidth
-                variant="outlined"
+          <React.Fragment key={field}>
+            <H5 className="profile-detail-label">{t(field.charAt(0).toUpperCase() + field.slice(1))}:</H5>
+            <div className={`profile-detail-value ${isEditMode ? 'editable' : ''}`}>
+              <InputGroup
                 disabled={!isEditMode}
                 value={dataToShow[field]}
                 onChange={handleFieldChange(field)}
-                sx={textFieldStyles}
-                inputProps={{style: {padding: '6px 12px'}}}
               />
-            </Grid>
-          </Grid>
+            </div>
+          </React.Fragment>
         ))}
-      </Grid>
-    </Box>
+      </div>
+    </Card>
   );
 };
 

@@ -1,6 +1,7 @@
 .profile-container {
-  padding: 16px;
-  width: clamp(350px, 40vw, 500px);
+  padding: 24px;
+  width: 600px;
+  min-height: 600px;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -12,7 +13,7 @@
   justify-content: flex-end;
   margin-bottom: 8px;
   min-height: 48px;
-  width: 100%; /* Ensure it takes full width to justify content to the end */
+  width: 100%;
 }
 
 .profile-edit-button {
@@ -24,13 +25,13 @@
 .profile-icon-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   position: relative;
 }
 
 .profile-icon-button {
-  width: 120px;
-  height: 120px;
+  width: 240px;
+  height: 240px;
   cursor: default;
   padding: 0;
   border-radius: 50%;
@@ -72,16 +73,33 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  width: 100%;
 }
 
 .icon-grid-item {
   width: calc(33.333% - 4px);
-  flex-grow: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-grid-item:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.bp6-dark .icon-grid-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.profile-name-input-container {
+  width: 100%; /* Allow name to fill width */
+  margin-bottom: 24px;
 }
 
 .profile-name-input .bp6-input {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 2rem !important;
   padding: 6px 12px;
   border-color: transparent !important;
   box-shadow: none !important;
@@ -99,24 +117,17 @@
 }
 
 .profile-details-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.profile-detail-row {
-  display: flex;
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: auto 1fr; /* Label column, then flexible input column */
+  gap: 16px;
+  width: 100%;
   align-items: center;
 }
 
 .profile-detail-label {
-  width: 33.33%;
   text-align: left;
-  padding-right: 8px;
-}
-
-.profile-detail-value {
-  width: 66.67%;
+  padding-right: 16px;
+  font-weight: bold;
 }
 
 .profile-detail-value .bp6-input {

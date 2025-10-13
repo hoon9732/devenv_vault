@@ -28,7 +28,7 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
   const bottomNavItems = [
       { text: t('Settings'), icon: "cog", path: '/settings' },
       { text: t('About'), icon: "info-sign" },
-      { text: t('Profile'), icon: "user" },
+      { text: t('Profile'), icon: "user", path: '/profile' },
   ];
 
   const handleItemClick = (item) => {
@@ -38,8 +38,6 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
       handleExplorerToggle(item);
     } else if (item.text === t('About')) {
       handleAboutClick();
-    } else if (item.text === t('Profile')) {
-      handleModalOpen('Profile');
     }
   };
 
