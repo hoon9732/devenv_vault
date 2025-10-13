@@ -7,17 +7,29 @@
   background-color: var(--bp-background-color-hover);
 }
 
-.bp6-light .sidebar-container {
-  border-right: 1px solid rgba(16, 22, 26, 0.15);
-}
-
-.bp6-dark .sidebar-container {
-  border-right: 1px solid rgba(16, 22, 26, 0.4);
-}
-
 .sidebar-menu {
   padding: 0;
   width: 57px;
+}
+
+.sidebar-menu-item.bp6-menu-item {
+  height: 48px;
+  width: 57px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Needed for positioning the new div */
+}
+
+/* Force the inner element to be full height */
+.sidebar-menu-item > * {
+  min-width: 0 !important;
+  padding: 0 !important;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Force hardware acceleration to prevent flicker */
@@ -26,7 +38,7 @@
 }
 
 .sidebar-menu-item .bp6-icon {
-  margin: 0; /* Override default icon margin */
+  margin: 0;
 }
 
 .sidebar-scrollable-menu {
@@ -55,4 +67,38 @@
 
 .bp6-dark .sidebar-header-item {
   background-color: #2d2d2d;
+}
+
+/* NEW INDICATOR STYLES FOR REAL DIVs */
+.sidebar-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  border-radius: 0;
+}
+
+.page-indicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  left: 8px;
+}
+
+.bp6-light .sidebar-indicator {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.bp6-dark .sidebar-indicator {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.bp6-light .page-indicator {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.bp6-dark .page-indicator {
+  background-color: rgba(255, 255, 255, 0.15);
 }

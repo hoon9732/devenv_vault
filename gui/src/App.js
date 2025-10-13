@@ -232,6 +232,7 @@ function App() {
               handleAboutClick={handleAboutClick} 
               uiScale={uiScale}
               isExplorerOpen={isExplorerOpen}
+              location={location}
             />
               <Explorer 
                 open={isExplorerOpen} 

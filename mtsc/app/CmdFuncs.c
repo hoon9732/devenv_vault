@@ -1749,3 +1749,33 @@ STATUS mtsChkGf7(void) {
 		nValue = g_pTmGf7->m_ALIGN_STS;
 		
 		SET_RESULT_VALUE("0x%04X", nValue);
+		eResult = mtsCheckEqual(refVal, nValue & g_dwArgMask);
+	} else if (strcmp(g_szArgs[0], "AQQC1") == 0_ {
+		dValue = (double)(g_pTmGf7->m_AQQC1 * 0.0000000005);
+		
+		SET_RESULT_VALUE("%0.10f", dValue);
+		eResult = RESULT_TYPE_PASS;
+	} else if (strcmp(g_szArgs[0], "AQQC2") == 0_ {
+		dValue = (double)(g_pTmGf7->m_AQQC * 0.0000000005);
+		
+		SET_RESULT_VALUE("%0.10f", dValue);
+		eResult = RESULT_TYPE_PASS;
+	} else if (strcmp(g_szArgs[0], "AQQC3") == 0_ {
+		dValue = (double)(g_pTmGf7->m_AQQC3 * 0.0000000005);
+		
+		SET_RESULT_VALUE("%0.10f", dValue);
+		eResult = RESULT_TYPE_PASS;
+	} else if (strcmp(g_szArgs[0], "AQQC4") == 0_ {
+		dValue = (double)(g_pTmGf7->m_AQQC4 * 0.0000000005);
+		
+		SET_RESULT_VALUE("%0.10f", dValue);
+		eResult = RESULT_TYPE_PASS;
+	} else {
+		REPORT_ERROR("Invalid Argument. [#%d(%s)]\n", 0, g_szArgs[0]);
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(eResult, g_szResultValue);
+	
+	return OK;
+}

@@ -7,7 +7,7 @@ import './Sidebar.css';
 
 const collapsedWidth = 57; // Approx theme.spacing(7)
 
-const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale, handleHamburgerClick, isExplorerOpen }) => {
+const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiScale, handleHamburgerClick, isExplorerOpen, location }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
@@ -41,35 +41,65 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
     }
   };
 
-  const renderMenuItem = (item) => {
-    const menuItem = (
-      <MenuItem
-        className="sidebar-menu-item"
-        onClick={() => handleItemClick(item)}
-        style={{ height: '48px', padding: 0, color: theme.palette.text.primary, alignItems: 'center' }}
-        text={
-          <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
-            <div style={{ width: `${collapsedWidth}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
-              <Icon icon={item.icon} size={iconSize} color={item.color} />
-            </div>
-          </div>
-        }
-      />
-    );
+      const renderMenuItem = (item) => {
 
-    return (
-      <Tooltip content={item.text} placement="right" usePortal={false} key={item.text}>
-        {menuItem}
-      </Tooltip>
-    );
-  };
+        const isSidebarActive = item.text === t('Explorer') && isExplorerOpen;
+
+        const isPageActive = item.path && item.path === location.pathname;
+
+    
+
+        const menuItem = (
+
+          <MenuItem
+
+            className="sidebar-menu-item"
+
+            onClick={() => handleItemClick(item)}
+
+            style={{ height: '48px', padding: 0, color: theme.palette.text.primary, alignItems: 'center' }}
+
+            text={
+
+              <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
+
+                {isSidebarActive && <div className="sidebar-indicator" />}
+
+                {isPageActive && <div className="page-indicator" />}
+
+                <div style={{ width: `${collapsedWidth}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+
+                  <Icon icon={item.icon} size={iconSize} color={item.color} />
+
+                </div>
+
+              </div>
+
+            }
+
+          />
+
+        );
+
+    
+
+        return (
+
+          <Tooltip content={item.text} placement="right" usePortal={false} key={item.text}>
+
+            {menuItem}
+
+          </Tooltip>
+
+        );
+
+      };
 
   return (
     <Box
       sx={{
         width: collapsedWidth,
         flexShrink: 0,
-        borderRight: `1px solid ${theme.palette.divider}`,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
