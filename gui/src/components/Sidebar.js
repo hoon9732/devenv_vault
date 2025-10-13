@@ -77,11 +77,11 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
       }}
       className={`${Classes.FOCUS_DISABLED} ${theme.palette.mode === 'dark' ? Classes.DARK : ''}`}
     >
-      <Menu style={{ padding: 0, flexShrink: 0, width: collapsedWidth }}>
+      <Menu style={{ padding: 0, flexShrink: 0, width: collapsedWidth, borderRadius: 0, overflow: 'hidden' }}>
         <MenuItem 
           className="sidebar-menu-item"
           style={{ 
-            height: '48px', 
+            height: '64px', 
             padding: 0,
             backgroundColor: theme.palette.topbar.background, 
             color: theme.palette.text.primary,
@@ -97,24 +97,24 @@ const Sidebar = ({ handleExplorerToggle, handleModalOpen, handleAboutClick, uiSc
         />
       </Menu>
 
-      <Menu style={{ overflowY: 'auto', overflowX: 'hidden', padding: 0, width: collapsedWidth }}>
+      <Menu style={{ overflowY: 'auto', overflowX: 'hidden', padding: 0, width: collapsedWidth, borderRadius: 0, overflow: 'hidden' }}>
         {mainNavItems.flatMap((item, index) => [
           renderMenuItem(item),
-          index < mainNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-main-${index}`} /> : null
+          index < mainNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: 'transparent' }} key={`d-main-${index}`} /> : null
         ]).filter(Boolean)}
-        <Divider style={{ margin: 0 }} />
+        <Divider style={{ margin: 0, borderColor: 'transparent' }} />
         {appNavItems.flatMap((item, index) => [
           renderMenuItem(item),
-          index < appNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-app-${index}`} /> : null
+          index < appNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: 'transparent' }} key={`d-app-${index}`} /> : null
         ]).filter(Boolean)}
       </Menu>
 
-      <Box sx={{ marginTop: 'auto', flexShrink: 0 }}>
-        <Menu style={{ padding: 0, width: collapsedWidth }}>
-          <Divider style={{ margin: 0 }} />
+      <Box sx={{ marginTop: 'auto', flexShrink: 0, overflow: 'hidden' }}>
+        <Menu style={{ padding: 0, width: collapsedWidth, borderRadius: 0, overflow: 'hidden' }}>
+          <Divider style={{ margin: 0, borderColor: 'transparent' }} />
           {bottomNavItems.flatMap((item, index) => [
             renderMenuItem(item),
-            index < bottomNavItems.length - 1 ? <Divider style={{ margin: 0 }} key={`d-bottom-${index}`} /> : null
+            index < bottomNavItems.length - 1 ? <Divider style={{ margin: 0, borderColor: 'transparent' }} key={`d-bottom-${index}`} /> : null
           ]).filter(Boolean)}
         </Menu>
       </Box>

@@ -71,7 +71,8 @@ ipcMain.on('update-titlebar-colors', (event, { backgroundColor, symbolColor }) =
   if (win) {
     win.setTitleBarOverlay({
       color: backgroundColor,
-      symbolColor: symbolColor
+      symbolColor: symbolColor,
+      height: 40
     });
   }
 });
@@ -276,11 +277,6 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
     resizable: false,
     movable: true,
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: theme === 'dark' ? '#293742' : '#ffffff',
-      symbolColor: theme === 'dark' ? '#f5f8fa' : '#182026',
-      height: 40
-    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,

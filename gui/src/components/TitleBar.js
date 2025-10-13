@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TitleBar.css';
 import icon from '../assets/favicon.ico';
 
-const TitleBar = () => {
+const TitleBar = ({ theme }) => {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const TitleBar = () => {
   }, []);
 
   return (
-    <div className="title-bar draggable">
+    <div className="title-bar draggable" style={{ backgroundColor: theme.palette.appBar.background, color: theme.palette.text.primary }}>
       <div className="title-bar-icon">
         <img src={icon} alt="icon" />
       </div>

@@ -1430,3 +1430,82 @@ STATUS mtsActMotorOn(void) {
 	
 	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MSL_MOTOR_ON, g_pTmFg2->m_GCU_RESP, usGcuResp, eResult);
 	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	DELAY_MS(GCU_RESPONSE_TIME);
+	
+	usGcuMode = g_pTmGf2->m_GCU_MODE;
+	eResult = mtsCheckEqual(refVal, usGcuMode & g_dwArgMask);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usGcuMode);
+	
+	return OK;
+}
+
+STATUS mtsAcuCtrlCommandSetErrorDeg(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	UINT16 usActKind;
+	INT16 sDeg;
+	int dDegError;
+	CODE usGcuResp;
+	
+	UINT32 uResCode = 0;
+	int dDeg1 = 0;
+	int dDeg2 = 0;
+	int dDeg3 = 0;
+	int dDeg4 = 0;
+	
+	TRY_STR_TO_LONG(usActKind, 0, UINT16);
+	TRY_STR_TO_LONG(sDeg, 1, INT16);
+	TRY_STR_TO_LONG(dDegError, 2, int);
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_2.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_2.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_2.m_OPCODE = TM_FG2_2_OPCODE;
+	g_pTmFg2->fg2_2.m_ACTKIND = usActKind;
+	g_pTmFg2->fg2_2.m_VALUE = sDeg;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_2_OPCODE, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	DELAY_SEC(3.5);
+	
+	switch (usActKind) {
+		case 1: /* Roll */
+			dDeg1 = sDeg;
+			dDeg2 = sDeg;
+			dDeg3 = sDeg;
+			dDeg4 = sDeg;
+			break;
+		case 2: /* Pitch */
+			dDeg1 = -sDeg;
+			dDeg2 = sDeg;
+			dDeg3 = sDeg;
+			dDeg4 = -sDeg;
+			break;
+		case 3: /* Yaw */
+			dDeg1 = -sDeg;
+			dDeg2 = -sDeg;
+			dDeg3 = sDeg;
+			dDeg4 = sDeg;
+			break;
+		default;
+			REPORT_ERROR("Invalid Argument(usActKind).\n");
+			return ERROR;
+	}
+	
+	uResCode = uResCode + (mtsCheckRange(dDeg1 - dDegError, dDeg1 + dDegError, g_pTmGf2->

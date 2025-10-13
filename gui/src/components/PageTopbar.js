@@ -26,7 +26,7 @@ const PageTopbar = ({ page, theme }) => {
 
   return (
     <Box sx={{ backgroundColor: 'topbar.background' }}>
-      <Toolbar sx={{ minHeight: '48px !important', height: '48px', p: '0 16px !important' }}>
+      <Toolbar sx={{ minHeight: '64px !important', height: '64px', p: '0 16px !important' }}>
         {renderTopbarContent()}
       </Toolbar>
     </Box>

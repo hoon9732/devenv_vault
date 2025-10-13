@@ -102,6 +102,7 @@ function App() {
                 background: { default: '#f4f6f8', paper: '#ffffff' },
                 appBar: { background: '#ffffff' },
                 topbar: { background: '#ebebeb' },
+                text: { primary: '#182026' }
               }),
         },
         components: {
@@ -203,8 +204,9 @@ function App() {
         height: '100vh',
         overflow: 'hidden',
         backgroundColor: theme.palette.background.default,
-      }}>
-        <TitleBar />
+      }} className={themeMode === 'dark' ? Classes.DARK : ''}>
+        <CssBaseline />
+        <TitleBar theme={theme} />
         <Box sx={{ flex: 1, minHeight: 0 }}>
           <Box sx={{
             display: 'flex',
@@ -212,8 +214,7 @@ function App() {
             transformOrigin: 'top left',
             width: `${100 / uiScale}%`,
             height: `${100 / uiScale}%`,
-          }} className={`${themeMode}-theme`}>
-            <CssBaseline />
+          }}>
             <Sidebar handleFileOpen={handleFileOpen} handleExplorerToggle={handleExplorerToggle} handleModalOpen={handleModalOpen} handleAboutClick={handleAboutClick} uiScale={uiScale} />
               <Explorer 
                 open={isExplorerOpen} 
