@@ -1,1 +1,51 @@
+.explorer-topbar {
+  display: flex;
+  flex-direction: column;
+  height: 64px;
+  background-color: var(--bp-background-color-hover);
+  flex-shrink: 0;
+}
 
+.explorer-topbar-upper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.explorer-topbar-lower {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 32px;
+  font-size: 14px;
+  padding: 0 16px;
+}
+
+.bp6-light .explorer-topbar-lower {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6); /* Greyed out text */
+}
+
+.bp6-dark .explorer-topbar-lower {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6); /* Greyed out text */
+}
+
+.explorer-topbar-left,
+.explorer-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.explorer-topbar-right {
+  margin-left: auto;
+}
+
+.explorer-tree .bp6-tree-node-label {
+  font-size: 14px;
+}

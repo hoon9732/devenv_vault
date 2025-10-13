@@ -1508,4 +1508,51 @@ STATUS mtsAcuCtrlCommandSetErrorDeg(void) {
 			return ERROR;
 	}
 	
-	uResCode = uResCode + (mtsCheckRange(dDeg1 - dDegError, dDeg1 + dDegError, g_pTmGf2->
+	uResCode = uResCode + (mtsCheckRange(dDeg1 - dDegError, dDeg1 + dDegError, g_pTmGf2->m_FIN1_FB) * 1000);
+	uResCode = uResCode + (mtsCheckRange(dDeg2 - dDegError, dDeg2 + dDegError, g_pTmGf2->m_FIN2_FB) * 100);
+	uResCode = uResCode + (mtsCheckRange(dDeg3 - dDegError, dDeg3 + dDegError, g_pTmGf2->m_FIN3_FB) * 10);
+	uResCode = uResCode + (mtsCheckRange(dDeg4 - dDegError, dDeg4 + dDegError, g_pTmGf2->m_FIN4_FB) * 1);
+	
+	eResult = mtsCheckEqual(1111, uResCode);
+	
+	return OK;
+}
+
+STATUS mtsAcuSlewStart(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_ACT_TEST_START;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GET_DELAY_TICK(3500), 1, TM_FG2_1_OPCODE_ACT_TEST_START, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	UdpSendOPsTxResult(eResult, "0x%04X", usGcuResp);
+	
+	return OK;
+}
+
+STATUS mtsAcuSlewEnd(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_ACT_TEST_END;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GET_DELAY_TICK(3500), 1, TM_FG2_1_OPCODE

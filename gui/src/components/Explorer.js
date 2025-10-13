@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { Button as MuiButton } from '@mui/material';
-import { Button, Classes, Tree, Popover, Menu, MenuItem, Tooltip } from '@blueprintjs/core';
+import { Button, Classes, Tree, Popover, Menu, MenuItem, Tooltip, Icon } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
+import './Explorer.css';
 
 const initialDrawerWidth = 240;
 const minDrawerWidth = 150;
@@ -192,14 +193,14 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
       className={Classes.FOCUS_DISABLED}
     >
       <Box sx={{ width: drawerWidth, height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'background.paper', border: 'none' }}>
-                        <div className="explorer-topbar" style={{ height: '64px', display: 'flex', flexDirection: 'column' }}>
-                          <div className="explorer-topbar-upper" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '32px', padding: '0 8px', flexShrink: 0 }}>
+                        <div className="explorer-topbar">
+                          <div className="explorer-topbar-upper">
                             <div className="explorer-topbar-left">
               <Tooltip content={t('Open Workspace')} placement="top" usePortal={false}><Button minimal icon="folder-open" onClick={handleOpenWorkspace} /></Tooltip>
               <Tooltip content={t('New File')} placement="top" usePortal={false}><Button minimal icon="document" disabled={!workspacePath} /></Tooltip>
               <Tooltip content={t('New Folder')} placement="top" usePortal={false}><Button minimal icon="folder-new" disabled={!workspacePath} /></Tooltip>
             </div>
-                            <div className="explorer-topbar-right" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+                            <div className="explorer-topbar-right">
               <Tooltip content={t('Refresh')} placement="top" usePortal={false}><Button minimal icon="refresh" disabled={!workspacePath} onClick={refreshTreeView} /></Tooltip>
               <Popover content={settingsMenu} placement="bottom-end">
                 <Tooltip content={t('Settings')} placement="top" usePortal={false}><Button minimal icon="more" /></Tooltip>
@@ -211,14 +212,8 @@ const Explorer = ({ open, setOpen, workspacePath, setWorkspacePath, uiScale, isI
               />
             </div>
                           </div>
-                          <div className="explorer-topbar-lower" style={{ 
-                            height: '32px',
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            paddingLeft: '16px', 
-                            fontSize: '12px',
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
-                          }}>
+                          <div className="explorer-topbar-lower">
+                            {workspacePath && <Icon icon="root-folder" style={{ marginRight: '8px' }} />}
                             <span>{workspacePath ? workspacePath.split('\\').pop() : t('No Workspace')}</span>
                           </div>
                         </div>
