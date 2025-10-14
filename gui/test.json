@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectId": "proj_20251015_tst2b",
+  "metadata": {
+    "projectName": "Test Project (.json)",
+    "author": "Gemini",
+    "createdAt": "2025-10-15T10:05:00Z",
+    "updatedAt": "2025-10-15T10:05:00Z",
+    "description": "This is a sample JSON project file for testing purposes."
+  },
+  "nodes": [
+    {
+      "id": "node_A",
+      "type": "sensor",
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "label": "Temperature Sensor",
+        "properties": {
+          "dataType": "Analog",
+          "range": "-50 to 150 C"
+        }
+      }
+    },
+    {
+      "id": "node_B",
+      "type": "actuator",
+      "position": { "x": 400, "y": 200 },
+      "data": {
+        "label": "Cooling Fan",
+        "properties": {
+          "power": "5W"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_A-B",
+      "source": "node_A",
+      "target": "node_B",
+      "label": "Control Signal",
+      "data": {
+        "properties": {
+          "signalId": "TEMP-CTRL-FAN",
+          "signalType": "PWM"
+        }
+      }
+    }
+  ]
+}

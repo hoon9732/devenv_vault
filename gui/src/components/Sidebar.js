@@ -17,6 +17,7 @@ const collapsedWidth = 57; // Approx theme.spacing(7)
 
 const Sidebar = ({
   handleExplorerToggle,
+  handleOutlineToggle,
   handleAboutClick,
   uiScale,
   handleHamburgerClick,
@@ -31,7 +32,7 @@ const Sidebar = ({
   const mainNavItems = [
     { text: t('Home'), icon: 'home', path: '/' },
     { text: t('Explorer'), icon: 'folder-open' },
-    { text: t('Search'), icon: 'search', path: '/search' },
+    { text: t('Project Outline'), icon: 'diagram-tree', path: '/search' },
   ];
 
   const appNavItems = [
@@ -62,7 +63,9 @@ const Sidebar = ({
   ];
 
   const handleItemClick = (item) => {
-    if (item.path) {
+    if (item.text === t('Project Outline')) {
+      handleOutlineToggle();
+    } else if (item.path) {
       handleExplorerToggle(item); // Re-using this handler for navigation
     } else if (item.text === t('Explorer')) {
       handleExplorerToggle(item);
@@ -251,6 +254,7 @@ const Sidebar = ({
 
 Sidebar.propTypes = {
   handleExplorerToggle: PropTypes.func.isRequired,
+  handleOutlineToggle: PropTypes.func.isRequired,
   handleAboutClick: PropTypes.func.isRequired,
   uiScale: PropTypes.number.isRequired,
   handleHamburgerClick: PropTypes.func.isRequired,

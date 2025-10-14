@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectId": "proj_20251015_tst1a",
+  "metadata": {
+    "projectName": "Test Project (.icd)",
+    "author": "Gemini",
+    "createdAt": "2025-10-15T10:00:00Z",
+    "updatedAt": "2025-10-15T10:00:00Z",
+    "description": "This is a sample ICD project file for testing purposes."
+  },
+  "nodes": [
+    {
+      "id": "node_1",
+      "type": "powerSource",
+      "position": { "x": 50, "y": 50 },
+      "data": {
+        "label": "Battery",
+        "properties": {
+          "outputVoltage": {
+            "value": 12,
+            "unit": "VDC"
+          }
+        }
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "computeModule",
+      "position": { "x": 300, "y": 50 },
+      "data": {
+        "label": "Control Unit",
+        "properties": {
+          "inputVoltage": {
+            "value": 12,
+            "unit": "VDC"
+          }
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_1-2",
+      "source": "node_1",
+      "target": "node_2",
+      "label": "Power Cable",
+      "data": {
+        "properties": {
+          "signalId": "PWR-MAIN",
+          "cableType": "18 AWG"
+        }
+      }
+    }
+  ]
+}

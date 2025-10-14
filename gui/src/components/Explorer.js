@@ -35,6 +35,7 @@ const Explorer = ({
   const [settings, setSettings] = useState({
     showIcons: true,
     showOnStart: false,
+    showAnimation: true,
   });
   const [nodes, setNodes] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -63,7 +64,7 @@ const Explorer = ({
     const fetchSettings = async () => {
       if (window.electron) {
         const fetchedSettings = await window.electron.getWorkspaceSettings();
-        setSettings(fetchedSettings);
+        setSettings((prev) => ({ ...prev, ...fetchedSettings }));
       }
     };
     fetchSettings();
@@ -158,8 +159,7 @@ const Explorer = ({
     // If it's a file, call the open file handler
     if (node.nodeData && !node.nodeData.isDirectory) {
       onOpenFile(node.id);
-    }
-    else {
+    } else {
       // If it's a directory, toggle its expansion
       if (node.isExpanded) {
         handleNodeCollapse(node);
@@ -195,7 +195,10 @@ const Explorer = ({
     [isResizing, sidebarRef, setDrawerWidth],
   );
 
-  const handleMouseUp = useCallback(() => setIsResizing(false), [setIsResizing]);
+  const handleMouseUp = useCallback(
+    () => setIsResizing(false),
+    [setIsResizing],
+  );
 
   useEffect(() => {
     if (isResizing) {
@@ -221,13 +224,18 @@ const Explorer = ({
     <Menu>
       <MenuItem
         icon={settings.showIcons ? 'tick' : 'blank'}
-        text={t('Workspace Icons')}
+        text={t('Show Icons')}
         onClick={() => handleSettingChange('showIcons')}
       />
       <MenuItem
         icon={settings.showOnStart ? 'tick' : 'blank'}
-        text={t('Default Workspace')}
+        text={t('Show on Start')}
         onClick={() => handleSettingChange('showOnStart')}
+      />
+      <MenuItem
+        icon={settings.showAnimation ? 'tick' : 'blank'}
+        text={t('Show Animation')}
+        onClick={() => handleSettingChange('showAnimation')}
       />
     </Menu>
   );
@@ -243,7 +251,7 @@ const Explorer = ({
         flexShrink: 0,
         overflow: 'hidden',
         transition:
-          isResizing || (open && isInitialLoad)
+          !settings.showAnimation || isResizing || (open && isInitialLoad)
             ? 'none'
             : (theme) => theme.transitions.create('width'),
         position: 'relative',
@@ -264,13 +272,25 @@ const Explorer = ({
         <div className="explorer-topbar">
           <div className="explorer-topbar-upper">
             <div className="explorer-topbar-left">
-              <Tooltip content={t('Open Workspace')} placement="top" usePortal={false}>
-                <Button minimal icon="folder-open" onClick={handleOpenWorkspace} />
+              <Tooltip
+                content={t('Open Workspace')}
+                placement="top"
+                usePortal={false}
+              >
+                <Button
+                  minimal
+                  icon="folder-open"
+                  onClick={handleOpenWorkspace}
+                />
               </Tooltip>
               <Tooltip content={t('New File')} placement="top" usePortal={false}>
                 <Button minimal icon="document" disabled={!workspacePath} />
               </Tooltip>
-              <Tooltip content={t('New Folder')} placement="top" usePortal={false}>
+              <Tooltip
+                content={t('New Folder')}
+                placement="top"
+                usePortal={false}
+              >
                 <Button minimal icon="folder-new" disabled={!workspacePath} />
               </Tooltip>
             </div>
@@ -288,7 +308,7 @@ const Explorer = ({
                 placement="bottom-end"
                 usePortal={false}
               >
-                <Tooltip content={t('Settings')} placement="top" usePortal={false}>
+                <Tooltip content={t('More')} placement="top" usePortal={false}>
                   <Button minimal icon="more" />
                 </Tooltip>
               </Popover>{' '}
@@ -336,10 +356,7 @@ const Explorer = ({
             renderTree &&
             !workspacePath && (
               <Box sx={{ p: 2, textAlign: 'center' }}>
-                <MuiButton
-                  variant="contained"
-                  onClick={handleOpenWorkspace}
-                >
+                <MuiButton variant="contained" onClick={handleOpenWorkspace}>
                   {t('Open Workspace')}
                 </MuiButton>
               </Box>
@@ -373,4 +390,3 @@ Explorer.propTypes = {
 };
 
 export default Explorer;
-

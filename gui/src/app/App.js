@@ -17,12 +17,15 @@ import GraphsScreen from '../pages/GraphsScreen';
 import DocsScreen from '../pages/DocsScreen';
 import ProfileScreen from '../pages/ProfileScreen';
 import Explorer from '../components/Explorer';
+import ProjectOutline from '../components/ProjectOutline';
+import { ProjectProvider } from '../contexts/ProjectContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getSettings, saveSettings } from '../utils/settingsManager';
 import { Classes } from '@blueprintjs/core';
 
 function App() {
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
+  const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [lastOpenBar, setLastOpenBar] = useState('explorer');
   const [workspacePath, setWorkspacePath] = useState(null);
   const [fileContent, setFileContent] = useState('');
@@ -156,6 +159,10 @@ function App() {
     }
   };
 
+  const handleOutlineToggle = () => {
+    setIsOutlineOpen(!isOutlineOpen);
+  };
+
   const handleFileOpen = async () => {
     if (window.electron) {
       const content = await window.electron.openFileDialog();
@@ -240,89 +247,93 @@ function App() {
             transform: 'translateZ(0)',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              transform: `scale(${uiScale})`,
-              transformOrigin: 'top left',
-              width: `${100 / uiScale}%`,
-              height: `${100 / uiScale}%`,
-            }}
-          >
-            <Sidebar
-              handleFileOpen={handleFileOpen}
-              handleHamburgerClick={handleHamburgerClick}
-              handleExplorerToggle={handleExplorerToggle}
-              handleModalOpen={handleModalOpen}
-              handleAboutClick={handleAboutClick}
-              uiScale={uiScale}
-              isExplorerOpen={isExplorerOpen}
-              location={location}
-            />
-            <Explorer
-              open={isExplorerOpen}
-              setOpen={setIsExplorerOpen}
-              workspacePath={workspacePath}
-              setWorkspacePath={setWorkspacePath}
-              uiScale={uiScale}
-              isInitialLoad={isInitialLoad}
-              onOpenFile={handleOpenFile}
-              theme={theme}
-            />
+          <ProjectProvider>
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
-                flexGrow: 1,
-                minWidth: 0,
+                transform: `scale(${uiScale})`,
+                transformOrigin: 'top left',
+                width: `${100 / uiScale}%`,
+                height: `${100 / uiScale}%`,
               }}
             >
-              <div>
-                <PageTopbar page={currentPage} theme={theme} />
-              </div>
+              <Sidebar
+                handleFileOpen={handleFileOpen}
+                handleHamburgerClick={handleHamburgerClick}
+                handleExplorerToggle={handleExplorerToggle}
+                handleOutlineToggle={handleOutlineToggle}
+                handleModalOpen={handleModalOpen}
+                handleAboutClick={handleAboutClick}
+                uiScale={uiScale}
+                isExplorerOpen={isExplorerOpen}
+                location={location}
+              />
+              <Explorer
+                open={isExplorerOpen}
+                setOpen={setIsExplorerOpen}
+                workspacePath={workspacePath}
+                setWorkspacePath={setWorkspacePath}
+                uiScale={uiScale}
+                isInitialLoad={isInitialLoad}
+                onOpenFile={handleOpenFile}
+                theme={theme}
+              />
+              <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} />
               <Box
-                component="main"
                 sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
                   flexGrow: 1,
-                  overflowY: 'auto',
+                  minWidth: 0,
                 }}
               >
+                <div>
+                  <PageTopbar page={currentPage} theme={theme} />
+                </div>
                 <Box
-                  sx={{ padding: (theme) => theme.spacing(3), height: '100%' }}
+                  component="main"
+                  sx={{
+                    flexGrow: 1,
+                    overflowY: 'auto',
+                  }}
                 >
-                  <Routes>
-                    <Route path="/" element={<HomeScreen />} />
-                    <Route path="/search" element={<SearchScreen />} />
-                    <Route
-                      path="/file-viewer"
-                      element={<FileViewerScreen fileContent={fileContent} />}
-                    />
-                    <Route
-                      path="/settings"
-                      element={
-                        <SettingsScreen
-                          themeMode={themeMode}
-                          setThemeMode={setThemeMode}
-                          uiScale={uiScale}
-                          setUiScale={setUiScale}
-                          isHardwareAccelerationEnabled={
-                            isHardwareAccelerationEnabled
-                          }
-                          setIsHardwareAccelerationEnabled={
-                            setIsHardwareAccelerationEnabled
-                          }
-                        />
-                      }
-                    />
-                    <Route path="/sheet" element={<SheetScreen />} />
-                    <Route path="/graphs" element={<GraphsScreen />} />
-                    <Route path="/docs" element={<DocsScreen />} />
-                    <Route path="/profile" element={<ProfileScreen />} />
-                  </Routes>
+                  <Box
+                    sx={{ padding: (theme) => theme.spacing(3), height: '100%' }}
+                  >
+                    <Routes>
+                      <Route path="/" element={<HomeScreen />} />
+                      <Route path="/search" element={<SearchScreen />} />
+                      <Route
+                        path="/file-viewer"
+                        element={<FileViewerScreen fileContent={fileContent} />}
+                      />
+                      <Route
+                        path="/settings"
+                        element={
+                          <SettingsScreen
+                            themeMode={themeMode}
+                            setThemeMode={setThemeMode}
+                            uiScale={uiScale}
+                            setUiScale={setUiScale}
+                            isHardwareAccelerationEnabled={
+                              isHardwareAccelerationEnabled
+                            }
+                            setIsHardwareAccelerationEnabled={
+                              setIsHardwareAccelerationEnabled
+                            }
+                          />
+                        }
+                      />
+                      <Route path="/sheet" element={<SheetScreen />} />
+                      <Route path="/graphs" element={<GraphsScreen />} />
+                      <Route path="/docs" element={<DocsScreen />} />
+                      <Route path="/profile" element={<ProfileScreen />} />
+                    </Routes>
+                  </Box>
                 </Box>
               </Box>
             </Box>
-          </Box>
+          </ProjectProvider>
         </Box>
       </Box>
     </ThemeProvider>

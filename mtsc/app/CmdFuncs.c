@@ -1931,3 +1931,39 @@ STATUS mtsGcuProgramStart(void) {
 			REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG33, IDX = %d)\n", g_pTmFg3->fg3_3.m_IDX);
 			return ERROR;
 		}
+		
+		for (k = 0; k < 1000; k++) {
+			if (g_pTmFg3->fg3_3.m_IDX == g_pTmGf3->gf3_3.m_IDX) {
+				break;
+			}
+			
+			DELAY_MS(1);
+		}
+		
+		if (g_pTmFg3->fg3_3.m_IDX != g_pTmGf3->gf3_3.m_IDX) {
+			LOGMSG("IDX(%d) Data No Ack.\n", g_pTmFg3->fg3_3.m_IDX);
+			break;
+		}
+		
+		progressCurr = mtsCalProgress(i, block_num);
+		if (progressCurr != progressPrev) {
+			UdpSendOpsTxResult(RESULT_TYPE_ONGOING, "%d", progressCurr);
+			progressPrev = progressCurr;
+		}
+	}
+	
+	eResult = mtsCheckEqual(block_num, i);
+	UdpSendOpsTxResult(eResult, "%d", mtsCalProgress(i, block_num));
+	
+	return OK;
+}
+
+STATUS mtsGcuProgramEnd(void) {
+	int i;
+	int *ptr_int;
+	CODE usGcuResp;
+	
+	memset((void *)(g_pTmFg3), 0, sizeof(TM_TYPE_FG3));
+	
+	g_pTmFg3->fg3_3.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg3->fg3_3.m_CONTROL = TM_FG3_SDLC_CONTROL;

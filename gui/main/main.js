@@ -181,7 +181,10 @@ ipcMain.handle('delete-directory', async (event, dirPath) => {
 ipcMain.handle('open-file-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [{ name: 'JSON Files', extensions: ['json'] }],
+    filters: [
+      { name: 'ICD Files', extensions: ['icd', 'json'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
   });
 
   if (canceled || filePaths.length === 0) {

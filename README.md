@@ -14,6 +14,41 @@ Give me detailed steps on what i should do based on the current codebase, refere
 
 The 'gui' folder is the root of the app(others are unimportant data, and ignore gui/node_modules).
 
+---
+
+I would like to ask your opinion for guidance on next step of my app development, and show you the bigger picture of my plan.
+
+Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing. The resulting software should be responsive and light(resource-wise), also robust and open for later development.
+
+Current state: I have started developing the most basic UI elements(sidebar buttons, a file explorer sidebar, settings screen, pages)
+I have started with the GUI elements. However, I still cannot decide how to develop the actual back-end of the SW, which is the core. I have found out about the concept of MBSE development principle done by software like CATIA Magic, which enables a smooth process form UML 2 system diagram to actual simulation and modeling.
+
+Back-end Requirement: My first goal is to choose the appropriate coding language and data saving format(XML or json) for saving E-ICD(Electrical ICD) or D-ICD(Digital ICD) elements, which saves numerous sheet data for nodes and links in between(signal id, voltage, signal type etc.) So I am imagining a robust back-end for a software where you can easily create a node on a blank diagram and add unlimited amount of properties as as a sheet and unlimited levels of subproperties within. And also be able to connect the nodes with a simple drag-and-drop mouse movement, which forms a orthogonal line in between. And the line can also be edited of its numerous properties. You can either edit the diagram in diagram mode or the sheet mode, and can import or export it in numerous extensions(ex: .xls for sheet, .dwg for diagram)
+
+Limitations: Considering that my corporate pc environment restricts access to well known IDES(Vscode), I am using notepad ++ and using Node.js as the only possible stack, back-end might also have to be developed via javascript and npm libraries.
+
+Plan for immediate future: The ICD app should have be able to create its own 'project' on a 'dock' type single main window which works as viewer and also editor, similar to 'Photoshop' application. The current buttons on the sidebar(uncolored buttons) would make widgets in the form of extra sidebar appear to the side of the 'dock'. The file explorer sidebar is the currently only implemented widget, and it will be used for importing of files into the dock.
+
+Other colored buttons on the sidebar('Sheet', 'Diagram', 'Docs') are simply another form of visualizing a single source of truth in the dock in differet forms(sheet should show tables with the help of blueprint js table functions, diagram should show rectangle node objects able to be connected via orthogonal lines, with nodes and line able to be added properties, docs should show simple text of the metadata of the file in the dock(extra text, spec documents etc.))
+
+The 'project' inside the dock should be able to have its own file extension(.icd file for example) and should be savable and loadable. Currently, i am thinking of .json file be the first type of file that can be directly imported or exported from the dock.
+
+To conclude, do not get into any specifics or code. Simply help me decide the initial steps and give me suggestions on where to start from where I stand.
+
+---
+
+Before we proceed, i can use some major graphic improvements on the 'Project Outline' Sidebar
+1. the topbar of the 'Project Outline' Sidebar should be split into 'upper topbar' and 'lower topbar' just like the explorer topbar, with minor changes in buttons. The upper topbar should have two buttons to the left, 'Import Project' using 'import' icon from blueprint, and 'New Project' using 'add' icon from blueprint. And two buttons to the right, 'Refresh', 'Settings', and 'Close' button.
+2. The lower topbar should be a search bar for searching matching contents withing the 'project outline' window.
+3. The overall theme and spacing should be almost identical to the 'Explorer' sidebar(32px upper topbar, 32px lower topbar, and 64px overall)
+
+---
+
+Minor fixes for both the 'explorer' and the 'project outline' sidebar please.
+1. Rename the 'settings' button to 'more' and use 'more' icon from blueprint instead(explorer is doing this right)
+2. The buttons on the topbar of the 'project outline' should not leave blue outline around the button after clicked. I don't see such line(which looks bad) in the 'explorer' buttons so follow this case.
+3. Under the 'project outline' settings(now 'more') dropdown, add 'Show Icons', 'Show on Start'(with also actual functions). Also rename the 'explorer' counterparts from 'Workspace Icons' to 'Show Icons', and 'Default Workspace' to also 'Show on Start'. And lastly, add a 3rd category for 'explorer' and 'project outline' sidebar called 'Show Animation' which turns on or off the expanding/shrinking animation of the sidebar itself. Currently, the 'explorer' has animation by default, and 'Project Outline' does not. So make animation toggleable on both.
+
 # 2025-09-30
 
 Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.
