@@ -1,18 +1,12 @@
 import React from 'react';
+import Page from '../components/Page';
 import ProfileContent from '../components/ProfileContent';
 
 const ProfileScreen = () => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-      }}
-    >
+    <Page icon="user" title="Profile">
       <ProfileContent />
-    </div>
+    </Page>
   );
 };
 

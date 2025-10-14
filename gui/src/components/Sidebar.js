@@ -19,6 +19,7 @@ const Sidebar = ({
   handleExplorerToggle,
   handleOutlineToggle,
   handleAboutClick,
+  handleModalOpen,
   uiScale,
   handleHamburgerClick,
   isExplorerOpen,
@@ -36,9 +37,9 @@ const Sidebar = ({
   ];
 
   const bottomNavItems = [
-    { text: t('Settings'), icon: 'cog' },
+    { text: t('Settings'), icon: 'cog', path: '/settings' },
     { text: t('About'), icon: 'info-sign' },
-    { text: t('Profile'), icon: 'user' },
+    { text: t('Profile'), icon: 'user', path: '/profile' },
   ];
 
   const handleItemClick = (item) => {
@@ -49,9 +50,8 @@ const Sidebar = ({
     } else if (item.text === t('About')) {
       handleAboutClick();
     } else if (item.path) {
-      handleExplorerToggle(item); // Re-using this handler for navigation
+      handleModalOpen(item.path);
     }
-    // Clicks on Settings and Profile will do nothing for now
   };
 
   const renderMenuItem = (item) => {
@@ -226,6 +226,7 @@ Sidebar.propTypes = {
   handleExplorerToggle: PropTypes.func.isRequired,
   handleOutlineToggle: PropTypes.func.isRequired,
   handleAboutClick: PropTypes.func.isRequired,
+  handleModalOpen: PropTypes.func.isRequired,
   uiScale: PropTypes.number.isRequired,
   handleHamburgerClick: PropTypes.func.isRequired,
   isExplorerOpen: PropTypes.bool.isRequired,

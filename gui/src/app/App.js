@@ -256,28 +256,30 @@ function App() {
                   minWidth: 0,
                 }}
               >
-                <Dock uiScale={uiScale} />
-                {/* Routes are kept for modal windows like Settings/Profile for now */}
-                <Routes>
-                  <Route
-                    path="/settings"
-                    element={
-                      <SettingsScreen
-                        themeMode={themeMode}
-                        setThemeMode={setThemeMode}
-                        uiScale={uiScale}
-                        setUiScale={setUiScale}
-                        isHardwareAccelerationEnabled={
-                          isHardwareAccelerationEnabled
-                        }
-                        setIsHardwareAccelerationEnabled={
-                          setIsHardwareAccelerationEnabled
-                        }
-                      />
-                    }
-                  />
-                  <Route path="/profile" element={<ProfileScreen />} />
-                </Routes>
+                {location.pathname === '/' ? (
+                  <Dock uiScale={uiScale} />
+                ) : (
+                  <Routes>
+                    <Route
+                      path="/settings"
+                      element={
+                        <SettingsScreen
+                          themeMode={themeMode}
+                          setThemeMode={setThemeMode}
+                          uiScale={uiScale}
+                          setUiScale={setUiScale}
+                          isHardwareAccelerationEnabled={
+                            isHardwareAccelerationEnabled
+                          }
+                          setIsHardwareAccelerationEnabled={
+                            setIsHardwareAccelerationEnabled
+                          }
+                        />
+                      }
+                    />
+                    <Route path="/profile" element={<ProfileScreen />} />
+                  </Routes>
+                )}
               </Box>
             </Box>
           </ProjectProvider>
