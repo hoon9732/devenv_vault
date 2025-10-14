@@ -1,0 +1,30 @@
+.sheet-view-container {
+  padding: 20px;
+  height: 100%;
+  overflow: auto;
+}
+
+.sheet-table-section {
+  margin-bottom: 40px;
+}
+
+.sheet-table-section h4 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #182026;
+}
+
+.bp6-dark .sheet-table-section h4 {
+  color: #f5f8fa;
+}
+
+/* Give the table a border */
+.bp6-table-container {
+  border: 1px solid #d8e1e8;
+  border-radius: 3px;
+}
+
+.bp6-dark .bp6-table-container {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}

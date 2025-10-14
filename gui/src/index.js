@@ -6,6 +6,7 @@ import App from './app/App';
 import { LanguageProvider } from './contexts/LanguageContext';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import '@blueprintjs/table/lib/css/table.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

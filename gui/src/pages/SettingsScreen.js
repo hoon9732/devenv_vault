@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, H4, H5, Text, HTMLSelect, Switch } from '@blueprintjs/core';
+import { Card, H5, Text, HTMLSelect, Switch } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const SettingsScreen = ({

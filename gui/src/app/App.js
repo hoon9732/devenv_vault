@@ -6,18 +6,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 import TitleBar from '../components/TitleBar';
-import PageTopbar from '../components/PageTopbar';
 import Sidebar from '../components/Sidebar';
-import HomeScreen from '../pages/HomeScreen';
-import SearchScreen from '../pages/SearchScreen';
-import FileViewerScreen from '../pages/FileViewerScreen';
 import SettingsScreen from '../pages/SettingsScreen';
-import SheetScreen from '../pages/SheetScreen';
-import GraphsScreen from '../pages/GraphsScreen';
-import DocsScreen from '../pages/DocsScreen';
 import ProfileScreen from '../pages/ProfileScreen';
 import Explorer from '../components/Explorer';
 import ProjectOutline from '../components/ProjectOutline';
+import Dock from '../dock/Dock';
 import { ProjectProvider } from '../contexts/ProjectContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getSettings, saveSettings } from '../utils/settingsManager';
@@ -28,7 +22,6 @@ function App() {
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [lastOpenBar, setLastOpenBar] = useState('explorer');
   const [workspacePath, setWorkspacePath] = useState(null);
-  const [fileContent, setFileContent] = useState('');
   const [themeMode, setThemeMode] = useState('dark');
   const [uiScale, setUiScale] = useState(1);
   const [isHardwareAccelerationEnabled, setIsHardwareAccelerationEnabled] =
@@ -38,8 +31,6 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, language } = useLanguage();
-
-  const currentPage = location.pathname.substring(1) || 'home';
 
   useEffect(() => {
     setIsInitialLoad(false);
@@ -163,22 +154,6 @@ function App() {
     setIsOutlineOpen(!isOutlineOpen);
   };
 
-  const handleFileOpen = async () => {
-    if (window.electron) {
-      const content = await window.electron.openFileDialog();
-      if (content) {
-        setFileContent(content);
-        navigate('/file-viewer');
-      }
-    } else {
-      console.error('Electron context not available');
-      setFileContent(
-        'This is a fallback content for browsers. File dialog is only available in Electron.',
-      );
-      navigate('/file-viewer');
-    }
-  };
-
   const handleModalOpen = (content) => {
     if (content === 'Profile') {
       navigate('/profile');
@@ -191,18 +166,6 @@ function App() {
         theme: themeMode,
         uiScale: uiScale,
       });
-    }
-  };
-
-  const handleOpenFile = async (filePath) => {
-    if (window.electron) {
-      const result = await window.electron.readFileContent(filePath);
-      if (result.success) {
-        setFileContent(result.content);
-        navigate('/file-viewer');
-      } else {
-        console.error('Failed to read file:', result.error);
-      }
     }
   };
 
@@ -258,7 +221,6 @@ function App() {
               }}
             >
               <Sidebar
-                handleFileOpen={handleFileOpen}
                 handleHamburgerClick={handleHamburgerClick}
                 handleExplorerToggle={handleExplorerToggle}
                 handleOutlineToggle={handleOutlineToggle}
@@ -275,7 +237,9 @@ function App() {
                 setWorkspacePath={setWorkspacePath}
                 uiScale={uiScale}
                 isInitialLoad={isInitialLoad}
-                onOpenFile={handleOpenFile}
+                onOpenFile={() => {
+                  /* Placeholder for future use */
+                }}
                 theme={theme}
               />
               <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} />
@@ -287,50 +251,28 @@ function App() {
                   minWidth: 0,
                 }}
               >
-                <div>
-                  <PageTopbar page={currentPage} theme={theme} />
-                </div>
-                <Box
-                  component="main"
-                  sx={{
-                    flexGrow: 1,
-                    overflowY: 'auto',
-                  }}
-                >
-                  <Box
-                    sx={{ padding: (theme) => theme.spacing(3), height: '100%' }}
-                  >
-                    <Routes>
-                      <Route path="/" element={<HomeScreen />} />
-                      <Route path="/search" element={<SearchScreen />} />
-                      <Route
-                        path="/file-viewer"
-                        element={<FileViewerScreen fileContent={fileContent} />}
-                      />
-                      <Route
-                        path="/settings"
-                        element={
-                          <SettingsScreen
-                            themeMode={themeMode}
-                            setThemeMode={setThemeMode}
-                            uiScale={uiScale}
-                            setUiScale={setUiScale}
-                            isHardwareAccelerationEnabled={
-                              isHardwareAccelerationEnabled
-                            }
-                            setIsHardwareAccelerationEnabled={
-                              setIsHardwareAccelerationEnabled
-                            }
-                          />
+                <Dock />
+                {/* Routes are kept for modal windows like Settings/Profile for now */}
+                <Routes>
+                  <Route
+                    path="/settings"
+                    element={
+                      <SettingsScreen
+                        themeMode={themeMode}
+                        setThemeMode={setThemeMode}
+                        uiScale={uiScale}
+                        setUiScale={setUiScale}
+                        isHardwareAccelerationEnabled={
+                          isHardwareAccelerationEnabled
+                        }
+                        setIsHardwareAccelerationEnabled={
+                          setIsHardwareAccelerationEnabled
                         }
                       />
-                      <Route path="/sheet" element={<SheetScreen />} />
-                      <Route path="/graphs" element={<GraphsScreen />} />
-                      <Route path="/docs" element={<DocsScreen />} />
-                      <Route path="/profile" element={<ProfileScreen />} />
-                    </Routes>
-                  </Box>
-                </Box>
+                    }
+                  />
+                  <Route path="/profile" element={<ProfileScreen />} />
+                </Routes>
               </Box>
             </Box>
           </ProjectProvider>

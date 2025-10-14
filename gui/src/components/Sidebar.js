@@ -26,52 +26,31 @@ const Sidebar = ({
 }) => {
   const { t } = useLanguage();
   const theme = useTheme();
-  const isLightTheme = theme.palette.mode === 'light';
   const iconSize = 20 + (uiScale - 1) * 10;
 
   const mainNavItems = [
     { text: t('Home'), icon: 'home', path: '/' },
     { text: t('Explorer'), icon: 'folder-open' },
-    { text: t('Project Outline'), icon: 'diagram-tree', path: '/search' },
-  ];
-
-  const appNavItems = [
-    {
-      text: t('Sheet'),
-      icon: 'th',
-      path: '/sheet',
-      color: isLightTheme ? 'rgb(76, 175, 80)' : 'rgba(102, 255, 102, 0.7)',
-    },
-    {
-      text: t('Graphs'),
-      icon: 'data-lineage',
-      path: '/graphs',
-      color: isLightTheme ? 'rgb(255, 152, 0)' : 'rgba(255, 178, 102, 0.7)',
-    },
-    {
-      text: t('Docs'),
-      icon: 'document-share',
-      path: '/docs',
-      color: isLightTheme ? 'rgb(33, 150, 243)' : 'rgba(102, 178, 255, 0.7)',
-    },
+    { text: t('Project Outline'), icon: 'diagram-tree' },
   ];
 
   const bottomNavItems = [
-    { text: t('Settings'), icon: 'cog', path: '/settings' },
+    { text: t('Settings'), icon: 'cog' },
     { text: t('About'), icon: 'info-sign' },
-    { text: t('Profile'), icon: 'user', path: '/profile' },
+    { text: t('Profile'), icon: 'user' },
   ];
 
   const handleItemClick = (item) => {
     if (item.text === t('Project Outline')) {
       handleOutlineToggle();
-    } else if (item.path) {
-      handleExplorerToggle(item); // Re-using this handler for navigation
     } else if (item.text === t('Explorer')) {
       handleExplorerToggle(item);
     } else if (item.text === t('About')) {
       handleAboutClick();
+    } else if (item.path) {
+      handleExplorerToggle(item); // Re-using this handler for navigation
     }
+    // Clicks on Settings and Profile will do nothing for now
   };
 
   const renderMenuItem = (item) => {
@@ -207,18 +186,6 @@ const Sidebar = ({
               <Divider
                 style={{ margin: 0, borderColor: 'transparent' }}
                 key={`d-main-${index}`}
-              />
-            ) : null,
-          ])
-          .filter(Boolean)}
-        <Divider style={{ margin: 0, borderColor: 'transparent' }} />
-        {appNavItems
-          .flatMap((item, index) => [
-            renderMenuItem(item),
-            index < appNavItems.length - 1 ? (
-              <Divider
-                style={{ margin: 0, borderColor: 'transparent' }}
-                key={`d-app-${index}`}
               />
             ) : null,
           ])

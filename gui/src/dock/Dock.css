@@ -1,0 +1,101 @@
+.dock-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #eef1f4; /* A light neutral background */
+}
+
+.bp6-dark .dock-container {
+  background-color: #202b33; /* A dark neutral background */
+}
+
+.dock-topbar {
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d8e1e8;
+}
+
+.bp6-dark .dock-topbar {
+  background-color: #293742;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.render-type-switcher {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 0.2s ease-in-out;
+}
+
+.render-type-switcher:hover {
+  filter: brightness(1.1);
+}
+
+.dock-topbar-main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  padding: 0 16px;
+  border-left: 1px solid #d8e1e8;
+}
+
+.bp6-dark .dock-topbar-main {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dock-topbar-upper,
+.dock-topbar-lower {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  width: 100%;
+}
+
+.dock-topbar-lower {
+  border-top: 1px solid #e5e5e5;
+}
+
+.bp6-dark .dock-topbar-lower {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Blueprint overrides for breadcrumbs */
+.dock-topbar-upper .bp6-breadcrumbs {
+  margin: 0;
+}
+
+.dock-topbar-upper .bp6-breadcrumb {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Blueprint overrides for navbar */
+.dock-topbar-lower .bp6-navbar {
+  padding: 0;
+  height: 100%;
+}
+
+.dock-content {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.dock-content-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  user-select: none;
+}

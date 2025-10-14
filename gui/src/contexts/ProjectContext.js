@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import ProjectManager from '../services/ProjectManager';
 
 // 1. Create the context
@@ -96,4 +97,8 @@ export const ProjectProvider = ({ children }) => {
       {children}
     </ProjectContext.Provider>
   );
+};
+
+ProjectProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
