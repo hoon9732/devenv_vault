@@ -1861,3 +1861,73 @@ STATUS mtsGcuProgramMode(void) {
 	
 	return OK;
 }
+
+STATUS mtsGcuProgramStart(void) {
+	int i, k;
+	int *ptr_int;
+	
+	int block_num;
+	int block_rem;
+	int content_num;
+	
+	short *imageshort;
+	CODE usGcuResp;
+	OPS_TYPE_RESULT_TYPE eResult;
+	int progressPrev = 0, progressCurr = 0;
+	
+	memset((void *)(g_pTmFg3), 0, sizeof(TM_TYPE_FG3));
+	
+	g_pTmFg3->fg3_3.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg3->fg3_3.m_CONTROL= TM_FG3_SDLC_CONTROL;
+	g_pTmFg3->fg3_3.m_OPCODE = TM_FG3_3_OPCODE_SW_TX;
+	g_pTMFg3->fg3_3.m_IDX = 0;
+	
+	ptr_int = (int *)(&g_pTmFg3->fg3_3.m_DATA[0]);
+	*ptr_int++ = g_nGcuImgTotalBytes;
+	*ptr_int = mtsMakeChecksum(g_pGcuImgBuf, g_nGcuImgTotalBytes);
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG33) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG33)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG3_3_OPCODE_SW_TX, g_pTmGf3->gf3_3.m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	LOGMSG("GCU Program Start...\n");
+	
+	block_num = (g_nGcuImgTotalBytes / 2) / 125;
+	block_rem = (g_nGcuImgTotalBytes / 2) % 125;
+	
+	if (block_rem != 0) {
+		block_num += 1;
+	}
+	
+	imageshort = (short *)g_pGcuImgBuf;
+	
+	memset((void *)(g_pTmFg3), 0, sizeof(TM_TYPE_FG3));
+	
+	for (i = 0; i < block_num; i++) {
+		if ((block_rem != 0) && (i == (block_num -1))) {
+			content_num = block_rem;
+		} else {
+			content_num = 125;
+		}
+		
+		g_pTmFg3->fg3_3.m_ADDRESS = TM_SDLC_ADDRESS;
+		g_pTmFg3->fg3_3.m_CONTROL = TM_FG3_SDLC_CONTROL;
+		g_pTmFg3->fg3_3.m_OPCODE = TM_FG3_3_OPCODE_SW_TX;
+		g_pTmFg3->fg3_3.m_IDX = (INT16)(i + 1);
+		
+		for (k = 0; k < content_num; k++) {
+			g_pTmFg3->fg3_3.m_DATA[k] = imageshort[k + 125 * i];
+		}
+		
+		if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG33) == ERROR) {
+			REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG33, IDX = %d)\n", g_pTmFg3->fg3_3.m_IDX);
+			return ERROR;
+		}
