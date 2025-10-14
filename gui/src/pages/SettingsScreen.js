@@ -36,7 +36,6 @@ const SettingsScreen = ({
 
   return (
     <div style={{ width: '100%', maxWidth: 800 }}>
-      <H4 style={{ marginBottom: '20px' }}>{t('Settings')}</H4>
 
       <Card
         elevation={2}

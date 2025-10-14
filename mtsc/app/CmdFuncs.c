@@ -1800,4 +1800,64 @@ STATUS mtsGcuLoad(void) {
 	printf("\n read %s ", GCU_IMG_FILE);
 	pBuffer = (char *)g_pGcuImgBuf;
 	FOREVER {
+		nReadBytes = fread((void *)pBuffer, 1, DATA_BLOCK_SIZE, fPFile);
+		g_nGcuImgTotalBytes += nReadBytes;
+		pBugger += DATA_BLOCK_SIZE;
 		
+		printf(". ");
+		
+		if (nReadBytes < DATA_BLOCK_SIZE) {
+			LOGMSG(" %d Bytes Read.\n", g_nGcuImgTotalBytes);
+			break;
+		}
+	}
+	
+	printf("\n fclose %s . . .", GCU_IMG_FILE);
+	if (fclose(fpFile) == EOF) {
+		printf("ERROR.\n");
+		
+		REPORT_ERROR("GCU File Close Error.\n");
+		return ERROR:
+	}
+	
+	printf("OK.");
+	
+	if (g_nGcuImgTotalBytes > GCU_IMG_BUFF_LENGTH) {
+		REPORT_ERROR("GCU File size is too big.\n");
+		return ERROR;
+	}
+	
+	UdpSendOpsTxResult(RESULT_TYPE_PASS, "OK");
+	
+	return OK;
+}
+
+STATUS mtsGcuProgramMode(void) {
+	OPS_TYPE_RESULT_TYPE eResult;
+	CODE usGcuResp, usGcuMode;
+	
+	memset((void *)(g_pTmFg2), 0, sizeof(TM_TYPE_FG2));
+	
+	g_pTmFg2->fg2_1.m_ADDRESS = TM_SDLC_ADDRESS;
+	g_pTmFg2->fg2_1.m_CONTROL = TM_FG2_SDLC_CONTROL;
+	g_pTmFg2->fg2_1.m_OPCODE = TM_FG2_1_OPCODE_MODE_GCU_PROGRAM;
+	
+	if (PostCmd(g_hSdlcSendGcu, SDLC_SEND_GCU_TX_FG2) == ERROR) {
+		REPORT_ERROR("PostCmd(SDLC_SEND_GCU_TX_FG2)\n");
+		return ERROR;
+	}
+	
+	WAIT_RESPONSE(GCU_RESPONSE_TIME, 1, TM_FG2_1_OPCODE_MODE_GCU_PROGRAM, g_pTmGf2->m_GCU_RESP, usGcuResp, eResult);
+	
+	if (eResult == RESULT_TYPE_FAIL) {
+		REPORT_ERROR("GCU : No Response.\n");
+		return ERROR;
+	}
+	
+	usGcuMode = g_pTMGf2->m_GCU_MODE;
+	eResult = mtsCheckEqual(0x5000, usGcuMode & 0xF000);
+	
+	UdpSendOpsTxResult(eResult, "0x%04X", usGcuMode);
+	
+	return OK;
+}
