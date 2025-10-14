@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -9,6 +9,7 @@ import {
   Popover,
   Menu,
   MenuItem,
+  Tree,
 } from '@blueprintjs/core';
 import { useProject } from '../contexts/ProjectContext';
 import './ProjectOutline.css';
@@ -16,34 +17,194 @@ import './ProjectOutline.css';
 const drawerWidth = 280;
 
 const ProjectOutline = ({ open, onClose }) => {
-  const { projectData, loadProject } = useProject();
+  const {
+    outlineProjects,
+    activeProject,
+    selection,
+    setActiveSelection,
+    importProjectToOutline,
+    setActiveProject,
+  } = useProject();
+  const [nodes, setNodes] = useState([]);
   const [settings, setSettings] = useState({
     showIcons: true,
     showOnStart: false,
     showAnimation: true,
   });
 
+  // Load settings on component mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      if (window.electron) {
+        const fetchedSettings = await window.electron.getOutlineSettings();
+        setSettings(fetchedSettings);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  // Rebuild the tree ONLY when the data it depends on changes.
+  useEffect(() => {
+    const toTreeNodes = (projects) => {
+      return projects.map((proj) => {
+        const oldNode = nodes.find(n => n.id === proj.projectId);
+        const isExpanded = oldNode ? oldNode.isExpanded : (activeProject && proj.projectId === activeProject.projectId);
+
+        return {
+          id: proj.projectId,
+          icon: settings.showIcons ? 'projects' : undefined,
+          label: proj.metadata.projectName,
+          hasCaret: true,
+          isExpanded: isExpanded,
+          isSelected: selection.includes(proj.projectId),
+          className: (activeProject && proj.projectId === activeProject.projectId) ? 'active-project' : '',
+          childNodes: [
+            {
+              id: `${proj.projectId}-nodes`,
+              icon: settings.showIcons ? 'database' : undefined,
+              label: `Nodes (${proj.nodes.length})`,
+              hasCaret: proj.nodes.length > 0,
+              childNodes: proj.nodes.map((n) => ({
+                id: n.id,
+                icon: settings.showIcons ? 'symbol-square' : undefined,
+                label: n.data.label,
+                isSelected: selection.includes(n.id),
+              })),
+            },
+            {
+              id: `${proj.projectId}-edges`,
+              icon: settings.showIcons ? 'flow-linear' : undefined,
+              label: `Edges (${proj.edges.length})`,
+              hasCaret: proj.edges.length > 0,
+              childNodes: proj.edges.map((e) => ({
+                id: e.id,
+                icon: settings.showIcons ? 'exchange' : undefined,
+                label: e.label,
+                isSelected: selection.includes(e.id),
+              })),
+            },
+          ],
+        };
+      });
+    };
+    setNodes(toTreeNodes(outlineProjects));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outlineProjects, activeProject, selection, settings.showIcons]);
+
+
   const handleSettingChange = (settingName) => {
-    setSettings((prev) => ({ ...prev, [settingName]: !prev[settingName] }));
-    // NOTE: Logic to save these settings would be added here later
+    setSettings(prevSettings => {
+      const newSettings = { ...prevSettings, [settingName]: !prevSettings[settingName] };
+      if (window.electron) {
+        window.electron.setOutlineSettings(newSettings);
+      }
+      return newSettings;
+    });
   };
 
   const handleImportProject = async () => {
     if (window.electron) {
-      const content = await window.electron.openFileDialog();
-      if (content) {
-        try {
-          const projectJson = JSON.parse(content);
-          loadProject(projectJson);
-        } catch (error) {
-          console.error('Failed to parse project file:', error);
-          // Optionally, show an error message to the user
-        }
+      const results = await window.electron.openFileDialog(true); // Pass true for multi-select
+      if (results) {
+        results.forEach(result => {
+          if (result && result.content) {
+            try {
+              const projectJson = JSON.parse(result.content);
+              importProjectToOutline(projectJson);
+            } catch (error) {
+              console.error('Failed to parse project file:', error);
+            }
+          }
+        });
       }
-    } else {
-      console.error('Electron context not available for file dialog.');
     }
   };
+
+  const handleNodeCollapse = (node) => {
+    const newNodes = [...nodes];
+    Tree.nodeFromPath(node.path, newNodes).isExpanded = false;
+    setNodes(newNodes);
+  };
+
+  const handleNodeExpand = (node) => {
+    const newNodes = [...nodes];
+    Tree.nodeFromPath(node.path, newNodes).isExpanded = true;
+    setNodes(newNodes);
+  };
+
+    const handleNodeClick = (node, nodePath, e) => {
+
+      if (e.target.classList.contains('bp6-tree-node-caret')) {
+
+        if (node.isExpanded) {
+
+          handleNodeCollapse(node);
+
+        } else {
+
+          handleNodeExpand(node);
+
+        }
+
+        return;
+
+      }
+
+  
+
+      // Determine the project ID for the clicked node
+
+      let projectId = '';
+
+      if (nodePath.length === 1) {
+
+        projectId = node.id;
+
+      } else {
+
+        // Find the parent project by traversing the outlineProjects structure
+
+        for (const proj of outlineProjects) {
+
+          if (proj.nodes.some(n => n.id === node.id) || proj.edges.some(e => e.id === node.id)) {
+
+            projectId = proj.projectId;
+
+            break;
+
+          }
+
+        }
+
+      }
+
+  
+
+      // If the clicked item's project is not active, make it active
+
+      if (projectId && activeProject?.projectId !== projectId) {
+
+        setActiveProject(projectId);
+
+      }
+
+  
+
+      // Handle selection
+
+      const isMultiSelect = e.metaKey || e.ctrlKey;
+
+      const newSelection = isMultiSelect ? [...selection] : [];
+
+      if (!newSelection.includes(node.id)) {
+
+        newSelection.push(node.id);
+
+      }
+
+      setActiveSelection(newSelection);
+
+    };
 
   const settingsMenu = (
     <Menu>
@@ -66,10 +227,10 @@ const ProjectOutline = ({ open, onClose }) => {
   );
 
   const renderContent = () => {
-    if (!projectData) {
+    if (outlineProjects.length === 0) {
       return (
         <div className="project-outline-content empty">
-          <p>No project loaded.</p>
+          <p>No projects imported.</p>
           <p>
             Click the <Icon icon="import" size={12} /> button to import a
             project.
@@ -78,43 +239,15 @@ const ProjectOutline = ({ open, onClose }) => {
       );
     }
 
-    const { nodes, edges } = projectData;
     return (
       <div className="project-outline-content">
-        <div className="outline-section">
-          <h5>Nodes ({nodes.length})</h5>
-          <ul>
-            {nodes.map((node) => (
-              <li key={node.id} className="outline-item">
-                {settings.showIcons && (
-                  <Icon
-                    icon="database"
-                    size={14}
-                    style={{ marginRight: '8px' }}
-                  />
-                )}
-                {node.data.label || node.id}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="outline-section">
-          <h5>Edges ({edges.length})</h5>
-          <ul>
-            {edges.map((edge) => (
-              <li key={edge.id} className="outline-item">
-                {settings.showIcons && (
-                  <Icon
-                    icon="flow-linear"
-                    size={14}
-                    style={{ marginRight: '8px' }}
-                  />
-                )}
-                {edge.label || edge.id}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Tree
+          contents={nodes}
+          onNodeCollapse={handleNodeCollapse}
+          onNodeExpand={handleNodeExpand}
+          onNodeClick={handleNodeClick}
+          className="outline-tree"
+        />
       </div>
     );
   };
@@ -134,20 +267,14 @@ const ProjectOutline = ({ open, onClose }) => {
           <div className="outline-topbar-upper">
             <div className="outline-topbar-left">
               <Tooltip
-                content="Import Project"
+                content="Import Project(s)"
                 placement="top"
                 usePortal={false}
               >
                 <Button minimal icon="import" onClick={handleImportProject} />
               </Tooltip>
-              <Tooltip content="New Project" placement="top" usePortal={false}>
-                <Button minimal icon="add" />
-              </Tooltip>
             </div>
             <div className="outline-topbar-right">
-              <Tooltip content="Refresh" placement="top" usePortal={false}>
-                <Button minimal icon="refresh" />
-              </Tooltip>
               <Popover
                 content={settingsMenu}
                 placement="bottom-end"
@@ -165,10 +292,10 @@ const ProjectOutline = ({ open, onClose }) => {
           <div className="outline-topbar-lower">
             <InputGroup
               leftIcon="search"
-              placeholder="Search outline..."
+              placeholder="Search projects..."
               round
               small
-              disabled={!projectData}
+              disabled={outlineProjects.length === 0}
             />
           </div>
         </div>

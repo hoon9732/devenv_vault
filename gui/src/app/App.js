@@ -72,19 +72,23 @@ function App() {
   }, [themeMode, isLoading]);
 
   useEffect(() => {
-    const loadWorkspace = async () => {
+    const loadInitialSettings = async () => {
       if (window.electron) {
-        const path = await window.electron.getWorkspacePath();
-        const settings = await window.electron.getWorkspaceSettings();
-        if (path) {
-          setWorkspacePath(path);
-          if (settings.showOnStart) {
+        const workspaceSettings = await window.electron.getWorkspaceSettings();
+        if (workspaceSettings && workspaceSettings.path) {
+          setWorkspacePath(workspaceSettings.path);
+          if (workspaceSettings.showOnStart) {
             setIsExplorerOpen(true);
           }
         }
+        
+        const outlineSettings = await window.electron.getOutlineSettings();
+        if (outlineSettings && outlineSettings.showOnStart) {
+          setIsOutlineOpen(true);
+        }
       }
     };
-    loadWorkspace();
+    loadInitialSettings();
   }, []);
 
   const theme = useMemo(
@@ -228,6 +232,7 @@ function App() {
                 handleAboutClick={handleAboutClick}
                 uiScale={uiScale}
                 isExplorerOpen={isExplorerOpen}
+                isOutlineOpen={isOutlineOpen}
                 location={location}
               />
               <Explorer
@@ -251,7 +256,7 @@ function App() {
                   minWidth: 0,
                 }}
               >
-                <Dock />
+                <Dock uiScale={uiScale} />
                 {/* Routes are kept for modal windows like Settings/Profile for now */}
                 <Routes>
                   <Route

@@ -4,7 +4,7 @@
   height: 100%;
   /* Width and transition are now handled inline for animation */
   border-left: 1px solid rgba(0, 0, 0, 0.12);
-  background-color: var(--background-paper, #ffffff);
+  background-color: #f5f8fa; /* Match Explorer light background */
   color: var(--text-primary, #000000);
   overflow: hidden;
   flex-shrink: 0;
@@ -67,7 +67,7 @@
 }
 
 .project-outline-content {
-  padding: 8px;
+  padding: 0;
   overflow-y: auto;
   flex-grow: 1;
 }
@@ -82,44 +82,14 @@
   color: #a7b6c2;
 }
 
-.outline-section {
-  margin-bottom: 16px;
+.outline-tree .bp6-tree-node-label {
+  font-size: 14px;
 }
 
-.outline-section h5 {
-  margin: 0 0 8px 8px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #5c7080;
+.bp6-tree-node.active-project > .bp6-tree-node-content {
+  background-color: #dbeeff; /* A light blue highlight */
 }
 
-.bp6-dark .outline-section h5 {
-  color: #a7b6c2;
-}
-
-.outline-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.outline-item {
-  display: flex;
-  align-items: center;
-  padding: 6px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.outline-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.bp6-dark .outline-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+.bp6-dark .bp6-tree-node.active-project > .bp6-tree-node-content {
+  background-color: #3d5875; /* A darker blue highlight for dark mode */
 }

@@ -49,6 +49,28 @@ Minor fixes for both the 'explorer' and the 'project outline' sidebar please.
 2. The buttons on the topbar of the 'project outline' should not leave blue outline around the button after clicked. I don't see such line(which looks bad) in the 'explorer' buttons so follow this case.
 3. Under the 'project outline' settings(now 'more') dropdown, add 'Show Icons', 'Show on Start'(with also actual functions). Also rename the 'explorer' counterparts from 'Workspace Icons' to 'Show Icons', and 'Default Workspace' to also 'Show on Start'. And lastly, add a 3rd category for 'explorer' and 'project outline' sidebar called 'Show Animation' which turns on or off the expanding/shrinking animation of the sidebar itself. Currently, the 'explorer' has animation by default, and 'Project Outline' does not. So make animation toggleable on both.
 
+---
+
+Now that the loading fuctionality has been achieved, the next logical step would be the editing and saving function. But we might need a restructuring of the app before that.
+
+1. The current 'page' system is not compatible with the singular 'dock' system showing different renderings of a single source of truth. Remove current placeholder pages and related placeholder data except for global 'settings' page and 'profiles' page. 'Settings' and 'Profiles' will be later implemented in the form of a separate window within the app(like the photoshop preferences settings), but that would be a subject for later. simply make them not appear in the main screen when the button is clicked.
+2. The new 'dock' will occupy the remaining space as the representation of single source of truth. It will have a topbar of 64px height to match other sidebar height. At the leftmost part of the topbar, a 64x64 px square region should show a color-coded(green, crimson, blue) icon of the type of rendering the currently loaded project is showing(sheet, graph(renamed 'diagram'), or docs, showing sheet by default). Clicking this icon will create a dropdown menu for changing its type. This method will replace the sidebar icons(sidebar icons for sheet, graph and docs would be removed).
+To the right of the 'Render Type' squareicon would be the remaining topbar, which is separated into 32px height upper topbar and lower topbar. The upper topbar should show the hierarchy of the object currently opend on the dock screen. So, by default there should be a 'project' icon from blueprintjs in the left, and then 'root_project_name'. If there is a node 'Battery-A' in it, and if I double-clicked it, the screen would show its subordinates and the topbar should show 'root_project_name'>'battery'. I heard that blueprintjs has a library for this kind of representation.
+And the bottom topbar would have conventional dropdown toolbar menus 'File', 'Settings', 'Help' each with categories like 'Open', 'Save', 'Save As', 'Import', 'Export' under 'File' etc.(settings and help are placeholders for now)
+3. Use blueprintjs built-in libraries as much as possible to implement this visual feature. And if possible, try to show the sheet, graph, docs version of the loaded single file according to the 'Render Type'
+
+---
+
+I can see that currently, the loaded test.icd project is not showing anything.
+Can you first implement the sheet view using the table function of the blueprintjs to enable full viewing and editing of the data as in excel.
+
+---
+
+I would like to suggest a major fix in the functionality of the outline sidebar
+1. The outline sidebar is simply a widget for showing projects currently loaded on the app. It should work as a list of projects ready to be opened. Thus, the import project should enable multiple imports and the largest unit in the 'Project Outline' list should be individual projects(individual .json, .icd files), not the nodes and edges. I want the same arrow expansion/shrinking dropdown layout as in the explorer sidebar, so that each project can be expanded to see nodes and edges inside it, and also subnodes inside each node if there is. And most importantly, the project loaded on the outline should not appear on the dock unless the outline project is double-clicked or dragged and drop onto the dock.(ALso revise the test for blank dock accordingly)
+2. The primary way for loading a project would be through the bottom topbar 'Files'-'Open' Button. Only a single project can be loaded by this method.
+3. Create 'New' Button over the 'Open' Button to create a blank graph. and also add basic node, edge editing tools if they are present in react flow. Also enable save, save as function for new files or saving existing json/icd files into icd. Use export for saving as .json.
+
 # 2025-09-30
 
 Main Goal: Create a GUI for ICD(Interface Control Document) visualization, analysis and editing.

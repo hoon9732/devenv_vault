@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Alignment,
   Button,
@@ -16,28 +17,90 @@ import GraphView from './GraphView';
 import DocsView from './DocsView';
 import './Dock.css';
 
-const Dock = () => {
+const Dock = ({ uiScale }) => {
   const [renderType, setRenderType] = useState('graph');
-  const { projectData } = useProject();
+  const {
+    activeProject,
+    createNewActiveProject,
+    loadProjectAsActive,
+    exportActiveProjectToJson,
+  } = useProject();
+  const [currentFilePath, setCurrentFilePath] = useState(null);
+
+  const handleNewProject = () => {
+    createNewActiveProject();
+    setCurrentFilePath(null); // A new project doesn't have a path yet
+  };
+
+  const handleOpenProject = async () => {
+    if (window.electron) {
+      const result = await window.electron.openFileDialog();
+      if (result && result.content) {
+        try {
+          const projectJson = JSON.parse(result.content);
+          loadProjectAsActive(projectJson);
+          setCurrentFilePath(result.filePath);
+        } catch (error) {
+          console.error('Failed to parse project file:', error);
+        }
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    if (!activeProject || !currentFilePath) return;
+    const content = exportActiveProjectToJson();
+    if (window.electron) {
+      // This is a simplified save. A real app would use a main-process handler
+      // to write the file without a dialog.
+      try {
+        await window.electron.saveFileContent(currentFilePath, content);
+      } catch (error) {
+        console.error('Failed to save file:', error);
+      }
+    }
+  };
+
+  const handleSaveAs = async () => {
+    if (!activeProject) return;
+    const content = exportActiveProjectToJson();
+    if (window.electron) {
+      const result = await window.electron.saveFileDialog({
+        content,
+        fileType: 'icd',
+      });
+      if (result.success) {
+        setCurrentFilePath(result.filePath);
+      }
+    }
+  };
+
+  const handleExport = async () => {
+    if (!activeProject) return;
+    const content = exportActiveProjectToJson();
+    if (window.electron) {
+      await window.electron.saveFileDialog({ content, fileType: 'json' });
+    }
+  };
 
   const renderTypeConfig = {
     sheet: {
       icon: 'th',
       color: 'rgb(76, 175, 80)',
       text: 'Sheet',
-      component: <SheetView />,
+      component: <SheetView uiScale={uiScale} />,
     },
     graph: {
       icon: 'data-lineage',
       color: 'rgb(255, 152, 0)',
       text: 'Graph',
-      component: <GraphView />,
+      component: <GraphView uiScale={uiScale} />,
     },
     docs: {
       icon: 'document',
       color: 'rgb(33, 150, 243)',
       text: 'Docs',
-      component: <DocsView />,
+      component: <DocsView uiScale={uiScale} />,
     },
   };
 
@@ -62,7 +125,7 @@ const Dock = () => {
   );
 
   const renderBreadcrumbs = () => {
-    if (!projectData) {
+    if (!activeProject) {
       return (
         <Breadcrumbs
           items={[{ icon: 'ban-circle', text: 'No Project Loaded' }]}
@@ -71,30 +134,40 @@ const Dock = () => {
     }
     // Placeholder for future hierarchy navigation
     const items = [
-      { icon: 'projects', text: projectData.metadata.projectName },
+      { icon: 'projects', text: activeProject.metadata.projectName },
     ];
     return <Breadcrumbs items={items} />;
   };
 
   const renderFileMenu = () => (
     <Menu>
-      <MenuItem icon="folder-open" text="Open..." />
-      <MenuItem icon="floppy-disk" text="Save" />
-      <MenuItem icon="document" text="Save As..." />
+      <MenuItem icon="document" text="New" onClick={handleNewProject} />
+      <MenuItem icon="folder-open" text="Open..." onClick={handleOpenProject} />
+      <MenuItem icon="floppy-disk" text="Save" onClick={handleSave} disabled={!currentFilePath} />
+      <MenuItem
+        icon="floppy-disk"
+        text="Save As..."
+        onClick={handleSaveAs}
+        disabled={!activeProject}
+      />
       <MenuItem text="---" disabled />
-      <MenuItem icon="import" text="Import..." />
-      <MenuItem icon="export" text="Export..." />
+      <MenuItem
+        icon="export"
+        text="Export as JSON..."
+        onClick={handleExport}
+        disabled={!activeProject}
+      />
     </Menu>
   );
 
   const renderContent = () => {
-    if (!projectData) {
+    if (!activeProject) {
       return (
         <div className="dock-content-placeholder">
           <Icon icon="folder-open" size={60} color="#CED9E0" />
           <h3 style={{ color: '#95AAB8' }}>No Project Open</h3>
           <p style={{ color: '#B8C5D1' }}>
-            Import a project from the Project Outline to begin.
+            Select File {'>'} New or File {'>'} Open to begin.
           </p>
         </div>
       );
@@ -120,21 +193,23 @@ const Dock = () => {
         <div className="dock-topbar-main">
           <div className="dock-topbar-upper">{renderBreadcrumbs()}</div>
           <div className="dock-topbar-lower">
-            <Navbar style={{ background: 'transparent', boxShadow: 'none' }}>
-              <Navbar.Group align={Alignment.LEFT}>
-                <Popover content={renderFileMenu()} placement="bottom-start">
-                  <Button minimal text="File" />
-                </Popover>
-                <Button minimal text="Settings" />
-                <Button minimal text="Help" />
-              </Navbar.Group>
-            </Navbar>
+            <div className="dock-toolbar">
+              <Popover content={renderFileMenu()} placement="bottom-start">
+                <Button minimal text="File" />
+              </Popover>
+              <Button minimal text="Settings" />
+              <Button minimal text="Help" />
+            </div>
           </div>
         </div>
       </div>
       <div className="dock-content">{renderContent()}</div>
     </div>
   );
+};
+
+Dock.propTypes = {
+  uiScale: PropTypes.number.isRequired,
 };
 
 export default Dock;

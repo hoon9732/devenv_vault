@@ -2,10 +2,8 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import ProjectManager from '../services/ProjectManager';
 
-// 1. Create the context
 const ProjectContext = createContext(null);
 
-// 2. Create a custom hook for easy access to the context
 export const useProject = () => {
   const context = useContext(ProjectContext);
   if (!context) {
@@ -14,82 +12,110 @@ export const useProject = () => {
   return context;
 };
 
-// 3. Create the Provider component
 export const ProjectProvider = ({ children }) => {
-  const [projectData, setProjectData] = useState(ProjectManager.getProject());
+  const [projectState, setProjectState] = useState({
+    activeProject: ProjectManager.getActiveProject(),
+    outlineProjects: ProjectManager.getOutlineProjects(),
+    selection: [], // Array of selected item IDs
+  });
 
-  // --- State Update Wrapper ---
-  // This function ensures that after any data manipulation, React's state is updated,
-  // which causes the UI to re-render with the new data.
   const updateState = useCallback(() => {
-    setProjectData({ ...ProjectManager.getProject() });
+    setProjectState((prevState) => ({
+      ...prevState,
+      activeProject: ProjectManager.getActiveProject()
+        ? { ...ProjectManager.getActiveProject() }
+        : null,
+      outlineProjects: [...ProjectManager.getOutlineProjects()],
+    }));
   }, []);
 
-  // --- Wrapped ProjectManager Functions ---
-  // We wrap the ProjectManager functions to automatically trigger a state update.
+  const setActiveSelection = useCallback((newSelection) => {
+    setProjectState((prevState) => ({ ...prevState, selection: newSelection }));
+  }, []);
 
-  const createNewProject = useCallback((projectName) => {
-    ProjectManager.createNewProject(projectName);
+  // --- Wrapped Functions ---
+
+  const importProjectToOutline = useCallback((projectData) => {
+    ProjectManager.importProjectToOutline(projectData);
     updateState();
   }, [updateState]);
 
-  const loadProject = useCallback((jsonData) => {
+  const setActiveProject = useCallback((projectId) => {
+    ProjectManager.setActiveProject(projectId);
+    setActiveSelection([]); // Clear selection when changing projects
+    updateState();
+  }, [updateState, setActiveSelection]);
+
+  const createNewActiveProject = useCallback((projectName) => {
+    ProjectManager.createNewActiveProject(projectName);
+    setActiveSelection([]);
+    updateState();
+  }, [updateState, setActiveSelection]);
+
+  const loadProjectAsActive = useCallback((projectData) => {
     try {
-      ProjectManager.loadProject(jsonData);
+      ProjectManager.loadProjectAsActive(projectData);
+      setActiveSelection([]);
       updateState();
     } catch (error) {
       console.error(error);
-      // Here you could also set an error state to show in the UI
     }
-  }, [updateState]);
+  }, [updateState, setActiveSelection]);
 
-  const exportProjectToJson = useCallback(() => {
-    return ProjectManager.exportProjectToJson();
+  const exportActiveProjectToJson = useCallback(() => {
+    return ProjectManager.exportActiveProjectToJson();
   }, []);
 
-  const addNode = useCallback((nodeData) => {
-    ProjectManager.addNode(nodeData);
+  const updateActiveNode = useCallback((nodeId, updates) => {
+    ProjectManager.updateActiveNode(nodeId, updates);
     updateState();
   }, [updateState]);
 
-  const updateNode = useCallback((nodeId, updates) => {
-    ProjectManager.updateNode(nodeId, updates);
+  const updateActiveEdge = useCallback((edgeId, updates) => {
+    ProjectManager.updateActiveEdge(edgeId, updates);
     updateState();
   }, [updateState]);
 
-  const removeNode = useCallback((nodeId) => {
-    ProjectManager.removeNode(nodeId);
-    updateState();
-  }, [updateState]);
-
-  const addEdge = useCallback((edgeData) => {
-    ProjectManager.addEdge(edgeData);
-    updateState();
-  }, [updateState]);
-
-  const updateEdge = useCallback((edgeId, updates) => {
-    ProjectManager.updateEdge(edgeId, updates);
-    updateState();
-  }, [updateState]);
-
-  const removeEdge = useCallback((edgeId) => {
-    ProjectManager.removeEdge(edgeId);
-    updateState();
-  }, [updateState]);
+  // Pass-through for other functions for simplicity
+  const {
+    addNodeToActiveProject,
+    removeNodeFromActiveProject,
+    addEdgeToActiveProject,
+    removeEdgeFromActiveProject,
+  } = ProjectManager;
 
 
-  // The value provided to consuming components
   const value = {
-    projectData,
-    createNewProject,
-    loadProject,
-    exportProjectToJson,
-    addNode,
-    updateNode,
-    removeNode,
-    addEdge,
-    updateEdge,
-    removeEdge,
+    activeProject: projectState.activeProject,
+    outlineProjects: projectState.outlineProjects,
+    selection: projectState.selection,
+    setActiveSelection,
+    importProjectToOutline,
+    setActiveProject,
+    createNewActiveProject,
+    loadProjectAsActive,
+    exportActiveProjectToJson,
+    updateActiveNode,
+    updateActiveEdge,
+    // Re-wrapping these to include state updates and return values
+    addNode: useCallback((nodeData) => {
+      const newNode = addNodeToActiveProject(nodeData);
+      updateState();
+      return newNode;
+    }, [updateState, addNodeToActiveProject]),
+    removeNode: useCallback((nodeId) => {
+      removeNodeFromActiveProject(nodeId);
+      updateState();
+    }, [updateState, removeNodeFromActiveProject]),
+    addEdge: useCallback((edgeData) => {
+      const newEdge = addEdgeToActiveProject(edgeData);
+      updateState();
+      return newEdge;
+    }, [updateState, addEdgeToActiveProject]),
+    removeEdge: useCallback((edgeId) => {
+      removeEdgeFromActiveProject(edgeId);
+      updateState();
+    }, [updateState, removeEdgeFromActiveProject]),
   };
 
   return (

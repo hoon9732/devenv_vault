@@ -22,6 +22,7 @@ const Sidebar = ({
   uiScale,
   handleHamburgerClick,
   isExplorerOpen,
+  isOutlineOpen,
   location,
 }) => {
   const { t } = useLanguage();
@@ -54,7 +55,9 @@ const Sidebar = ({
   };
 
   const renderMenuItem = (item) => {
-    const isSidebarActive = item.text === t('Explorer') && isExplorerOpen;
+    const isExplorerActive = item.text === t('Explorer') && isExplorerOpen;
+    const isOutlineActive = item.text === t('Project Outline') && isOutlineOpen;
+    const isSidebarActive = isExplorerActive || isOutlineActive;
 
     const isPageActive = item.path && item.path === location.pathname;
 
@@ -226,6 +229,7 @@ Sidebar.propTypes = {
   uiScale: PropTypes.number.isRequired,
   handleHamburgerClick: PropTypes.func.isRequired,
   isExplorerOpen: PropTypes.bool.isRequired,
+  isOutlineOpen: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired,
 };
 

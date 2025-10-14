@@ -2,3 +2,15 @@
   width: 100%;
   height: 100%;
 }
+
+/* Add a blue outline to selected nodes */
+.react-flow__node.selected {
+  outline: 2px solid #1e88e5;
+  outline-offset: 2px;
+}
+
+/* Highlight selected edges */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #1e88e5;
+  stroke-width: 2;
+}

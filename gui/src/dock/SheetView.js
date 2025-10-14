@@ -4,9 +4,10 @@ import { useProject } from '../contexts/ProjectContext';
 import './SheetView.css';
 
 const SheetView = () => {
-  const { projectData, updateNode, updateEdge } = useProject();
+  const { activeProject, updateActiveNode, updateActiveEdge } = useProject();
 
-  if (!projectData) {
+  if (!activeProject) {
+    // This view is only rendered when there is an active project
     return null;
   }
 
@@ -68,27 +69,27 @@ const SheetView = () => {
   };
 
   // --- Node Table Logic ---
-  const nodeProperties = getUniqueProperties(projectData.nodes);
+  const nodeProperties = getUniqueProperties(activeProject.nodes);
   const handleNodeCellChange = (value, rowIndex, propIndex) =>
     handleCellChange(
       value,
       rowIndex,
       propIndex,
-      projectData.nodes,
+      activeProject.nodes,
       nodeProperties,
-      updateNode,
+      updateActiveNode,
     );
 
   // --- Edge Table Logic ---
-  const edgeProperties = getUniqueProperties(projectData.edges);
+  const edgeProperties = getUniqueProperties(activeProject.edges);
   const handleEdgeCellChange = (value, rowIndex, propIndex) =>
     handleCellChange(
       value,
       rowIndex,
       propIndex,
-      projectData.edges,
+      activeProject.edges,
       edgeProperties,
-      updateEdge,
+      updateActiveEdge,
     );
 
   return (
@@ -96,24 +97,24 @@ const SheetView = () => {
       <div className="sheet-table-section">
         <h4>Nodes</h4>
         <Table
-          numRows={projectData.nodes.length}
+          numRows={activeProject.nodes.length}
           enableColumnReordering={true}
-          key={`nodes-${projectData.nodes.length}`} // Force re-render on row change
+          key={`nodes-${activeProject.nodes.length}`} // Force re-render on row change
         >
           <Column
             name="ID"
             cellRenderer={(rowIndex) => (
-              <Cell>{projectData.nodes[rowIndex].id}</Cell>
+              <Cell>{activeProject.nodes[rowIndex].id}</Cell>
             )}
           />
           <Column
             name="Label"
             cellRenderer={(rowIndex) => (
               <EditableCell
-                value={projectData.nodes[rowIndex].data.label || ''}
+                value={activeProject.nodes[rowIndex].data.label || ''}
                 onConfirm={(value) => {
-                  const node = projectData.nodes[rowIndex];
-                  updateNode(node.id, {
+                  const node = activeProject.nodes[rowIndex];
+                  updateActiveNode(node.id, {
                     data: { ...node.data, label: value },
                   });
                 }}
@@ -125,7 +126,7 @@ const SheetView = () => {
               key={propKey}
               name={propKey}
               cellRenderer={(rowIndex) => {
-                const node = projectData.nodes[rowIndex];
+                const node = activeProject.nodes[rowIndex];
                 const value = propKey
                   .split('.')
                   .reduce(
@@ -149,24 +150,24 @@ const SheetView = () => {
       <div className="sheet-table-section">
         <h4>Edges</h4>
         <Table
-          numRows={projectData.edges.length}
+          numRows={activeProject.edges.length}
           enableColumnReordering={true}
-          key={`edges-${projectData.edges.length}`} // Force re-render on row change
+          key={`edges-${activeProject.edges.length}`} // Force re-render on row change
         >
           <Column
             name="ID"
             cellRenderer={(rowIndex) => (
-              <Cell>{projectData.edges[rowIndex].id}</Cell>
+              <Cell>{activeProject.edges[rowIndex].id}</Cell>
             )}
           />
           <Column
             name="Label"
             cellRenderer={(rowIndex) => (
               <EditableCell
-                value={projectData.edges[rowIndex].label || ''}
+                value={activeProject.edges[rowIndex].label || ''}
                 onConfirm={(value) => {
-                  const edge = projectData.edges[rowIndex];
-                  updateEdge(edge.id, { ...edge, label: value });
+                  const edge = activeProject.edges[rowIndex];
+                  updateActiveEdge(edge.id, { ...edge, label: value });
                 }}
               />
             )}
@@ -174,13 +175,13 @@ const SheetView = () => {
           <Column
             name="Source"
             cellRenderer={(rowIndex) => (
-              <Cell>{projectData.edges[rowIndex].source}</Cell>
+              <Cell>{activeProject.edges[rowIndex].source}</Cell>
             )}
           />
           <Column
             name="Target"
             cellRenderer={(rowIndex) => (
-              <Cell>{projectData.edges[rowIndex].target}</Cell>
+              <Cell>{activeProject.edges[rowIndex].target}</Cell>
             )}
           />
           {edgeProperties.map((propKey, propIndex) => (
@@ -188,7 +189,7 @@ const SheetView = () => {
               key={propKey}
               name={propKey}
               cellRenderer={(rowIndex) => {
-                const edge = projectData.edges[rowIndex];
+                const edge = activeProject.edges[rowIndex];
                 const value = propKey
                   .split('.')
                   .reduce(

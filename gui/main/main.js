@@ -121,7 +121,24 @@ ipcMain.handle('set-workspace-settings', (event, settings) => {
   config.workspaceSettings = { ...config.workspaceSettings, ...settings };
   writeConfig(config);
 });
-// --- End Workspace Settings ---
+
+// --- Outline Settings ---
+const defaultOutlineSettings = {
+  showIcons: true,
+  showOnStart: false,
+};
+
+ipcMain.handle('get-outline-settings', () => {
+  const config = readConfig();
+  return { ...defaultOutlineSettings, ...config.outlineSettings };
+});
+
+ipcMain.handle('set-outline-settings', (event, settings) => {
+  const config = readConfig();
+  config.outlineSettings = { ...config.outlineSettings, ...settings };
+  writeConfig(config);
+});
+// --- End Outline Settings ---
 
 // Open a dialog to select a new workspace path and save it
 ipcMain.handle('set-workspace-path', async () => {
@@ -178,9 +195,9 @@ ipcMain.handle('delete-directory', async (event, dirPath) => {
 });
 
 // IPC handler for opening a file dialog
-ipcMain.handle('open-file-dialog', async () => {
+ipcMain.handle('open-file-dialog', async (event, multiSelect = false) => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ['openFile'],
+    properties: ['openFile', multiSelect ? 'multiSelections' : undefined].filter(Boolean),
     filters: [
       { name: 'ICD Files', extensions: ['icd', 'json'] },
       { name: 'All Files', extensions: ['*'] },
@@ -192,11 +209,58 @@ ipcMain.handle('open-file-dialog', async () => {
   }
 
   try {
-    const content = fs.readFileSync(filePaths[0], 'utf-8');
-    return content;
+    if (multiSelect) {
+      return filePaths.map(filePath => ({
+        content: fs.readFileSync(filePath, 'utf-8'),
+        filePath,
+      }));
+    } else {
+      const filePath = filePaths[0];
+      const content = fs.readFileSync(filePath, 'utf-8');
+      return { content, filePath };
+    }
   } catch (error) {
-    console.error('Failed to read file', error);
+    console.error('Failed to read file(s)', error);
     return null;
+  }
+});
+
+// IPC handler for saving a file
+ipcMain.handle(
+  'save-file-content',
+  async (event, { filePath, content }) => {
+    try {
+      fs.writeFileSync(filePath, content, 'utf-8');
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to save file content:', error);
+      return { success: false, error: error.message };
+    }
+  },
+);
+
+// IPC handler for saving a file
+ipcMain.handle('save-file-dialog', async (event, { content, fileType }) => {
+  const filters =
+    fileType === 'icd'
+      ? [{ name: 'ICD Project', extensions: ['icd'] }]
+      : [{ name: 'JSON File', extensions: ['json'] }];
+
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Save File',
+    filters,
+  });
+
+  if (canceled || !filePath) {
+    return { success: false, error: 'Dialog canceled' };
+  }
+
+  try {
+    fs.writeFileSync(filePath, content, 'utf-8');
+    return { success: true, filePath };
+  } catch (error) {
+    console.error('Failed to save file', error);
+    return { success: false, error: error.message };
   }
 });
 

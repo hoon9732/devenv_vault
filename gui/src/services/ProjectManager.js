@@ -1,36 +1,79 @@
 /**
  * ProjectManager.js
- * 
- * This is a headless, UI-agnostic module for managing the state of an ICD project.
- * It handles creating, loading, modifying, and exporting project data based on the defined JSON schema.
- * This manager acts as the single source of truth for the application's data.
+ *
+ * This is a headless, UI-agnostic module for managing the state of multiple ICD projects.
+ * It maintains a list of projects for the outline and a single "active" project for the dock.
  */
 
-// A private variable to hold the current project data in memory.
-let currentProject = null;
+let outlineProjects = [];
+let activeProject = null;
 
-/**
- * Generates a unique ID for nodes and edges.
- * @param {string} prefix - 'node' or 'edge'
- * @returns {string} A unique identifier string.
- */
 const generateUniqueId = (prefix) => {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
 const ProjectManager = {
+  // --- Outline Project Management ---
+
   /**
-   * Creates a new, empty project structure and sets it as the current project.
-   * @param {string} projectName - The name for the new project.
-   * @returns {object} The newly created project object.
+   * Imports a new project into the outline list. Avoids duplicates.
+   * @param {object} projectData - The parsed project data to import.
    */
-  createNewProject: (projectName = 'Untitled Project') => {
+  importProjectToOutline: (projectData) => {
+    if (!projectData || !projectData.projectId) {
+      console.error('Import failed: projectData is invalid or missing projectId.');
+      return;
+    }
+    const exists = outlineProjects.some(p => p.projectId === projectData.projectId);
+    if (!exists) {
+      outlineProjects.push(projectData);
+    }
+  },
+
+  /**
+   * Returns the list of all projects for the outline.
+   * @returns {Array} The list of outline projects.
+   */
+  getOutlineProjects: () => {
+    return outlineProjects;
+  },
+
+  // --- Active Project Management ---
+
+  /**
+   * Sets a project from the outline as the single active project.
+   * @param {string} projectId - The ID of the project to set as active.
+   */
+  setActiveProject: (projectId) => {
+    const project = outlineProjects.find(p => p.projectId === projectId);
+    if (project) {
+      activeProject = project;
+    } else {
+      console.error(`setActiveProject failed: project with id ${projectId} not found.`);
+    }
+  },
+
+  /**
+   * Creates a new, empty project, adds it to the outline, and sets it as active.
+   * @param {string} projectName - The name for the new project.
+   */
+  createNewActiveProject: (projectName = 'Untitled Project') => {
     const timestamp = new Date().toISOString();
-    currentProject = {
+    
+    // Logic to find the next available number for "Untitled Project"
+    let counter = 1;
+    let finalName = projectName;
+    const projectNames = new Set(outlineProjects.map(p => p.metadata.projectName));
+    while (projectNames.has(finalName)) {
+      finalName = `${projectName} ${counter}`;
+      counter++;
+    }
+
+    const newProject = {
       schemaVersion: '1.0.0',
       projectId: generateUniqueId('proj'),
       metadata: {
-        projectName: projectName,
+        projectName: finalName,
         author: '',
         createdAt: timestamp,
         updatedAt: timestamp,
@@ -39,114 +82,105 @@ const ProjectManager = {
       nodes: [],
       edges: [],
     };
-    return currentProject;
+    outlineProjects.push(newProject);
+    activeProject = newProject;
   },
 
   /**
-   * Loads project data from a parsed JSON object.
-   * @param {object} projectData - The parsed JSON data to load.
-   * @throws {Error} If the project data is invalid.
+   * Loads a project directly, adding it to the outline and setting it as active.
+   * Used for "File > Open".
+   * @param {object} projectData - The parsed project data to load.
    */
-  loadProject: (projectData) => {
-    // Basic validation
+  loadProjectAsActive: (projectData) => {
     if (projectData && projectData.nodes && projectData.edges && projectData.metadata) {
-      currentProject = projectData;
-      console.log('Project loaded successfully:', currentProject.metadata.projectName);
+      ProjectManager.importProjectToOutline(projectData); // Add to outline if not already there
+      activeProject = projectData;
     } else {
       throw new Error('Invalid or corrupted project file.');
     }
   },
 
   /**
-   * Returns the entire current project object.
-   * @returns {object | null} The current project data.
+   * Returns the entire active project object.
+   * @returns {object | null} The active project data.
    */
-  getProject: () => {
-    return currentProject;
+  getActiveProject: () => {
+    return activeProject;
   },
 
   /**
-   * Exports the current project state to a JSON string.
-   * @returns {string} A stringified JSON representation of the project.
+   * Exports the active project state to a JSON string.
+   * @returns {string | null} A stringified JSON representation of the active project.
    */
-  exportProjectToJson: () => {
-    if (!currentProject) return null;
-    currentProject.metadata.updatedAt = new Date().toISOString();
-    return JSON.stringify(currentProject, null, 2); // Pretty-print with 2-space indentation
+  exportActiveProjectToJson: () => {
+    if (!activeProject) return null;
+    activeProject.metadata.updatedAt = new Date().toISOString();
+    return JSON.stringify(activeProject, null, 2);
   },
 
-  // --- Node Management ---
+  // --- Active Project Data Manipulation ---
 
-  /**
-   * Adds a new node to the project.
-   * @param {object} nodeData - The data for the new node (e.g., { type, position, data }).
-   * @returns {object} The newly added node.
-   */
-  addNode: (nodeData) => {
-    if (!currentProject) return null;
-    const newNode = {
-      id: generateUniqueId('node'),
-      ...nodeData,
+  addNodeToActiveProject: (nodeData) => {
+    if (!activeProject) return null;
+    
+    // Logic for numbered naming
+    let counter = 1;
+    let finalLabel = nodeData.data.label || 'New Node';
+    const nodeLabels = new Set(activeProject.nodes.map(n => n.data.label));
+    while (nodeLabels.has(finalLabel)) {
+      finalLabel = `${nodeData.data.label || 'New Node'} ${counter}`;
+      counter++;
+    }
+    
+    const newNode = { 
+      id: generateUniqueId('node'), 
+      ...nodeData, 
+      data: { ...nodeData.data, label: finalLabel } 
     };
-    currentProject.nodes.push(newNode);
+    activeProject.nodes.push(newNode);
     return newNode;
   },
 
-  /**
-   * Updates an existing node's data.
-   * @param {string} nodeId - The ID of the node to update.
-   * @param {object} updates - An object containing the properties to update.
-   * @returns {object | null} The updated node object or null if not found.
-   */
-  updateNode: (nodeId, updates) => {
-    if (!currentProject) return null;
-    const node = currentProject.nodes.find(n => n.id === nodeId);
+  updateActiveNode: (nodeId, updates) => {
+    if (!activeProject) return null;
+    const node = activeProject.nodes.find(n => n.id === nodeId);
     if (node) {
-      // Deep merge might be needed for nested properties in a real app
-      Object.assign(node, updates);
+      Object.assign(node, updates); // Note: For deep merges, a library might be better
       return node;
     }
     return null;
   },
 
-  /**
-   * Removes a node and any connected edges.
-   * @param {string} nodeId - The ID of the node to remove.
-   */
-  removeNode: (nodeId) => {
-    if (!currentProject) return;
-    // Remove the node
-    currentProject.nodes = currentProject.nodes.filter(n => n.id !== nodeId);
-    // Remove any edges connected to this node
-    currentProject.edges = currentProject.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+  removeNodeFromActiveProject: (nodeId) => {
+    if (!activeProject) return;
+    activeProject.nodes = activeProject.nodes.filter(n => n.id !== nodeId);
+    activeProject.edges = activeProject.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
   },
 
-  // --- Edge Management ---
+  addEdgeToActiveProject: (edgeData) => {
+    if (!activeProject) return null;
 
-  /**
-   * Adds a new edge between two nodes.
-   * @param {object} edgeData - Data for the new edge (e.g., { source, target, label, data }).
-   * @returns {object} The newly added edge.
-   */
-  addEdge: (edgeData) => {
-    if (!currentProject) return null;
-    const newEdge = {
-      id: generateUniqueId('edge'),
+    // Logic for numbered naming
+    let counter = 1;
+    let finalLabel = edgeData.label || 'New Edge';
+    const edgeLabels = new Set(activeProject.edges.map(e => e.label));
+    while (edgeLabels.has(finalLabel)) {
+      finalLabel = `${edgeData.label || 'New Edge'} ${counter}`;
+      counter++;
+    }
+
+    const newEdge = { 
+      id: generateUniqueId('edge'), 
       ...edgeData,
+      label: finalLabel
     };
-    currentProject.edges.push(newEdge);
+    activeProject.edges.push(newEdge);
     return newEdge;
   },
 
-  /**
-   * Updates an existing edge's data.
-   * @param {string} edgeId - The ID of the edge to update.
-   * @param {object} updates - An object containing the properties to update.
-   * @returns {object | null} The updated edge object or null if not found.
-   */
-  updateEdge: (edgeId, updates) => {
-    if (!currentProject) return null;
-    const edge = currentProject.edges.find(e => e.id === edgeId);
+  updateActiveEdge: (edgeId, updates) => {
+    if (!activeProject) return null;
+    const edge = activeProject.edges.find(e => e.id === edgeId);
     if (edge) {
       Object.assign(edge, updates);
       return edge;
@@ -154,15 +188,10 @@ const ProjectManager = {
     return null;
   },
 
-  /**
-   * Removes an edge.
-   * @param {string} edgeId - The ID of the edge to remove.
-   */
-  removeEdge: (edgeId) => {
-    if (!currentProject) return;
-    currentProject.edges = currentProject.edges.filter(e => e.id !== edgeId);
+  removeEdgeFromActiveProject: (edgeId) => {
+    if (!activeProject) return;
+    activeProject.edges = activeProject.edges.filter(e => e.id !== edgeId);
   },
 };
 
-// We export the manager as a singleton object.
 export default ProjectManager;
