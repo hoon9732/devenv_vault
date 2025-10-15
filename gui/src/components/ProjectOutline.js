@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
 import {
   Button,
   Classes,
@@ -14,7 +15,9 @@ import {
 import { useProject } from '../contexts/ProjectContext';
 import './ProjectOutline.css';
 
-const drawerWidth = 280;
+const initialDrawerWidth = 240;
+const minDrawerWidth = 160;
+const maxDrawerWidth = 480;
 
 const ProjectOutline = ({ open, onClose }) => {
   const {
@@ -31,6 +34,10 @@ const ProjectOutline = ({ open, onClose }) => {
     showOnStart: false,
     showAnimation: true,
   });
+  const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
+  const [isResizing, setIsResizing] = useState(false);
+  const [isResizable, setIsResizable] = useState(true);
+  const sidebarRef = useRef(null);
 
   // Load settings on component mount
   useEffect(() => {
@@ -47,8 +54,10 @@ const ProjectOutline = ({ open, onClose }) => {
   useEffect(() => {
     const toTreeNodes = (projects) => {
       return projects.map((proj) => {
-        const oldNode = nodes.find(n => n.id === proj.projectId);
-        const isExpanded = oldNode ? oldNode.isExpanded : (activeProject && proj.projectId === activeProject.projectId);
+        const oldNode = nodes.find((n) => n.id === proj.projectId);
+        const isExpanded = oldNode
+          ? oldNode.isExpanded
+          : activeProject && proj.projectId === activeProject.projectId;
 
         return {
           id: proj.projectId,
@@ -57,7 +66,10 @@ const ProjectOutline = ({ open, onClose }) => {
           hasCaret: true,
           isExpanded: isExpanded,
           isSelected: selection.includes(proj.projectId),
-          className: (activeProject && proj.projectId === activeProject.projectId) ? 'active-project' : '',
+          className:
+            activeProject && proj.projectId === activeProject.projectId
+              ? 'active-project'
+              : '',
           childNodes: [
             {
               id: `${proj.projectId}-nodes`,
@@ -91,10 +103,12 @@ const ProjectOutline = ({ open, onClose }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [outlineProjects, activeProject, selection, settings.showIcons]);
 
-
   const handleSettingChange = (settingName) => {
-    setSettings(prevSettings => {
-      const newSettings = { ...prevSettings, [settingName]: !prevSettings[settingName] };
+    setSettings((prevSettings) => {
+      const newSettings = {
+        ...prevSettings,
+        [settingName]: !prevSettings[settingName],
+      };
       if (window.electron) {
         window.electron.setOutlineSettings(newSettings);
       }
@@ -102,11 +116,19 @@ const ProjectOutline = ({ open, onClose }) => {
     });
   };
 
+  const handleFixedSizeToggle = () => {
+    const newResizableState = !isResizable;
+    setIsResizable(newResizableState);
+    if (!newResizableState) {
+      setDrawerWidth(initialDrawerWidth);
+    }
+  };
+
   const handleImportProject = async () => {
     if (window.electron) {
       const results = await window.electron.openFileDialog(true); // Pass true for multi-select
       if (results) {
-        results.forEach(result => {
+        results.forEach((result) => {
           if (result && result.content) {
             try {
               const projectJson = JSON.parse(result.content);
@@ -132,79 +154,83 @@ const ProjectOutline = ({ open, onClose }) => {
     setNodes(newNodes);
   };
 
-    const handleNodeClick = (node, nodePath, e) => {
-
-      if (e.target.classList.contains('bp6-tree-node-caret')) {
-
-        if (node.isExpanded) {
-
-          handleNodeCollapse(node);
-
-        } else {
-
-          handleNodeExpand(node);
-
-        }
-
-        return;
-
-      }
-
-  
-
-      // Determine the project ID for the clicked node
-
-      let projectId = '';
-
-      if (nodePath.length === 1) {
-
-        projectId = node.id;
-
+  const handleNodeClick = (node, nodePath, e) => {
+    if (e.target.classList.contains('bp6-tree-node-caret')) {
+      if (node.isExpanded) {
+        handleNodeCollapse(node);
       } else {
+        handleNodeExpand(node);
+      }
+      return;
+    }
 
-        // Find the parent project by traversing the outlineProjects structure
-
-        for (const proj of outlineProjects) {
-
-          if (proj.nodes.some(n => n.id === node.id) || proj.edges.some(e => e.id === node.id)) {
-
-            projectId = proj.projectId;
-
-            break;
-
-          }
-
+    // Determine the project ID for the clicked node
+    let projectId = '';
+    if (nodePath.length === 1) {
+      projectId = node.id;
+    } else {
+      // Find the parent project by traversing the outlineProjects structure
+      for (const proj of outlineProjects) {
+        if (
+          proj.nodes.some((n) => n.id === node.id) ||
+          proj.edges.some((e) => e.id === node.id)
+        ) {
+          projectId = proj.projectId;
+          break;
         }
-
       }
+    }
 
-  
+    // If the clicked item's project is not active, make it active
+    if (projectId && activeProject?.projectId !== projectId) {
+      setActiveProject(projectId);
+    }
 
-      // If the clicked item's project is not active, make it active
+    // Handle selection
+    const isMultiSelect = e.metaKey || e.ctrlKey;
+    const newSelection = isMultiSelect ? [...selection] : [];
+    if (!newSelection.includes(node.id)) {
+      newSelection.push(node.id);
+    }
+    setActiveSelection(newSelection);
+  };
 
-      if (projectId && activeProject?.projectId !== projectId) {
+  const handleMouseDown = (e) => {
+    if (!isResizable) return;
+    e.preventDefault();
+    setIsResizing(true);
+  };
 
-        setActiveProject(projectId);
-
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isResizing && sidebarRef.current) {
+        const newWidth =
+          e.clientX - sidebarRef.current.getBoundingClientRect().left;
+        if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth)
+          setDrawerWidth(newWidth);
       }
+    },
+    [isResizing, sidebarRef, setDrawerWidth],
+  );
 
-  
+  const handleMouseUp = useCallback(
+    () => setIsResizing(false),
+    [setIsResizing],
+  );
 
-      // Handle selection
-
-      const isMultiSelect = e.metaKey || e.ctrlKey;
-
-      const newSelection = isMultiSelect ? [...selection] : [];
-
-      if (!newSelection.includes(node.id)) {
-
-        newSelection.push(node.id);
-
-      }
-
-      setActiveSelection(newSelection);
-
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const settingsMenu = (
     <Menu>
@@ -222,6 +248,11 @@ const ProjectOutline = ({ open, onClose }) => {
         icon={settings.showAnimation ? 'tick' : 'blank'}
         text="Show Animation"
         onClick={() => handleSettingChange('showAnimation')}
+      />
+      <MenuItem
+        icon={!isResizable ? 'tick' : 'blank'}
+        text="Fixed Size"
+        onClick={handleFixedSizeToggle}
       />
     </Menu>
   );
@@ -253,13 +284,16 @@ const ProjectOutline = ({ open, onClose }) => {
   };
 
   return (
-    <div
+    <Box
+      ref={sidebarRef}
       className={`project-outline-container ${Classes.FOCUS_DISABLED}`}
-      style={{
+      sx={{
         width: open ? drawerWidth : 0,
-        transition: !settings.showAnimation
-          ? 'none'
-          : 'width 0.3s ease-in-out',
+        transition:
+          !settings.showAnimation || isResizing
+            ? 'none'
+            : 'width 0.3s ease-in-out',
+        position: 'relative', // Needed for the resize handle
       }}
     >
       <div className="outline-inner-container" style={{ width: drawerWidth }}>
@@ -301,7 +335,21 @@ const ProjectOutline = ({ open, onClose }) => {
         </div>
         {renderContent()}
       </div>
-    </div>
+      {isResizable && (
+        <Box
+          onMouseDown={handleMouseDown}
+          sx={{
+            width: '5px',
+            cursor: 'col-resize',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 100,
+          }}
+        />
+      )}
+    </Box>
   );
 };
 

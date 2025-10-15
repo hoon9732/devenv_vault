@@ -11,6 +11,7 @@ import {
   Icon,
 } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useProject } from '../contexts/ProjectContext';
 import './Sidebar.css';
 
 const collapsedWidth = 57; // Approx theme.spacing(7)
@@ -19,27 +20,26 @@ const Sidebar = ({
   handleExplorerToggle,
   handleOutlineToggle,
   handleAboutClick,
-  handleModalOpen,
   uiScale,
   handleHamburgerClick,
   isExplorerOpen,
   isOutlineOpen,
-  location,
 }) => {
   const { t } = useLanguage();
+  const { activeView, setActiveView } = useProject();
   const theme = useTheme();
   const iconSize = 20 + (uiScale - 1) * 10;
 
   const mainNavItems = [
-    { text: t('Home'), icon: 'home', path: '/' },
+    { text: t('Home'), icon: 'home', view: 'graph' },
     { text: t('Explorer'), icon: 'folder-open' },
     { text: t('Project Outline'), icon: 'diagram-tree' },
   ];
 
   const bottomNavItems = [
-    { text: t('Settings'), icon: 'cog', path: '/settings' },
+    { text: t('Settings'), icon: 'cog', view: 'settings' },
     { text: t('About'), icon: 'info-sign' },
-    { text: t('Profile'), icon: 'user', path: '/profile' },
+    { text: t('Profile'), icon: 'user', view: 'profile' },
   ];
 
   const handleItemClick = (item) => {
@@ -49,8 +49,8 @@ const Sidebar = ({
       handleExplorerToggle(item);
     } else if (item.text === t('About')) {
       handleAboutClick();
-    } else if (item.path) {
-      handleModalOpen(item.path);
+    } else if (item.view) {
+      setActiveView(item.view);
     }
   };
 
@@ -59,7 +59,7 @@ const Sidebar = ({
     const isOutlineActive = item.text === t('Project Outline') && isOutlineOpen;
     const isSidebarActive = isExplorerActive || isOutlineActive;
 
-    const isPageActive = item.path && item.path === location.pathname;
+    const isViewActive = item.view && item.view === activeView;
 
     const menuItem = (
       <MenuItem
@@ -82,7 +82,7 @@ const Sidebar = ({
           >
             {isSidebarActive && <div className="sidebar-indicator" />}
 
-            {isPageActive && <div className="page-indicator" />}
+            {isViewActive && <div className="page-indicator" />}
 
             <div
               style={{
@@ -226,12 +226,10 @@ Sidebar.propTypes = {
   handleExplorerToggle: PropTypes.func.isRequired,
   handleOutlineToggle: PropTypes.func.isRequired,
   handleAboutClick: PropTypes.func.isRequired,
-  handleModalOpen: PropTypes.func.isRequired,
   uiScale: PropTypes.number.isRequired,
   handleHamburgerClick: PropTypes.func.isRequired,
   isExplorerOpen: PropTypes.bool.isRequired,
   isOutlineOpen: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired,
 };
 
 export default Sidebar;

@@ -18,6 +18,7 @@ export const ProjectProvider = ({ children }) => {
     outlineProjects: ProjectManager.getOutlineProjects(),
     selection: [], // Array of selected item IDs
   });
+  const [activeView, setActiveView] = useState('graph'); // Default view
 
   const updateState = useCallback(() => {
     setProjectState((prevState) => ({
@@ -89,6 +90,8 @@ export const ProjectProvider = ({ children }) => {
     activeProject: projectState.activeProject,
     outlineProjects: projectState.outlineProjects,
     selection: projectState.selection,
+    activeView,
+    setActiveView,
     setActiveSelection,
     importProjectToOutline,
     setActiveProject,

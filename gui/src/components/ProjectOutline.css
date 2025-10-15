@@ -56,6 +56,10 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
+.outline-topbar-lower .bp6-input {
+  font-size: 14px;
+}
+
 .outline-topbar-left,
 .outline-topbar-right {
   display: flex;

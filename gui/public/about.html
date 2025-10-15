@@ -68,17 +68,14 @@
       .light-theme .title-bar-controls button:hover {
         background-color: rgba(0, 0, 0, 0.1);
       }
-      /* --- End Title Bar Styles --- */
-
       .container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: calc(100% - 50px); /* Adjusted for title bar */
+        height: 100%;
         padding: 20px;
         box-sizing: border-box;
-        margin-top: 50px; /* Adjusted for title bar */
       }
       .logo {
         width: 60%;
@@ -130,13 +127,6 @@
     </style>
   </head>
   <body>
-    <div class="title-bar">
-      <div class="title-bar-title">About</div>
-      <div class="title-bar-controls">
-        <button id="close-btn">&#10005;</button>
-      </div>
-    </div>
-
     <div class="container">
       <div class="logo">
         <svg
@@ -243,7 +233,7 @@
       </div>
       <div class="info-header">
         <p class="author-text">Author: Hanwha Aerospace</p>
-        <p class="version-text">Version: 0.0.1</p>
+        <p class="version-text">Version: 0.1.0</p>
       </div>
       <div class="license-container">
         <pre>
@@ -428,33 +418,9 @@
       </div>
     </div>
     <script>
-      // Title Bar Close Button
-      document.getElementById('close-btn').addEventListener('click', () => {
-        window.electron.closeWindow();
-      });
-
-      // Theme and UI Scaling Script
       const params = new URLSearchParams(window.location.search);
       const theme = params.get('theme') || 'dark';
       document.body.className = theme + '-theme';
-
-      const uiScale = parseFloat(params.get('uiScale')) || 1.0;
-
-      const titleBar = document.querySelector('.title-bar');
-      const container = document.querySelector('.container');
-
-      if (uiScale !== 1.0) {
-        const originalHeight = 50;
-        const newHeight = originalHeight * uiScale;
-        titleBar.style.height = `${newHeight}px`;
-        container.style.marginTop = `${newHeight}px`;
-        container.style.height = `calc(100% - ${newHeight}px)`;
-
-        const buttons = document.querySelectorAll('.title-bar-controls button');
-        buttons.forEach((button) => {
-          button.style.lineHeight = `${newHeight}px`;
-        });
-      }
     </script>
   </body>
 </html>

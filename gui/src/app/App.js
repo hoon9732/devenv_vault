@@ -1,14 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
-import TitleBar from '../components/TitleBar';
 import Sidebar from '../components/Sidebar';
-import SettingsScreen from '../pages/SettingsScreen';
-import ProfileScreen from '../pages/ProfileScreen';
 import Explorer from '../components/Explorer';
 import ProjectOutline from '../components/ProjectOutline';
 import Dock from '../dock/Dock';
@@ -29,7 +26,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
   const { t, language } = useLanguage();
 
   useEffect(() => {
@@ -55,28 +51,17 @@ function App() {
         language,
         hardwareAcceleration: isHardwareAccelerationEnabled,
       });
-      if (window.electron) {
-        window.electron.updateTheme(themeMode);
-      }
     }
   }, [themeMode, uiScale, language, isLoading, isHardwareAccelerationEnabled]);
-
-  useEffect(() => {
-    if (!isLoading && window.electron) {
-      const colors =
-        themeMode === 'dark'
-          ? { backgroundColor: '#293742', symbolColor: '#f5f8fa' }
-          : { backgroundColor: '#ffffff', symbolColor: '#182026' };
-      window.electron.updateTitleBarColors(colors);
-    }
-  }, [themeMode, isLoading]);
 
   useEffect(() => {
     const loadInitialSettings = async () => {
       if (window.electron) {
         const workspaceSettings = await window.electron.getWorkspaceSettings();
-        if (workspaceSettings && workspaceSettings.path) {
-          setWorkspacePath(workspaceSettings.path);
+        if (workspaceSettings) {
+          if (workspaceSettings.path) {
+            setWorkspacePath(workspaceSettings.path);
+          }
           if (workspaceSettings.showOnStart) {
             setIsExplorerOpen(true);
           }
@@ -158,12 +143,6 @@ function App() {
     setIsOutlineOpen(!isOutlineOpen);
   };
 
-  const handleModalOpen = (content) => {
-    if (content === 'Profile') {
-      navigate('/profile');
-    }
-  };
-
   const handleAboutClick = () => {
     if (window.electron) {
       window.electron.openAboutWindow({
@@ -203,7 +182,6 @@ function App() {
         className={`${themeMode === 'dark' ? Classes.DARK : 'bp6-light'} ${isHardwareAccelerationEnabled ? 'hw-acceleration-enabled' : ''}`}
       >
         <CssBaseline />
-        <TitleBar theme={theme} />
         <Box
           sx={{
             flex: 1,
@@ -228,12 +206,10 @@ function App() {
                 handleHamburgerClick={handleHamburgerClick}
                 handleExplorerToggle={handleExplorerToggle}
                 handleOutlineToggle={handleOutlineToggle}
-                handleModalOpen={handleModalOpen}
                 handleAboutClick={handleAboutClick}
                 uiScale={uiScale}
                 isExplorerOpen={isExplorerOpen}
                 isOutlineOpen={isOutlineOpen}
-                location={location}
               />
               <Explorer
                 open={isExplorerOpen}
@@ -256,30 +232,16 @@ function App() {
                   minWidth: 0,
                 }}
               >
-                {location.pathname === '/' ? (
-                  <Dock uiScale={uiScale} />
-                ) : (
-                  <Routes>
-                    <Route
-                      path="/settings"
-                      element={
-                        <SettingsScreen
-                          themeMode={themeMode}
-                          setThemeMode={setThemeMode}
-                          uiScale={uiScale}
-                          setUiScale={setUiScale}
-                          isHardwareAccelerationEnabled={
-                            isHardwareAccelerationEnabled
-                          }
-                          setIsHardwareAccelerationEnabled={
-                            setIsHardwareAccelerationEnabled
-                          }
-                        />
-                      }
-                    />
-                    <Route path="/profile" element={<ProfileScreen />} />
-                  </Routes>
-                )}
+                <Dock
+                  uiScale={uiScale}
+                  themeMode={themeMode}
+                  setThemeMode={setThemeMode}
+                  isHardwareAccelerationEnabled={isHardwareAccelerationEnabled}
+                  setIsHardwareAccelerationEnabled={
+                    setIsHardwareAccelerationEnabled
+                  }
+                  setUiScale={setUiScale}
+                />
               </Box>
             </Box>
           </ProjectProvider>

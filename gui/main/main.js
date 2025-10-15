@@ -41,13 +41,8 @@ function createWindow() {
     ...winState.winOptions,
     minWidth: 960,
     minHeight: 640,
-    title: 'ICDV',
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#ffffff', // Default to light mode color
-      symbolColor: '#333333', // Default to light mode symbol color
-      height: 40,
-    },
+    title: `ICDV ${version}`,
+    titleBarStyle: 'default',
     icon: path.join(__dirname, '../src/assets/favicon.ico'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/preload.js'),
@@ -64,22 +59,8 @@ function createWindow() {
       slashes: true,
     });
   win.loadURL(startUrl);
+  win.setMenu(null);
 }
-
-// IPC handler for updating title bar colors
-ipcMain.on(
-  'update-titlebar-colors',
-  (event, { backgroundColor, symbolColor }) => {
-    const win = BrowserWindow.getFocusedWindow();
-    if (win) {
-      win.setTitleBarOverlay({
-        color: backgroundColor,
-        symbolColor: symbolColor,
-        height: 40,
-      });
-    }
-  },
-);
 
 app.whenReady().then(() => {
   createWindow();
@@ -342,10 +323,10 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
     width: 800,
     height: 600,
     title: 'About',
-    frame: false,
+    frame: true,
     resizable: false,
     movable: true,
-    titleBarStyle: 'hidden',
+    icon: path.join(__dirname, '../src/assets/favicon.ico'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/preload.js'),
       nodeIntegration: false,
@@ -361,6 +342,7 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
   aboutUrl.searchParams.set('theme', theme);
   aboutUrl.searchParams.set('uiScale', uiScale);
   aboutWin.loadURL(aboutUrl.href);
+  aboutWin.setMenu(null);
 });
 
 ipcMain.handle('get-app-version', () => version);
@@ -374,26 +356,4 @@ ipcMain.handle('read-file-content', async (event, filePath) => {
     console.error(`Error reading file ${filePath}:`, error);
     return { success: false, error: error.message };
   }
-});
-
-// --- Window Controls ---
-ipcMain.on('minimize-window', () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) win.minimize();
-});
-
-ipcMain.on('maximize-window', () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) {
-    if (win.isMaximized()) {
-      win.unmaximize();
-    } else {
-      win.maximize();
-    }
-  }
-});
-
-ipcMain.on('close-window', () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) win.close();
 });

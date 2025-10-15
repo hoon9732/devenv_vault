@@ -1,6 +1,6 @@
 {
-  "name": "icdv",
-  "version": "0.0.3",
+  "name": "ICDV",
+  "version": "0.1.0",
   "description": "ICD(Interface Control Document) viewer/editor.",
   "author": "David Jean, PGM Systems R&D Team 4, Hanwha Aerospace",
   "private": true,

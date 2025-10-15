@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alignment,
   Button,
   Breadcrumbs,
   Classes,
   Icon,
   Menu,
   MenuItem,
-  Navbar,
   Popover,
 } from '@blueprintjs/core';
 import { useProject } from '../contexts/ProjectContext';
 import SheetView from './SheetView';
 import GraphView from './GraphView';
 import DocsView from './DocsView';
+import SettingsScreen from '../pages/SettingsScreen';
+import ProfileScreen from '../pages/ProfileScreen';
 import './Dock.css';
 
-const Dock = ({ uiScale }) => {
-  const [renderType, setRenderType] = useState('graph');
+const Dock = ({
+  uiScale,
+  themeMode,
+  setThemeMode,
+  isHardwareAccelerationEnabled,
+  setIsHardwareAccelerationEnabled,
+  setUiScale,
+}) => {
   const {
     activeProject,
     createNewActiveProject,
     loadProjectAsActive,
     exportActiveProjectToJson,
+    activeView,
+    setActiveView,
   } = useProject();
   const [currentFilePath, setCurrentFilePath] = useState(null);
+
+  const isPageView = ['settings', 'profile'].includes(activeView);
 
   const handleNewProject = () => {
     createNewActiveProject();
@@ -102,6 +112,27 @@ const Dock = ({ uiScale }) => {
       text: 'Docs',
       component: <DocsView uiScale={uiScale} />,
     },
+    settings: {
+      icon: 'cog',
+      color: 'rgb(153, 153, 153)',
+      text: 'Settings',
+      component: (
+        <SettingsScreen
+          uiScale={uiScale}
+          themeMode={themeMode}
+          setThemeMode={setThemeMode}
+          isHardwareAccelerationEnabled={isHardwareAccelerationEnabled}
+          setIsHardwareAccelerationEnabled={setIsHardwareAccelerationEnabled}
+          setUiScale={setUiScale}
+        />
+      ),
+    },
+    profile: {
+      icon: 'user',
+      color: 'rgb(153, 153, 153)',
+      text: 'Profile',
+      component: <ProfileScreen />,
+    },
   };
 
   const renderTypeMenu = (
@@ -109,17 +140,17 @@ const Dock = ({ uiScale }) => {
       <MenuItem
         icon="th"
         text="Sheet"
-        onClick={() => setRenderType('sheet')}
+        onClick={() => setActiveView('sheet')}
       />
       <MenuItem
         icon="data-lineage"
         text="Graph"
-        onClick={() => setRenderType('graph')}
+        onClick={() => setActiveView('graph')}
       />
       <MenuItem
         icon="document"
         text="Docs"
-        onClick={() => setRenderType('docs')}
+        onClick={() => setActiveView('docs')}
       />
     </Menu>
   );
@@ -161,7 +192,7 @@ const Dock = ({ uiScale }) => {
   );
 
   const renderContent = () => {
-    if (!activeProject) {
+    if (!activeProject && !['settings', 'profile'].includes(activeView)) {
       return (
         <div className="dock-content-placeholder">
           <Icon icon="folder-open" size={60} color="#CED9E0" />
@@ -172,35 +203,53 @@ const Dock = ({ uiScale }) => {
         </div>
       );
     }
-    return renderTypeConfig[renderType].component;
+    return renderTypeConfig[activeView].component;
   };
 
   return (
     <div className={`dock-container ${Classes.FOCUS_DISABLED}`}>
       <div className="dock-topbar">
-        <Popover content={renderTypeMenu} placement="bottom-start">
+        <Popover
+          content={renderTypeMenu}
+          placement="bottom-start"
+          disabled={isPageView}
+        >
           <div
-            className="render-type-switcher"
-            style={{ backgroundColor: renderTypeConfig[renderType].color }}
+            className={`render-type-switcher ${isPageView ? 'disabled' : ''}`}
+            style={{ backgroundColor: renderTypeConfig[activeView].color }}
           >
             <Icon
-              icon={renderTypeConfig[renderType].icon}
+              icon={renderTypeConfig[activeView].icon}
               size={32}
               color="white"
             />
           </div>
         </Popover>
-        <div className="dock-topbar-main">
-          <div className="dock-topbar-upper">{renderBreadcrumbs()}</div>
-          <div className="dock-topbar-lower">
-            <div className="dock-toolbar">
-              <Popover content={renderFileMenu()} placement="bottom-start">
-                <Button minimal text="File" />
-              </Popover>
-              <Button minimal text="Settings" />
-              <Button minimal text="Help" />
-            </div>
+        <div
+          className={`dock-topbar-main ${
+            isPageView ? 'page-view-header' : ''
+          }`}
+        >
+          <div className="dock-topbar-upper">
+            {isPageView ? (
+              <span style={{ fontSize: '18px', fontWeight: 600 }}>
+                {renderTypeConfig[activeView].text}
+              </span>
+            ) : (
+              renderBreadcrumbs()
+            )}
           </div>
+          {!isPageView && (
+            <div className="dock-topbar-lower">
+              <div className="dock-toolbar">
+                <Popover content={renderFileMenu()} placement="bottom-start">
+                  <Button minimal text="File" />
+                </Popover>
+                <Button minimal text="Settings" />
+                <Button minimal text="Help" />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="dock-content">{renderContent()}</div>
@@ -210,6 +259,11 @@ const Dock = ({ uiScale }) => {
 
 Dock.propTypes = {
   uiScale: PropTypes.number.isRequired,
+  themeMode: PropTypes.string.isRequired,
+  setThemeMode: PropTypes.func.isRequired,
+  isHardwareAccelerationEnabled: PropTypes.bool.isRequired,
+  setIsHardwareAccelerationEnabled: PropTypes.func.isRequired,
+  setUiScale: PropTypes.func.isRequired,
 };
 
 export default Dock;

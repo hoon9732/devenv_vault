@@ -107,31 +107,6 @@ const GraphView = ({ uiScale }) => {
     [setEdges, addEdge],
   );
 
-  const onNodeDrag = useCallback(
-    (event, node) => {
-      if (!reactFlowInstance) return;
-      const flowBounds = reactFlowInstance.getViewport();
-      const correctedMovementX = event.movementX / (flowBounds.zoom * uiScale);
-      const correctedMovementY = event.movementY / (flowBounds.zoom * uiScale);
-
-      setNodes((nds) =>
-        nds.map((n) => {
-          if (n.id === node.id) {
-            return {
-              ...n,
-              position: {
-                x: n.position.x + correctedMovementX,
-                y: n.position.y + correctedMovementY,
-              },
-            };
-          }
-          return n;
-        }),
-      );
-    },
-    [reactFlowInstance, setNodes, uiScale],
-  );
-
   const onNodeDragStop = useCallback(
     (_, node) => {
       updateActiveNode(node.id, { position: node.position });

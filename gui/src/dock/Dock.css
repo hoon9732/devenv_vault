@@ -37,7 +37,12 @@
   transform: translateZ(0); /* Force hardware acceleration */
 }
 
-.render-type-switcher:hover {
+.render-type-switcher.disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.render-type-switcher:not(.disabled):hover {
   filter: brightness(1.2);
 }
 
@@ -70,6 +75,10 @@
   background-color: #202b33;
 }
 
+.dock-topbar-main.page-view-header .dock-topbar-upper {
+  height: 100%;
+}
+
 
 
 
@@ -99,6 +108,7 @@
 .dock-content {
   flex-grow: 1;
   overflow: auto;
+  padding: 20px;
 }
 
 .dock-content-placeholder {

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import { Button as MuiButton } from '@mui/material';
 import {
   Button,
   Classes,
@@ -16,8 +15,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import './Explorer.css';
 
 const initialDrawerWidth = 240;
-const minDrawerWidth = 150;
-const maxDrawerWidth = 500;
+const minDrawerWidth = 160;
+const maxDrawerWidth = 480;
 
 const Explorer = ({
   open,
@@ -30,6 +29,7 @@ const Explorer = ({
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
   const [isResizing, setIsResizing] = useState(false);
+  const [isResizable, setIsResizable] = useState(true);
   const sidebarRef = useRef(null);
   const [renderTree, setRenderTree] = useState(false);
   const [settings, setSettings] = useState({
@@ -179,6 +179,7 @@ const Explorer = ({
   const handleClose = () => setOpen(false);
 
   const handleMouseDown = (e) => {
+    if (!isResizable) return;
     e.preventDefault();
     setIsResizing(true);
   };
@@ -220,6 +221,14 @@ const Explorer = ({
     if (window.electron) window.electron.setWorkspaceSettings(newSettings);
   };
 
+  const handleFixedSizeToggle = () => {
+    const newResizableState = !isResizable;
+    setIsResizable(newResizableState);
+    if (!newResizableState) {
+      setDrawerWidth(initialDrawerWidth);
+    }
+  };
+
   const settingsMenu = (
     <Menu>
       <MenuItem
@@ -236,6 +245,11 @@ const Explorer = ({
         icon={settings.showAnimation ? 'tick' : 'blank'}
         text={t('Show Animation')}
         onClick={() => handleSettingChange('showAnimation')}
+      />
+      <MenuItem
+        icon={!isResizable ? 'tick' : 'blank'}
+        text={t('Fixed Size')}
+        onClick={handleFixedSizeToggle}
       />
     </Menu>
   );
@@ -265,7 +279,6 @@ const Explorer = ({
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'background.paper',
           border: 'none',
         }}
       >
@@ -356,26 +369,28 @@ const Explorer = ({
             renderTree &&
             !workspacePath && (
               <Box sx={{ p: 2, textAlign: 'center' }}>
-                <MuiButton variant="contained" onClick={handleOpenWorkspace}>
+                <Button intent="primary" onClick={handleOpenWorkspace}>
                   {t('Open Workspace')}
-                </MuiButton>
+                </Button>
               </Box>
             )
           )}
         </Box>
       </Box>
-      <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          width: '5px',
-          cursor: 'col-resize',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 100,
-        }}
-      />
+      {isResizable && (
+        <Box
+          onMouseDown={handleMouseDown}
+          sx={{
+            width: '5px',
+            cursor: 'col-resize',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 100,
+          }}
+        />
+      )}
     </Box>
   );
 };
