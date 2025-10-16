@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import ScaledTooltip from './ScaledTooltip';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import {
-  Classes,
-  Menu,
-  MenuItem,
-  Tooltip,
   Divider,
   Icon,
 } from '@blueprintjs/core';
@@ -61,54 +62,32 @@ const Sidebar = ({
 
     const isViewActive = item.view && item.view === activeView;
 
-    const menuItem = (
-      <MenuItem
-        className="sidebar-menu-item"
-        onClick={() => handleItemClick(item)}
-        style={{
-          height: '48px',
-          padding: 0,
-          color: theme.palette.text.primary,
-          alignItems: 'center',
-        }}
-        text={
-          <div
-            style={{
-              display: 'flex',
+    return (
+      <ScaledTooltip
+        title={item.text}
+        placement="right"
+        key={item.text}
+        uiScale={uiScale}
+      >
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => handleItemClick(item)}
+            sx={{
+              height: '48px',
+              padding: 0,
+              color: theme.palette.text.primary,
               alignItems: 'center',
-              width: '100%',
-              height: '100%',
+              justifyContent: 'center',
             }}
           >
             {isSidebarActive && <div className="sidebar-indicator" />}
-
             {isViewActive && <div className="page-indicator" />}
-
-            <div
-              style={{
-                width: `${collapsedWidth}px`,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexShrink: 0,
-              }}
-            >
+            <ListItemIcon sx={{ minWidth: 0 }}>
               <Icon icon={item.icon} size={iconSize} color={item.color} />
-            </div>
-          </div>
-        }
-      />
-    );
-
-    return (
-      <Tooltip
-        content={item.text}
-        placement="right"
-        usePortal={false}
-        key={item.text}
-      >
-        {menuItem}
-      </Tooltip>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+      </ScaledTooltip>
     );
   };
 
@@ -121,12 +100,12 @@ const Sidebar = ({
         flexDirection: 'column',
         overflow: 'hidden',
       }}
-      className={`${Classes.FOCUS_DISABLED} ${
-        theme.palette.mode === 'dark' ? Classes.DARK : ''
+      className={`${
+        theme.palette.mode === 'dark' ? 'bp6-dark' : ''
       }`}
     >
-      <Menu
-        style={{
+      <List
+        sx={{
           padding: 0,
           flexShrink: 0,
           width: collapsedWidth,
@@ -134,46 +113,30 @@ const Sidebar = ({
           overflow: 'hidden',
         }}
       >
-        <MenuItem
-          className="sidebar-menu-item"
-          onClick={handleHamburgerClick}
-          style={{
-            height: '64px',
-            padding: 0,
-            backgroundColor: theme.palette.topbar.background,
-            color: theme.palette.text.primary,
-            alignItems: 'center',
-          }}
-          text={
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <div
-                style={{
-                  width: `${collapsedWidth}px`,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <Icon
-                  icon={isExplorerOpen ? 'menu-closed' : 'menu-open'}
-                  size={iconSize}
-                />
-              </div>
-            </div>
-          }
-        />
-      </Menu>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={handleHamburgerClick}
+            sx={{
+              height: '64px',
+              padding: 0,
+              backgroundColor: theme.palette.topbar.background,
+              color: theme.palette.text.primary,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 0 }}>
+              <Icon
+                icon={isExplorerOpen ? 'menu-closed' : 'menu-open'}
+                size={iconSize}
+              />
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+      </List>
 
-      <Menu
-        style={{
+      <List
+        sx={{
           overflowY: 'auto',
           overflowX: 'hidden',
           padding: 0,
@@ -193,11 +156,11 @@ const Sidebar = ({
             ) : null,
           ])
           .filter(Boolean)}
-      </Menu>
+      </List>
 
       <Box sx={{ marginTop: 'auto', flexShrink: 0, overflow: 'hidden' }}>
-        <Menu
-          style={{
+        <List
+          sx={{
             padding: 0,
             width: collapsedWidth,
             borderRadius: 0,
@@ -216,7 +179,7 @@ const Sidebar = ({
               ) : null,
             ])
             .filter(Boolean)}
-        </Menu>
+        </List>
       </Box>
     </Box>
   );

@@ -1,14 +1,15 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
+import ScaledTooltip from './ScaledTooltip';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Popover from '@mui/material/Popover';
+import MenuList from '@mui/material/MenuList';
 import {
   Button,
   Classes,
   Tree,
-  Popover,
-  Menu,
-  MenuItem,
-  Tooltip,
   Icon,
 } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -25,6 +26,7 @@ const Explorer = ({
   setWorkspacePath,
   isInitialLoad,
   onOpenFile,
+  uiScale,
 }) => {
   const { t } = useLanguage();
   const [drawerWidth, setDrawerWidth] = useState(initialDrawerWidth);
@@ -39,6 +41,19 @@ const Explorer = ({
   });
   const [nodes, setNodes] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [menuPosition, setMenuPosition] = useState(null);
+
+  const handleClick = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMenuPosition({
+      top: rect.bottom,
+      left: rect.left,
+    });
+  };
+
+  const handleCloseMenu = () => {
+    setMenuPosition(null);
+  };
 
   // Helper function to convert file system items to Blueprint Tree nodes
   const toTreeNodes = useCallback(
@@ -229,30 +244,7 @@ const Explorer = ({
     }
   };
 
-  const settingsMenu = (
-    <Menu>
-      <MenuItem
-        icon={settings.showIcons ? 'tick' : 'blank'}
-        text={t('Show Icons')}
-        onClick={() => handleSettingChange('showIcons')}
-      />
-      <MenuItem
-        icon={settings.showOnStart ? 'tick' : 'blank'}
-        text={t('Show on Start')}
-        onClick={() => handleSettingChange('showOnStart')}
-      />
-      <MenuItem
-        icon={settings.showAnimation ? 'tick' : 'blank'}
-        text={t('Show Animation')}
-        onClick={() => handleSettingChange('showAnimation')}
-      />
-      <MenuItem
-        icon={!isResizable ? 'tick' : 'blank'}
-        text={t('Fixed Size')}
-        onClick={handleFixedSizeToggle}
-      />
-    </Menu>
-  );
+
 
   return (
     <Box
@@ -285,46 +277,81 @@ const Explorer = ({
         <div className="explorer-topbar">
           <div className="explorer-topbar-upper">
             <div className="explorer-topbar-left">
-              <Tooltip
-                content={t('Open Workspace')}
+              <ScaledTooltip
+                title={t('Open Workspace')}
                 placement="top"
-                usePortal={false}
+                uiScale={uiScale}
               >
                 <Button
                   minimal
                   icon="folder-open"
                   onClick={handleOpenWorkspace}
                 />
-              </Tooltip>
-              <Tooltip content={t('New File')} placement="top" usePortal={false}>
+              </ScaledTooltip>
+              <ScaledTooltip title={t('New File')} placement="top" uiScale={uiScale}>
                 <Button minimal icon="document" disabled={!workspacePath} />
-              </Tooltip>
-              <Tooltip
-                content={t('New Folder')}
+              </ScaledTooltip>
+              <ScaledTooltip
+                title={t('New Folder')}
                 placement="top"
-                usePortal={false}
+                uiScale={uiScale}
               >
                 <Button minimal icon="folder-new" disabled={!workspacePath} />
-              </Tooltip>
+              </ScaledTooltip>
             </div>
             <div className="explorer-topbar-right">
-              <Tooltip content={t('Refresh')} placement="top" usePortal={false}>
+              <ScaledTooltip title={t('Refresh')} placement="top" uiScale={uiScale}>
                 <Button
                   minimal
                   icon="refresh"
                   disabled={!workspacePath}
                   onClick={refreshTreeView}
                 />
-              </Tooltip>
-              <Popover
-                content={settingsMenu}
-                placement="bottom-end"
-                usePortal={false}
+              </ScaledTooltip>
+                                                                          <ScaledTooltip title={t('More')} placement="top" uiScale={uiScale}>
+                                                                            <Button minimal icon="more" onClick={handleClick} />
+                                                                          </ScaledTooltip>              <Popover
+                open={Boolean(menuPosition)}
+                onClose={handleCloseMenu}
+                anchorReference="anchorPosition"
+                anchorPosition={menuPosition}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
               >
-                <Tooltip content={t('More')} placement="top" usePortal={false}>
-                  <Button minimal icon="more" />
-                </Tooltip>
-              </Popover>{' '}
+                <MenuList
+                  dense
+                  sx={{
+                    fontSize: `${uiScale}rem`,
+                  }}
+                >
+                  <MenuItem onClick={() => { handleSettingChange('showIcons'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showIcons ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    {t('Show Icons')}
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSettingChange('showOnStart'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showOnStart ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    {t('Show on Start')}
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSettingChange('showAnimation'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showAnimation ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    {t('Show Animation')}
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleFixedSizeToggle(); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={!isResizable ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    {t('Fixed Size')}
+                  </MenuItem>
+                </MenuList>
+              </Popover>
               <Button minimal icon="cross" onClick={handleClose} />
             </div>
           </div>
@@ -402,6 +429,7 @@ Explorer.propTypes = {
   setWorkspacePath: PropTypes.func.isRequired,
   isInitialLoad: PropTypes.bool.isRequired,
   onOpenFile: PropTypes.func.isRequired,
+  uiScale: PropTypes.number.isRequired,
 };
 
 export default Explorer;

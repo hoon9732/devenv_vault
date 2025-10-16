@@ -5,10 +5,10 @@ import {
   Breadcrumbs,
   Classes,
   Icon,
-  Menu,
-  MenuItem,
-  Popover,
 } from '@blueprintjs/core';
+import ScaledMenu from '../components/ScaledMenu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import { useProject } from '../contexts/ProjectContext';
 import SheetView from './SheetView';
 import GraphView from './GraphView';
@@ -34,6 +34,24 @@ const Dock = ({
     setActiveView,
   } = useProject();
   const [currentFilePath, setCurrentFilePath] = useState(null);
+  const [renderTypeMenuAnchorEl, setRenderTypeMenuAnchorEl] = useState(null);
+  const [fileMenuAnchorEl, setFileMenuAnchorEl] = useState(null);
+
+  const handleRenderTypeMenuClick = (event) => {
+    setRenderTypeMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleRenderTypeMenuClose = () => {
+    setRenderTypeMenuAnchorEl(null);
+  };
+
+  const handleFileMenuClick = (event) => {
+    setFileMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleFileMenuClose = () => {
+    setFileMenuAnchorEl(null);
+  };
 
   const isPageView = ['settings', 'profile'].includes(activeView);
 
@@ -131,29 +149,11 @@ const Dock = ({
       icon: 'user',
       color: 'rgb(153, 153, 153)',
       text: 'Profile',
-      component: <ProfileScreen />,
+      component: <ProfileScreen uiScale={uiScale} />,
     },
   };
 
-  const renderTypeMenu = (
-    <Menu>
-      <MenuItem
-        icon="th"
-        text="Sheet"
-        onClick={() => setActiveView('sheet')}
-      />
-      <MenuItem
-        icon="data-lineage"
-        text="Graph"
-        onClick={() => setActiveView('graph')}
-      />
-      <MenuItem
-        icon="document"
-        text="Docs"
-        onClick={() => setActiveView('docs')}
-      />
-    </Menu>
-  );
+
 
   const renderBreadcrumbs = () => {
     if (!activeProject) {
@@ -170,26 +170,7 @@ const Dock = ({
     return <Breadcrumbs items={items} />;
   };
 
-  const renderFileMenu = () => (
-    <Menu>
-      <MenuItem icon="document" text="New" onClick={handleNewProject} />
-      <MenuItem icon="folder-open" text="Open..." onClick={handleOpenProject} />
-      <MenuItem icon="floppy-disk" text="Save" onClick={handleSave} disabled={!currentFilePath} />
-      <MenuItem
-        icon="floppy-disk"
-        text="Save As..."
-        onClick={handleSaveAs}
-        disabled={!activeProject}
-      />
-      <MenuItem text="---" disabled />
-      <MenuItem
-        icon="export"
-        text="Export as JSON..."
-        onClick={handleExport}
-        disabled={!activeProject}
-      />
-    </Menu>
-  );
+
 
   const renderContent = () => {
     if (!activeProject && !['settings', 'profile'].includes(activeView)) {
@@ -209,22 +190,36 @@ const Dock = ({
   return (
     <div className={`dock-container ${Classes.FOCUS_DISABLED}`}>
       <div className="dock-topbar">
-        <Popover
-          content={renderTypeMenu}
-          placement="bottom-start"
-          disabled={isPageView}
+        <div
+          className={`render-type-switcher ${isPageView ? 'disabled' : ''}`}
+          style={{ backgroundColor: renderTypeConfig[activeView].color }}
+          onClick={!isPageView ? handleRenderTypeMenuClick : undefined}
         >
-          <div
-            className={`render-type-switcher ${isPageView ? 'disabled' : ''}`}
-            style={{ backgroundColor: renderTypeConfig[activeView].color }}
-          >
-            <Icon
-              icon={renderTypeConfig[activeView].icon}
-              size={32}
-              color="white"
-            />
-          </div>
-        </Popover>
+          <Icon
+            icon={renderTypeConfig[activeView].icon}
+            size={32}
+            color="white"
+          />
+        </div>
+        <ScaledMenu
+          anchorEl={renderTypeMenuAnchorEl}
+          open={Boolean(renderTypeMenuAnchorEl)}
+          onClose={handleRenderTypeMenuClose}
+          uiScale={uiScale}
+          dense
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <MenuItem onClick={() => { setActiveView('sheet'); handleRenderTypeMenuClose(); }}>Sheet</MenuItem>
+          <MenuItem onClick={() => { setActiveView('graph'); handleRenderTypeMenuClose(); }}>Graph</MenuItem>
+          <MenuItem onClick={() => { setActiveView('docs'); handleRenderTypeMenuClose(); }}>Docs</MenuItem>
+        </ScaledMenu>
         <div
           className={`dock-topbar-main ${
             isPageView ? 'page-view-header' : ''
@@ -242,9 +237,39 @@ const Dock = ({
           {!isPageView && (
             <div className="dock-topbar-lower">
               <div className="dock-toolbar">
-                <Popover content={renderFileMenu()} placement="bottom-start">
-                  <Button minimal text="File" />
-                </Popover>
+                <Button minimal text="File" onClick={handleFileMenuClick} />
+                <ScaledMenu
+                  anchorEl={fileMenuAnchorEl}
+                  open={Boolean(fileMenuAnchorEl)}
+                  onClose={handleFileMenuClose}
+                  uiScale={uiScale}
+                  dense
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                >
+                  <MenuItem onClick={() => { handleNewProject(); handleFileMenuClose(); }}>
+                    <ListItemIcon><Icon icon="document" /></ListItemIcon>New
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleOpenProject(); handleFileMenuClose(); }}>
+                    <ListItemIcon><Icon icon="folder-open" /></ListItemIcon>Open...
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSave(); handleFileMenuClose(); }} disabled={!currentFilePath}>
+                    <ListItemIcon><Icon icon="floppy-disk" /></ListItemIcon>Save
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSaveAs(); handleFileMenuClose(); }} disabled={!activeProject}>
+                    <ListItemIcon><Icon icon="floppy-disk" /></ListItemIcon>Save As...
+                  </MenuItem>
+                  <MenuItem disabled>---</MenuItem>
+                  <MenuItem onClick={() => { handleExport(); handleFileMenuClose(); }} disabled={!activeProject}>
+                    <ListItemIcon><Icon icon="export" /></ListItemIcon>Export as JSON...
+                  </MenuItem>
+                </ScaledMenu>
                 <Button minimal text="Settings" />
                 <Button minimal text="Help" />
               </div>

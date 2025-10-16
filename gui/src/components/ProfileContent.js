@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Card,
@@ -6,8 +7,9 @@ import {
   H5,
   InputGroup,
   Icon,
-  Popover,
 } from '@blueprintjs/core';
+import ScaledMenu from './ScaledMenu';
+import MenuItem from '@mui/material/MenuItem';
 import { useLanguage } from '../contexts/LanguageContext';
 import './ProfileContent.css';
 
@@ -20,14 +22,22 @@ const iconNames = [
   'id-number',
   'code',
   'cog',
-  'comparison',
 ];
 
-const ProfileContent = () => {
+const ProfileContent = ({ uiScale }) => {
   const { t } = useLanguage();
   const [profile, setProfile] = useState(null);
   const [editData, setEditData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -81,22 +91,6 @@ const ProfileContent = () => {
 
   const dataToShow = isEditMode ? editData : profile;
 
-  const iconMenu = (
-    <div className="icon-popover-content">
-      <div className="icon-grid">
-        {iconNames.map((name) => (
-          <Button
-            key={name}
-            className="icon-grid-item"
-            icon={<Icon icon={name} size={24} />}
-            onClick={() => handleIconSelect(name)}
-            minimal
-          />
-        ))}
-      </div>
-    </div>
-  );
-
   return (
     <Card elevation={Elevation.TWO} className="profile-container">
       <div className="profile-top-actions">
@@ -122,20 +116,45 @@ const ProfileContent = () => {
       </div>
 
       <div className="profile-icon-container">
-        <Popover content={iconMenu} placement="right" disabled={!isEditMode}>
-          <Button
-            className={`profile-icon-button ${isEditMode ? 'editable' : ''}`}
-            large
-            minimal
-          >
-            <Icon icon={dataToShow.profileIcon} size={160} />
-            {isEditMode && (
-              <div className="profile-icon-overlay">
-                <Icon icon="edit" size={64} color="white" />
-              </div>
-            )}
-          </Button>
-        </Popover>
+        <Button
+          className={`profile-icon-button ${isEditMode ? 'editable' : ''}`}
+          large
+          minimal
+          onClick={isEditMode ? handleClick : undefined}
+        >
+          <Icon icon={dataToShow.profileIcon} size={160} />
+          {isEditMode && (
+            <div className="profile-icon-overlay">
+              <Icon icon="edit" size={64} color="white" />
+            </div>
+          )}
+        </Button>
+        <ScaledMenu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleCloseMenu}
+          uiScale={uiScale}
+          dense
+          disablePortal
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <div className="icon-popover-content">
+            <div className="icon-grid">
+              {iconNames.map((name) => (
+                <MenuItem key={name} onClick={() => { handleIconSelect(name); handleCloseMenu(); }}>
+                  <Icon icon={name} size={24} />
+                </MenuItem>
+              ))}
+            </div>
+          </div>
+        </ScaledMenu>
       </div>
 
       <div className="profile-name-input-container">
@@ -168,6 +187,10 @@ const ProfileContent = () => {
       </div>
     </Card>
   );
+};
+
+ProfileContent.propTypes = {
+  uiScale: PropTypes.number.isRequired,
 };
 
 export default ProfileContent;

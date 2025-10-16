@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
+import ScaledTooltip from './ScaledTooltip';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Popover from '@mui/material/Popover';
+import MenuList from '@mui/material/MenuList';
 import {
   Button,
   Classes,
   InputGroup,
-  Tooltip,
   Icon,
-  Popover,
-  Menu,
-  MenuItem,
   Tree,
 } from '@blueprintjs/core';
 import { useProject } from '../contexts/ProjectContext';
@@ -19,7 +20,7 @@ const initialDrawerWidth = 240;
 const minDrawerWidth = 160;
 const maxDrawerWidth = 480;
 
-const ProjectOutline = ({ open, onClose }) => {
+const ProjectOutline = ({ open, onClose, uiScale }) => {
   const {
     outlineProjects,
     activeProject,
@@ -38,6 +39,19 @@ const ProjectOutline = ({ open, onClose }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [isResizable, setIsResizable] = useState(true);
   const sidebarRef = useRef(null);
+  const [menuPosition, setMenuPosition] = useState(null);
+
+  const handleClick = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMenuPosition({
+      top: rect.bottom,
+      left: rect.left,
+    });
+  };
+
+  const handleCloseMenu = () => {
+    setMenuPosition(null);
+  };
 
   // Load settings on component mount
   useEffect(() => {
@@ -232,30 +246,7 @@ const ProjectOutline = ({ open, onClose }) => {
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  const settingsMenu = (
-    <Menu>
-      <MenuItem
-        icon={settings.showIcons ? 'tick' : 'blank'}
-        text="Show Icons"
-        onClick={() => handleSettingChange('showIcons')}
-      />
-      <MenuItem
-        icon={settings.showOnStart ? 'tick' : 'blank'}
-        text="Show on Start"
-        onClick={() => handleSettingChange('showOnStart')}
-      />
-      <MenuItem
-        icon={settings.showAnimation ? 'tick' : 'blank'}
-        text="Show Animation"
-        onClick={() => handleSettingChange('showAnimation')}
-      />
-      <MenuItem
-        icon={!isResizable ? 'tick' : 'blank'}
-        text="Fixed Size"
-        onClick={handleFixedSizeToggle}
-      />
-    </Menu>
-  );
+
 
   const renderContent = () => {
     if (outlineProjects.length === 0) {
@@ -300,27 +291,62 @@ const ProjectOutline = ({ open, onClose }) => {
         <div className="outline-topbar">
           <div className="outline-topbar-upper">
             <div className="outline-topbar-left">
-              <Tooltip
-                content="Import Project(s)"
+              <ScaledTooltip
+                title="Import Project(s)"
                 placement="top"
-                usePortal={false}
+                uiScale={uiScale}
               >
                 <Button minimal icon="import" onClick={handleImportProject} />
-              </Tooltip>
+              </ScaledTooltip>
             </div>
             <div className="outline-topbar-right">
-              <Popover
-                content={settingsMenu}
-                placement="bottom-end"
-                usePortal={false}
+                                                                          <ScaledTooltip title="More" placement="top" uiScale={uiScale}>
+                                                                            <Button minimal icon="more" onClick={handleClick} />
+                                                                          </ScaledTooltip>              <Popover
+                open={Boolean(menuPosition)}
+                onClose={handleCloseMenu}
+                anchorReference="anchorPosition"
+                anchorPosition={menuPosition}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
               >
-                <Tooltip content="More" placement="top" usePortal={false}>
-                  <Button minimal icon="more" />
-                </Tooltip>
+                <MenuList
+                  dense
+                  sx={{
+                    fontSize: `${uiScale}rem`,
+                  }}
+                >
+                  <MenuItem onClick={() => { handleSettingChange('showIcons'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showIcons ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    Show Icons
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSettingChange('showOnStart'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showOnStart ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    Show on Start
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleSettingChange('showAnimation'); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={settings.showAnimation ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    Show Animation
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleFixedSizeToggle(); handleCloseMenu(); }}>
+                    <ListItemIcon>
+                      <Icon icon={!isResizable ? 'tick' : 'blank'} />
+                    </ListItemIcon>
+                    Fixed Size
+                  </MenuItem>
+                </MenuList>
               </Popover>
-              <Tooltip content="Close" placement="top" usePortal={false}>
+              <ScaledTooltip title="Close" placement="top" uiScale={uiScale}>
                 <Button minimal icon="cross" onClick={onClose} />
-              </Tooltip>
+              </ScaledTooltip>
             </div>
           </div>
           <div className="outline-topbar-lower">
@@ -356,6 +382,7 @@ const ProjectOutline = ({ open, onClose }) => {
 ProjectOutline.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  uiScale: PropTypes.number.isRequired,
 };
 
 export default ProjectOutline;

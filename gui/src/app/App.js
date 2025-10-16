@@ -223,7 +223,7 @@ function App() {
                 }}
                 theme={theme}
               />
-              <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} />
+              <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} uiScale={uiScale} />
               <Box
                 sx={{
                   display: 'flex',
