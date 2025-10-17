@@ -39,10 +39,9 @@ const NewFolderInput = ({ onCreate, onCancel }) => {
       type="text"
       value={inputValue}
       onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={onCancel}
-                  onClick={(e) => e.stopPropagation()}
-                  className="bp5-input"
+                  onKeyDown={handleKeyDown}
+                  onBlur={() => onCreate(inputValue)}
+                  onClick={(e) => e.stopPropagation()}                  className="bp5-input"
                   style={{ marginLeft: '4px' }}
                 />      );
     };
@@ -56,6 +55,46 @@ const NewFolderInput = ({ onCreate, onCancel }) => {
     const minDrawerWidth = 160;
     const maxDrawerWidth = 480;
     
+
+const RenameInput = ({ initialName, onRename, onCancel }) => {
+  const [inputValue, setInputValue] = useState(initialName);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, []);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onRename(inputValue);
+    } else if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      value={inputValue}
+      onChange={(e) => setInputValue(e.target.value)}
+      onKeyDown={handleKeyDown}
+      onBlur={() => onRename(inputValue)}
+      onClick={(e) => e.stopPropagation()}
+      className="bp5-input"
+      style={{ marginLeft: '4px' }}
+    />
+  );
+};
+
+RenameInput.propTypes = {
+  initialName: PropTypes.string.isRequired,
+  onRename: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
 
 const Explorer = ({
   open,
@@ -83,25 +122,7 @@ const Explorer = ({
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const [clipboard, setClipboard] = useState(null);
-
-  const findAndInsertNode = (nodes, parentPath, newNode) => {
-    return nodes.map(node => {
-      if (node.path === parentPath) {
-        return {
-          ...node,
-          isExpanded: true,
-          childNodes: [newNode, ...(node.childNodes || [])],
-        };
-      }
-      if (node.childNodes) {
-        return {
-          ...node,
-          childNodes: findAndInsertNode(node.childNodes, parentPath, newNode),
-        };
-      }
-      return node;
-    });
-  };
+  const [renamingNode, setRenamingNode] = useState(null);
 
   const handleCancelCreateFolder = useCallback(() => {
     setIsCreatingFolder(false);
@@ -120,7 +141,9 @@ const Explorer = ({
 
   const handleNewFolderClick = (node) => {
     handleCloseContextMenu();
-    if (isCreatingFolder) return;
+    if (isCreatingFolder) {
+      handleCancelCreateFolder();
+    }
     setIsCreatingFolder(true);
 
     const newNode = {
@@ -136,7 +159,11 @@ const Explorer = ({
 
     if (node) {
       const parentPath = node.isDirectory ? node.path : node.path.substring(0, node.path.lastIndexOf('\\'));
-      setNodes(prevNodes => findAndInsertNode(prevNodes, parentPath, newNode));
+      setNodes(prevNodes => findAndMutateNode(prevNodes, parentPath, (n) => ({
+        ...n,
+        isExpanded: true,
+        childNodes: [newNode, ...n.childNodes],
+      })));
     } else {
       setNodes((prevNodes) => [newNode, ...prevNodes]);
     }
@@ -179,11 +206,36 @@ const Explorer = ({
   };
 
   // Helper function to convert file system items to Blueprint Tree nodes
+  const handleRenameClick = (node) => {
+    setRenamingNode(node);
+    handleCloseContextMenu();
+  };
+
+  const handleRename = async (node, newName) => {
+    if (newName && newName !== node.name) {
+      const oldPath = node.path;
+      const newPath = `${oldPath.substring(0, oldPath.lastIndexOf('\\'))}\\${newName}`;
+      await window.electron.renamePath(oldPath, newPath);
+      refreshTreeView();
+    }
+    setRenamingNode(null);
+  };
+
   const toTreeNodes = useCallback(
     (items) => {
       return items.map((item) => ({
         id: item.path,
-        label: <div onContextMenu={(e) => { e.stopPropagation(); handleContextMenu(e, item); }}>{item.name}</div>,
+        label: (
+          renamingNode && renamingNode.id === item.path ? (
+            <RenameInput
+              initialName={item.name}
+              onRename={(newName) => handleRename(item, newName)}
+              onCancel={() => setRenamingNode(null)}
+            />
+          ) : (
+            <div onContextMenu={(e) => { e.stopPropagation(); handleContextMenu(e, item); }}>{item.name}</div>
+          )
+        ),
         icon: settings.showIcons
           ? item.isDirectory
             ? 'folder-close'
@@ -195,7 +247,7 @@ const Explorer = ({
         nodeData: item,
       }));
     },
-    [settings.showIcons],
+    [settings.showIcons, renamingNode],
   );
 
   useEffect(() => {
@@ -637,7 +689,7 @@ const Explorer = ({
           <ScaledMenuItem uiScale={uiScale} onClick={() => handleDelete(contextMenu.node)} disabled={!contextMenu?.node}>
             {t('Delete')}
           </ScaledMenuItem>
-          <ScaledMenuItem uiScale={uiScale} disabled>
+          <ScaledMenuItem uiScale={uiScale} onClick={() => handleRenameClick(contextMenu.node)} disabled={!contextMenu?.node}>
             {t('Rename')}
           </ScaledMenuItem>
         </MenuList>
