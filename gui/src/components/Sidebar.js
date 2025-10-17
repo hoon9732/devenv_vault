@@ -115,16 +115,13 @@ const Sidebar = ({
         <ListItem disablePadding>
           <ListItemButton
             onClick={handleHamburgerClick}
+            className="hamburger-button"
             sx={{
               height: '64px',
               padding: 0,
-              backgroundColor: theme.palette.topbar.background,
               color: 'inherit',
               alignItems: 'center',
               justifyContent: 'center',
-              '&:hover': {
-                backgroundColor: theme.palette.sidebar.hover,
-              },
             }}
           >
             <ListItemIcon sx={{ minWidth: 0 }}>

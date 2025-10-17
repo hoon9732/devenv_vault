@@ -1,10 +1,10 @@
-.settings-card {
+.bp6-card.settings-card {
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--card-background);
-  color: var(--card-text);
+  background-color: var(--card-background) !important;
+  color: var(--card-text) !important;
 }
 
 /* Override Blueprint's default text colors inside the card */

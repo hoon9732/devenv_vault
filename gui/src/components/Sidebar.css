@@ -53,8 +53,8 @@
   flex-shrink: 0;
 }
 
-.sidebar-menu-item:hover {
-  background-color: var(--sidebar-hover) !important;
+.hamburger-button {
+  background-color: var(--dock-topbar);
 }
 
 .sidebar-header-item {

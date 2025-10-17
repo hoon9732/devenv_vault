@@ -85,8 +85,7 @@ function App() {
       appBar: { background: '#293742' },
       topbar: { background: '#2d2d2d' },
       sidebar: {
-        background: '#30404d',
-        hover: 'rgba(115, 134, 148, 0.3)',
+        background: '#293742',
         header: '#2d2d2d',
         indicator: 'rgba(255, 255, 255, 0.3)',
         pageIndicator: 'rgba(255, 255, 255, 0.15)',
@@ -111,7 +110,7 @@ function App() {
         emptyText: '#a7b6c2',
       },
       card: {
-        background: '#293742',
+        background: '#25313a',
         text: '#f5f8fa',
       },
       text: { primary: '#f5f8fa', secondary: '#a7b6c2' },
@@ -124,7 +123,6 @@ function App() {
       topbar: { background: '#ebebeb' },
       sidebar: {
         background: '#ebebeb',
-        hover: 'rgba(167, 182, 194, 0.3)',
         header: '#ebebeb',
         indicator: 'rgba(0, 0, 0, 0.2)',
         pageIndicator: 'rgba(0, 0, 0, 0.1)',
@@ -161,8 +159,7 @@ function App() {
       appBar: { background: '#1e1e1e' },
       topbar: { background: '#2d2d2d' },
       sidebar: {
-        background: '#1e1e1e',
-        hover: 'rgba(255, 255, 255, 0.08)',
+        background: '#272727',
         header: '#2d2d2d',
         indicator: 'rgba(255, 255, 255, 0.3)',
         pageIndicator: 'rgba(255, 255, 255, 0.15)',
@@ -187,7 +184,7 @@ function App() {
         emptyText: '#b0b0b0',
       },
       card: {
-        background: '#1e1e1e',
+        background: '#2c2c2c',
         text: '#ffffff',
       },
       text: { primary: '#ffffff', secondary: '#b0b0b0' },
@@ -199,8 +196,7 @@ function App() {
       appBar: { background: '#ffffff' },
       topbar: { background: '#ebebeb' },
       sidebar: {
-        background: '#ffffff',
-        hover: 'rgba(0, 0, 0, 0.04)',
+        background: '#eeeeee',
         header: '#ebebeb',
         indicator: 'rgba(0, 0, 0, 0.2)',
         pageIndicator: 'rgba(0, 0, 0, 0.1)',
@@ -311,7 +307,6 @@ function App() {
         styles={{
           ':root': {
             '--sidebar-background': theme.palette.sidebar.background,
-            '--sidebar-hover': theme.palette.sidebar.hover,
             '--sidebar-header': theme.palette.sidebar.header,
             '--sidebar-indicator': theme.palette.sidebar.indicator,
             '--sidebar-page-indicator': theme.palette.sidebar.pageIndicator,

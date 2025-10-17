@@ -1,4 +1,4 @@
-.profile-container {
+.bp6-card.profile-container {
   padding: 24px;
   width: 600px;
   min-height: 600px;
@@ -6,8 +6,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--card-background);
-  color: var(--card-text);
+  background-color: var(--card-background) !important;
+  color: var(--card-text) !important;
 }
 
 .profile-top-actions {
