@@ -1,0 +1,14 @@
+.settings-card {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--card-background);
+  color: var(--card-text);
+}
+
+/* Override Blueprint's default text colors inside the card */
+.settings-card .bp6-heading,
+.settings-card .bp6-text-muted {
+  color: inherit !important;
+}

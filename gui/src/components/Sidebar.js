@@ -99,10 +99,9 @@ const Sidebar = ({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
+        backgroundColor: theme.palette.sidebar.background,
+        color: theme.palette.text.primary,
       }}
-      className={`${
-        theme.palette.mode === 'dark' ? 'bp6-dark' : ''
-      }`}
     >
       <List
         sx={{
@@ -120,9 +119,12 @@ const Sidebar = ({
               height: '64px',
               padding: 0,
               backgroundColor: theme.palette.topbar.background,
-              color: theme.palette.text.primary,
+              color: 'inherit',
               alignItems: 'center',
               justifyContent: 'center',
+              '&:hover': {
+                backgroundColor: theme.palette.sidebar.hover,
+              },
             }}
           >
             <ListItemIcon sx={{ minWidth: 0 }}>

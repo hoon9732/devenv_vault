@@ -318,7 +318,7 @@ ipcMain.handle('save-settings', (event, settings) => {
 // --- End Settings ---
 
 // IPC handler for opening the about window
-ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
+ipcMain.handle('open-about-window', (event, { themeMode, uiScale }) => {
   const aboutWin = new BrowserWindow({
     width: 800,
     height: 600,
@@ -339,7 +339,8 @@ ipcMain.handle('open-about-window', (event, { theme, uiScale }) => {
     : path.join(__dirname, '../build/about.html');
 
   const aboutUrl = new URL('file:' + aboutPath);
-  aboutUrl.searchParams.set('theme', theme);
+  const mode = themeMode.split('-')[1] || 'dark'; // Extract 'light' or 'dark'
+  aboutUrl.searchParams.set('theme', mode);
   aboutUrl.searchParams.set('uiScale', uiScale);
   aboutWin.loadURL(aboutUrl.href);
   aboutWin.setMenu(null);

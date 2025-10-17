@@ -3,11 +3,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: #eef1f4; /* A light neutral background */
-}
-
-.bp6-dark .dock-container {
-  background-color: #202b33; /* A dark neutral background */
+  background-color: var(--dock-background);
 }
 
 .dock-topbar {
@@ -16,13 +12,8 @@
   display: flex;
   align-items: center;
   padding: 0;
-  background-color: #ffffff;
-  border-bottom: 1px solid #d8e1e8;
-}
-
-.bp6-dark .dock-topbar {
-  background-color: #293742;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--dock-topbar);
+  border-bottom: 1px solid var(--dock-border);
 }
 
 .render-type-switcher {
@@ -51,7 +42,7 @@
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  border-left: 1px solid #d8e1e8;
+  border-left: 1px solid var(--dock-border);
 }
 
 .dock-topbar-upper,
@@ -64,30 +55,16 @@
 }
 
 .dock-topbar-lower {
-  background-color: #f5f8fa;
-}
-
-.bp6-dark .dock-topbar-main {
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.bp6-dark .dock-topbar-lower {
-  background-color: #202b33;
+  background-color: var(--dock-topbar-lower);
 }
 
 .dock-topbar-main.page-view-header .dock-topbar-upper {
   height: 100%;
 }
 
-
-
-
-
-
-.bp6-dark .dock-topbar-upper {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Moved from lower */
+.dock-topbar-upper {
+  border-bottom: 1px solid transparent; /* Keep the space, but color is managed by parent */
 }
-
 
 /* Blueprint overrides for breadcrumbs */
 .dock-topbar-upper .bp6-breadcrumbs {

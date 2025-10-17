@@ -114,25 +114,25 @@ const Dock = ({
   const renderTypeConfig = {
     sheet: {
       icon: 'th',
-      color: 'rgb(76, 175, 80)',
+      color: '#4CAF50',
       text: 'Sheet',
       component: <SheetView uiScale={uiScale} />,
     },
     graph: {
       icon: 'data-lineage',
-      color: 'rgb(255, 152, 0)',
+      color: '#FF9800',
       text: 'Graph',
       component: <GraphView uiScale={uiScale} />,
     },
     docs: {
       icon: 'document',
-      color: 'rgb(33, 150, 243)',
+      color: '#2196F3',
       text: 'Docs',
       component: <DocsView uiScale={uiScale} />,
     },
     settings: {
       icon: 'cog',
-      color: 'rgb(153, 153, 153)',
+      color: '#999999',
       text: 'Settings',
       component: (
         <SettingsScreen
@@ -147,7 +147,7 @@ const Dock = ({
     },
     profile: {
       icon: 'user',
-      color: 'rgb(153, 153, 153)',
+      color: '#999999',
       text: 'Profile',
       component: <ProfileScreen uiScale={uiScale} />,
     },
@@ -176,9 +176,9 @@ const Dock = ({
     if (!activeProject && !['settings', 'profile'].includes(activeView)) {
       return (
         <div className="dock-content-placeholder">
-          <Icon icon="folder-open" size={60} color="#CED9E0" />
-          <h3 style={{ color: '#95AAB8' }}>No Project Open</h3>
-          <p style={{ color: '#B8C5D1' }}>
+          <Icon icon="folder-open" size={60} color="var(--text-secondary)" />
+          <h3 style={{ color: 'var(--text-secondary)' }}>No Project Open</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>
             Select File {'>'} New or File {'>'} Open to begin.
           </p>
         </div>

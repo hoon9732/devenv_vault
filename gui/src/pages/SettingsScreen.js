@@ -9,6 +9,7 @@ import {
   Button,
 } from '@blueprintjs/core';
 import { useLanguage } from '../contexts/LanguageContext';
+import './SettingsScreen.css';
 
 const SettingsScreen = ({
   themeMode,
@@ -22,7 +23,7 @@ const SettingsScreen = ({
 
   const handleReset = () => {
     // Default values from settings.json and application defaults
-    setThemeMode('light');
+    setThemeMode('blueprint-light');
     setUiScale(0.8); // This is the '1.0x (Default)'
     setLanguage('en');
     setIsHardwareAccelerationEnabled(true);
@@ -61,17 +62,13 @@ const SettingsScreen = ({
           marginBottom: '20px',
         }}
       >
-        <Button intent="primary" text={t('Reset to Default')} onClick={handleReset} />
+        <Button
+          intent="primary"
+          text={t('Reset to Default')}
+          onClick={handleReset}
+        />
       </div>
-      <Card
-        elevation={2}
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <Card elevation={2} className="settings-card">
         <div>
           <H5>{t('UI Scale')}</H5>
           <Text muted>{t('Adjust the overall interface scale.')}</Text>
@@ -84,15 +81,7 @@ const SettingsScreen = ({
         />
       </Card>
 
-      <Card
-        elevation={2}
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <Card elevation={2} className="settings-card">
         <div>
           <H5>{t('Theme')}</H5>
           <Text muted>{t('Select your preferred color mode.')}</Text>
@@ -102,21 +91,15 @@ const SettingsScreen = ({
           value={themeMode}
           onChange={handleThemeChange}
           options={[
-            { label: 'Light', value: 'light' },
-            { label: 'Dark', value: 'dark' },
+            { label: 'Light (Blueprint)', value: 'blueprint-light' },
+            { label: 'Dark (Blueprint)', value: 'blueprint-dark' },
+            { label: 'Light (MUI)', value: 'mui-light' },
+            { label: 'Dark (MUI)', value: 'mui-dark' },
           ]}
         />
       </Card>
 
-      <Card
-        elevation={2}
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <Card elevation={2} className="settings-card">
         <div>
           <H5>{t('Language')}</H5>
           <Text muted>{t('Choose the application language.')}</Text>
@@ -132,15 +115,7 @@ const SettingsScreen = ({
         />
       </Card>
 
-      <Card
-        elevation={2}
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <Card elevation={2} className="settings-card">
         <div>
           <H5>{t('Hardware Acceleration')}</H5>
           <Text muted>

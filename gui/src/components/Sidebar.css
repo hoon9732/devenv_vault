@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: var(--bp-background-color-hover);
+  background-color: var(--sidebar-background);
 }
 
 .sidebar-menu {
@@ -53,20 +53,12 @@
   flex-shrink: 0;
 }
 
-.bp6-light .sidebar-menu-item:hover {
-  background-color: rgba(167, 182, 194, 0.3) !important;
+.sidebar-menu-item:hover {
+  background-color: var(--sidebar-hover) !important;
 }
 
-.bp6-dark .sidebar-menu-item:hover {
-  background-color: rgba(115, 134, 148, 0.3) !important;
-}
-
-.bp6-light .sidebar-header-item {
-  background-color: #ebebeb;
-}
-
-.bp6-dark .sidebar-header-item {
-  background-color: #2d2d2d;
+.sidebar-header-item {
+  background-color: var(--sidebar-header);
 }
 
 /* NEW INDICATOR STYLES FOR REAL DIVs */
@@ -77,6 +69,7 @@
   bottom: 0;
   width: 8px;
   border-radius: 0;
+  background-color: var(--sidebar-indicator);
 }
 
 .page-indicator {
@@ -85,20 +78,5 @@
   top: 0;
   bottom: 0;
   left: 8px;
-}
-
-.bp6-light .sidebar-indicator {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-.bp6-dark .sidebar-indicator {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.bp6-light .page-indicator {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.bp6-dark .page-indicator {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: var(--sidebar-page-indicator);
 }
