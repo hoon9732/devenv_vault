@@ -2,24 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
 
-const ScaledMenu = ({ uiScale, dense, ...props }) => {
+const ScaledMenu = ({ uiScale, children, ...props }) => {
   return (
     <Menu
       {...props}
-      dense={dense}
-      PaperProps={{
-        sx: {
-          transform: `scale(${uiScale})`,
-          transformOrigin: 'top left',
-        },
-      }}
-    />
+      className="scaled-menu"
+    >
+      {React.Children.map(children, (child) =>
+        React.cloneElement(child, { uiScale })
+      )}
+    </Menu>
   );
 };
 
 ScaledMenu.propTypes = {
   uiScale: PropTypes.number.isRequired,
-  dense: PropTypes.bool,
+  children: PropTypes.node.isRequired,
 };
 
 export default ScaledMenu;

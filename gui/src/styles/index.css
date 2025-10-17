@@ -53,3 +53,8 @@ code {
 .light-theme .bp5-navbar {
   background-color: #ebebeb; /* Corresponds to theme.palette.topbar.background */
 }
+
+
+.scaled-menu {
+  font-size: 1rem;
+}

@@ -7,7 +7,7 @@ import {
   Icon,
 } from '@blueprintjs/core';
 import ScaledMenu from '../components/ScaledMenu';
-import MenuItem from '@mui/material/MenuItem';
+import ScaledMenuItem from '../components/ScaledMenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { useProject } from '../contexts/ProjectContext';
 import SheetView from './SheetView';
@@ -215,10 +215,21 @@ const Dock = ({
             vertical: 'top',
             horizontal: 'left',
           }}
+          PaperProps={{
+            sx: {
+              borderRadius: 0,
+            },
+          }}
         >
-          <MenuItem onClick={() => { setActiveView('sheet'); handleRenderTypeMenuClose(); }}>Sheet</MenuItem>
-          <MenuItem onClick={() => { setActiveView('graph'); handleRenderTypeMenuClose(); }}>Graph</MenuItem>
-          <MenuItem onClick={() => { setActiveView('docs'); handleRenderTypeMenuClose(); }}>Docs</MenuItem>
+          <ScaledMenuItem onClick={() => { setActiveView('sheet'); handleRenderTypeMenuClose(); }}>
+            <ListItemIcon><Icon icon="th" /></ListItemIcon>Sheet
+          </ScaledMenuItem>
+          <ScaledMenuItem onClick={() => { setActiveView('graph'); handleRenderTypeMenuClose(); }}>
+            <ListItemIcon><Icon icon="data-lineage" /></ListItemIcon>Graph
+          </ScaledMenuItem>
+          <ScaledMenuItem onClick={() => { setActiveView('docs'); handleRenderTypeMenuClose(); }}>
+            <ListItemIcon><Icon icon="document" /></ListItemIcon>Docs
+          </ScaledMenuItem>
         </ScaledMenu>
         <div
           className={`dock-topbar-main ${
@@ -252,23 +263,27 @@ const Dock = ({
                     vertical: 'top',
                     horizontal: 'left',
                   }}
+                  PaperProps={{
+                    sx: {
+                      borderRadius: 0,
+                    },
+                  }}
                 >
-                  <MenuItem onClick={() => { handleNewProject(); handleFileMenuClose(); }}>
+                  <ScaledMenuItem onClick={() => { handleNewProject(); handleFileMenuClose(); }}>
                     <ListItemIcon><Icon icon="document" /></ListItemIcon>New
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleOpenProject(); handleFileMenuClose(); }}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem onClick={() => { handleOpenProject(); handleFileMenuClose(); }}>
                     <ListItemIcon><Icon icon="folder-open" /></ListItemIcon>Open...
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleSave(); handleFileMenuClose(); }} disabled={!currentFilePath}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem onClick={() => { handleSave(); handleFileMenuClose(); }} disabled={!currentFilePath}>
                     <ListItemIcon><Icon icon="floppy-disk" /></ListItemIcon>Save
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleSaveAs(); handleFileMenuClose(); }} disabled={!activeProject}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem onClick={() => { handleSaveAs(); handleFileMenuClose(); }} disabled={!activeProject}>
                     <ListItemIcon><Icon icon="floppy-disk" /></ListItemIcon>Save As...
-                  </MenuItem>
-                  <MenuItem disabled>---</MenuItem>
-                  <MenuItem onClick={() => { handleExport(); handleFileMenuClose(); }} disabled={!activeProject}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem onClick={() => { handleExport(); handleFileMenuClose(); }} disabled={!activeProject}>
                     <ListItemIcon><Icon icon="export" /></ListItemIcon>Export as JSON...
-                  </MenuItem>
+                  </ScaledMenuItem>
                 </ScaledMenu>
                 <Button minimal text="Settings" />
                 <Button minimal text="Help" />

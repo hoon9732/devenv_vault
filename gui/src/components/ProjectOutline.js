@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import ScaledTooltip from './ScaledTooltip';
-import MenuItem from '@mui/material/MenuItem';
+import ScaledMenuItem from './ScaledMenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Popover from '@mui/material/Popover';
 import MenuList from '@mui/material/MenuList';
@@ -311,37 +311,40 @@ const ProjectOutline = ({ open, onClose, uiScale }) => {
                   vertical: 'top',
                   horizontal: 'left',
                 }}
+                PaperProps={{
+                  sx: {
+                    borderRadius: 0,
+                  },
+                }}
               >
                 <MenuList
                   dense
-                  sx={{
-                    fontSize: `${uiScale}rem`,
-                  }}
+                  className="scaled-menu"
                 >
-                  <MenuItem onClick={() => { handleSettingChange('showIcons'); handleCloseMenu(); }}>
+                  <ScaledMenuItem uiScale={uiScale} onClick={() => { handleSettingChange('showIcons'); handleCloseMenu(); }}>
                     <ListItemIcon>
                       <Icon icon={settings.showIcons ? 'tick' : 'blank'} />
                     </ListItemIcon>
                     Show Icons
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleSettingChange('showOnStart'); handleCloseMenu(); }}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem uiScale={uiScale} onClick={() => { handleSettingChange('showOnStart'); handleCloseMenu(); }}>
                     <ListItemIcon>
                       <Icon icon={settings.showOnStart ? 'tick' : 'blank'} />
                     </ListItemIcon>
                     Show on Start
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleSettingChange('showAnimation'); handleCloseMenu(); }}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem uiScale={uiScale} onClick={() => { handleSettingChange('showAnimation'); handleCloseMenu(); }}>
                     <ListItemIcon>
                       <Icon icon={settings.showAnimation ? 'tick' : 'blank'} />
                     </ListItemIcon>
                     Show Animation
-                  </MenuItem>
-                  <MenuItem onClick={() => { handleFixedSizeToggle(); handleCloseMenu(); }}>
+                  </ScaledMenuItem>
+                  <ScaledMenuItem uiScale={uiScale} onClick={() => { handleFixedSizeToggle(); handleCloseMenu(); }}>
                     <ListItemIcon>
                       <Icon icon={!isResizable ? 'tick' : 'blank'} />
                     </ListItemIcon>
                     Fixed Size
-                  </MenuItem>
+                  </ScaledMenuItem>
                 </MenuList>
               </Popover>
               <ScaledTooltip title="Close" placement="top" uiScale={uiScale}>
