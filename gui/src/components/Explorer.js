@@ -226,7 +226,7 @@ const Explorer = ({
       return items.map((item) => ({
         id: item.path,
         label: (
-          renamingNode && renamingNode.id === item.path ? (
+          renamingNode && renamingNode.path === item.path ? (
             <RenameInput
               initialName={item.name}
               onRename={(newName) => handleRename(item, newName)}
