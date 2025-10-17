@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 const ScaledTooltip = ({ uiScale, ...props }) => {
   const StyledTooltip = styled(({ className, ...rest }) => (
     <Tooltip {...rest} classes={{ popper: className }} />
-  ))(({ theme }) => ({
+  ))(() => ({
     '& .MuiTooltip-tooltip': {
       fontSize: `${1 * uiScale}rem`,
     },

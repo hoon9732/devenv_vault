@@ -115,7 +115,6 @@ const Sidebar = ({
         <ListItem disablePadding>
           <ListItemButton
             onClick={handleHamburgerClick}
-            className="hamburger-button"
             sx={{
               height: '64px',
               padding: 0,

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button,
-  Breadcrumbs,
   Classes,
   Icon,
 } from '@blueprintjs/core';
+import Button from '@mui/material/Button';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import ScaledMenu from '../components/ScaledMenu';
 import ScaledMenuItem from '../components/ScaledMenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -158,16 +160,28 @@ const Dock = ({
   const renderBreadcrumbs = () => {
     if (!activeProject) {
       return (
-        <Breadcrumbs
-          items={[{ icon: 'ban-circle', text: 'No Project Loaded' }]}
-        />
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography sx={{ display: 'flex', alignItems: 'center', fontWeight: 'normal' }} color="text.secondary">
+            <Icon icon="ban-circle" style={{ marginRight: '8px' }} />
+            No Project Loaded
+          </Typography>
+        </Breadcrumbs>
       );
     }
     // Placeholder for future hierarchy navigation
     const items = [
       { icon: 'projects', text: activeProject.metadata.projectName },
     ];
-    return <Breadcrumbs items={items} />;
+    return (
+      <Breadcrumbs aria-label="breadcrumb">
+        {items.map((item, index) => (
+          <Typography key={index} sx={{ display: 'flex', alignItems: 'center', fontWeight: 'normal' }} color="text.primary">
+             <Icon icon={item.icon} style={{ marginRight: '8px' }} />
+             {item.text}
+          </Typography>
+        ))}
+      </Breadcrumbs>
+    );
   };
 
 
@@ -248,7 +262,7 @@ const Dock = ({
           {!isPageView && (
             <div className="dock-topbar-lower">
               <div className="dock-toolbar">
-                <Button minimal text="File" onClick={handleFileMenuClick} />
+                <Button variant="text" color="inherit" size="small" sx={{ textTransform: 'none' }} onClick={handleFileMenuClick}>File</Button>
                 <ScaledMenu
                   anchorEl={fileMenuAnchorEl}
                   open={Boolean(fileMenuAnchorEl)}
@@ -285,8 +299,10 @@ const Dock = ({
                     <ListItemIcon><Icon icon="export" /></ListItemIcon>Export as JSON...
                   </ScaledMenuItem>
                 </ScaledMenu>
-                <Button minimal text="Settings" />
-                <Button minimal text="Help" />
+                <Divider orientation="vertical" flexItem />
+                <Button variant="text" color="inherit" size="small" sx={{ textTransform: 'none' }}>Settings</Button>
+                <Divider orientation="vertical" flexItem />
+                <Button variant="text" color="inherit" size="small" sx={{ textTransform: 'none' }}>Help</Button>
               </div>
             </div>
           )}

@@ -58,8 +58,31 @@
   background-color: var(--dock-topbar-lower);
 }
 
+.dock-toolbar.bp6-navbar {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.dock-toolbar {
+  display: flex;
+  align-items: center;
+}
+
 .dock-topbar-main.page-view-header .dock-topbar-upper {
   height: 100%;
+}
+
+.dock-topbar-upper .MuiTypography-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+}
+
+.dock-toolbar .MuiButton-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+  font-size: 12px !important;
 }
 
 .dock-topbar-upper {
@@ -69,11 +92,6 @@
 /* Blueprint overrides for breadcrumbs */
 .dock-topbar-upper .bp6-breadcrumbs {
   margin: 0;
-}
-
-.dock-topbar-upper .bp6-breadcrumb {
-  font-size: 14px;
-  font-weight: 600;
 }
 
 /* Blueprint overrides for navbar */

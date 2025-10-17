@@ -85,7 +85,7 @@ function App() {
       appBar: { background: '#293742' },
       topbar: { background: '#2d2d2d' },
       sidebar: {
-        background: '#293742',
+        background: '#30404d',
         header: '#2d2d2d',
         indicator: 'rgba(255, 255, 255, 0.3)',
         pageIndicator: 'rgba(255, 255, 255, 0.15)',
@@ -97,15 +97,15 @@ function App() {
         border: 'rgba(255, 255, 255, 0.15)',
       },
       explorer: {
-        background: '#30404d',
-        topbarUpper: 'rgba(255, 255, 255, 0.15)',
-        topbarLower: 'rgba(0, 0, 0, 0.2)',
+        background: '#394B59',
+        topbarUpper: '#394B59',
+        topbarLower: '#293742',
       },
       projectOutline: {
-        background: '#30404d',
+        background: '#394B59',
         border: 'rgba(255, 255, 255, 0.12)',
-        topbarUpper: 'rgba(255, 255, 255, 0.15)',
-        topbarLower: 'rgba(0, 0, 0, 0.2)',
+        topbarUpper: '#394B59',
+        topbarLower: '#293742',
         highlight: '#3d5875',
         emptyText: '#a7b6c2',
       },
@@ -135,14 +135,14 @@ function App() {
       },
       explorer: {
         background: '#f5f8fa',
-        topbarUpper: 'transparent',
-        topbarLower: 'transparent',
+        topbarUpper: '#f5f8fa',
+        topbarLower: '#e1e8ed',
       },
       projectOutline: {
         background: '#f5f8fa',
         border: 'rgba(0, 0, 0, 0.12)',
-        topbarUpper: 'transparent',
-        topbarLower: 'transparent',
+        topbarUpper: '#f5f8fa',
+        topbarLower: '#e1e8ed',
         highlight: '#dbeeff',
         emptyText: '#8a9ba8',
       },
@@ -171,15 +171,15 @@ function App() {
         border: 'rgba(255, 255, 255, 0.12)',
       },
       explorer: {
-        background: '#1e1e1e',
-        topbarUpper: 'rgba(255, 255, 255, 0.15)',
-        topbarLower: 'rgba(0, 0, 0, 0.2)',
+        background: '#2c2c2c',
+        topbarUpper: '#2c2c2c',
+        topbarLower: '#1e1e1e',
       },
       projectOutline: {
-        background: '#1e1e1e',
+        background: '#2c2c2c',
         border: 'rgba(255, 255, 255, 0.12)',
-        topbarUpper: 'rgba(255, 255, 255, 0.15)',
-        topbarLower: 'rgba(0, 0, 0, 0.2)',
+        topbarUpper: '#2c2c2c',
+        topbarLower: '#1e1e1e',
         highlight: 'rgba(255, 255, 255, 0.12)',
         emptyText: '#b0b0b0',
       },
@@ -209,14 +209,14 @@ function App() {
       },
       explorer: {
         background: '#ffffff',
-        topbarUpper: 'transparent',
-        topbarLower: 'transparent',
+        topbarUpper: '#ffffff',
+        topbarLower: '#f5f5f5',
       },
       projectOutline: {
         background: '#ffffff',
         border: 'rgba(0, 0, 0, 0.12)',
-        topbarUpper: 'transparent',
-        topbarLower: 'transparent',
+        topbarUpper: '#ffffff',
+        topbarLower: '#f5f5f5',
         highlight: 'rgba(0, 0, 0, 0.08)',
         emptyText: '#8a9ba8',
       },
@@ -401,7 +401,7 @@ function App() {
                 }}
                 theme={theme}
               />
-              <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} uiScale={uiScale} />
+              <ProjectOutline open={isOutlineOpen} onClose={handleOutlineToggle} uiScale={uiScale} theme={theme} />
               <Box
                 sx={{
                   display: 'flex',

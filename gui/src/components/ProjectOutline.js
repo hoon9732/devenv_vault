@@ -300,9 +300,10 @@ const ProjectOutline = ({ open, onClose, uiScale }) => {
               </ScaledTooltip>
             </div>
             <div className="outline-topbar-right">
-                                                                          <ScaledTooltip title="More" placement="top" uiScale={uiScale}>
-                                                                            <Button minimal icon="more" onClick={handleClick} />
-                                                                          </ScaledTooltip>              <Popover
+              <ScaledTooltip title="More" placement="top" uiScale={uiScale}>
+                <Button minimal icon="more" onClick={handleClick} />
+              </ScaledTooltip>
+              <Popover
                 open={Boolean(menuPosition)}
                 onClose={handleCloseMenu}
                 anchorReference="anchorPosition"

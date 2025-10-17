@@ -1,9 +1,52 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const url = require('url');
 const { version } = require('../package.json');
 const WinState = require('electron-win-state').default;
+
+// --- IPC Handlers for File Operations ---
+
+ipcMain.handle('rename-path', async (event, { oldPath, newPath }) => {
+  try {
+    fs.renameSync(oldPath, newPath);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error renaming path from ${oldPath} to ${newPath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('copy-path', async (event, { sourcePath, destinationPath }) => {
+  try {
+    fs.copySync(sourcePath, destinationPath);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error copying path from ${sourcePath} to ${destinationPath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('move-path', async (event, { sourcePath, destinationPath }) => {
+  try {
+    fs.moveSync(sourcePath, destinationPath);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error moving path from ${sourcePath} to ${destinationPath}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('delete-path', async (event, pathToDelete) => {
+  try {
+    fs.removeSync(pathToDelete);
+    return { success: true };
+  } catch (error) {
+    console.error(`Error deleting path ${pathToDelete}:`, error);
+    return { success: false, error: error.message };
+  }
+});
+
 
 // --- Configuration Management ---
 const configPath = path.join(app.getPath('userData'), 'config.json');
@@ -150,6 +193,20 @@ ipcMain.handle('read-directory', async (event, dirPath) => {
   } catch (error) {
     console.error(`Error reading directory ${dirPath}:`, error);
     return []; // Return empty array on error
+  }
+});
+
+// IPC handler for creating a directory
+ipcMain.handle('create-directory', async (event, dirPath) => {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
+      return { success: true };
+    }
+    return { success: false, error: 'Directory already exists' };
+  } catch (error) {
+    console.error(`Error creating directory ${dirPath}:`, error);
+    return { success: false, error: error.message };
   }
 });
 

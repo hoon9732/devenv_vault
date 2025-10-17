@@ -53,10 +53,6 @@
   flex-shrink: 0;
 }
 
-.hamburger-button {
-  background-color: var(--dock-topbar);
-}
-
 .sidebar-header-item {
   background-color: var(--sidebar-header);
 }

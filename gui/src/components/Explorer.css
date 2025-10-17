@@ -46,6 +46,23 @@
 }
 
 /* Force hardware acceleration on tree nodes to prevent flicker during animation */
+
 .hw-acceleration-enabled .explorer-tree .bp6-tree-node {
+
   transform: translateZ(0);
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
